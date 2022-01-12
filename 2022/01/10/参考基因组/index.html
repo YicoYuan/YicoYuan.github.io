@@ -27,10 +27,14 @@
 <meta property="og:site_name" content="YuanYe&#39;s blog">
 <meta property="og:description" content="背景–为什么需要参考基因组？  基因组分析的中心法则：所有的基因组分析都是（应该）基于一个正常的参考序列。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/01.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/02.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/03.png">
 <meta property="article:published_time" content="2022-01-10T12:49:31.000Z">
-<meta property="article:modified_time" content="2022-01-10T16:10:51.987Z">
+<meta property="article:modified_time" content="2022-01-12T16:43:16.453Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/01.png">
 
 
 <link rel="canonical" href="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/">
@@ -212,7 +216,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-11 00:10:51" itemprop="dateModified" datetime="2022-01-11T00:10:51+08:00">2022-01-11</time>
+      <time title="修改时间：2022-01-13 00:43:16" itemprop="dateModified" datetime="2022-01-13T00:43:16+08:00">2022-01-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -314,7 +318,146 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h1 id="如何获取参考基因组？"><a href="#如何获取参考基因组？" class="headerlink" title="如何获取参考基因组？"></a>如何获取参考基因组？</h1><p>如何组装参考基因组这不是我们应该考虑的事，至少目前我们还不具备de nova所需的硬件条件。因此，我们主要需要了解如何从公共数据库中获取我们需要的参考基因组及其注释文件。</p>
-<p>待续…</p>
+<p>数据库的种类有很多，其中主要基因组数据库如下：</p>
+<table>
+<thead>
+<tr>
+<th>数据库</th>
+<th>网址</th>
+<th>包含物种</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ensembl</td>
+<td><a target="_blank" rel="noopener" href="http://www.ensembl.org/index.html">http://www.ensembl.org/index.html</a></td>
+<td>人类、鼠、脊椎动物和真核生物</td>
+</tr>
+<tr>
+<td>Ensembl Genomes</td>
+<td><a target="_blank" rel="noopener" href="http://wnsemblgenomes.org/">http://wnsemblgenomes.org</a></td>
+<td>细菌、原生生物、真菌、植物及无脊椎动物</td>
+</tr>
+<tr>
+<td>NCBI</td>
+<td><a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/genome">https://www.ncbi.nlm.nih.gov/genome</a></td>
+<td>综合</td>
+</tr>
+<tr>
+<td>UCSC</td>
+<td><a target="_blank" rel="noopener" href="http://genome.ucsc.edu/index.html">http://genome.ucsc.edu/index.html</a></td>
+<td>脊椎动物</td>
+</tr>
+<tr>
+<td>CAMERA</td>
+<td><a target="_blank" rel="noopener" href="http://camera.calit2.net/index.php">http://camera.calit2.net/index.php</a></td>
+<td>微生物</td>
+</tr>
+<tr>
+<td>The 1000 Genomes Project</td>
+<td><a target="_blank" rel="noopener" href="http://www.1000genomes.org/">http://www.1000genomes.org</a></td>
+<td>千人基因组</td>
+</tr>
+<tr>
+<td>Personal Genome Project</td>
+<td><a target="_blank" rel="noopener" href="http://www.personalgenomes.org/">http://www.personalgenomes.org</a></td>
+<td>人类个体</td>
+</tr>
+<tr>
+<td>GDB</td>
+<td><a target="_blank" rel="noopener" href="http://www.gdb.org/">http://www.gdb.org</a></td>
+<td>人类</td>
+</tr>
+<tr>
+<td>RGD</td>
+<td>http:/rgd.mcw.edu</td>
+<td>鼠</td>
+</tr>
+<tr>
+<td>EcoCye</td>
+<td><a target="_blank" rel="noopener" href="http://ecocye.org/">http://ecocye.org</a></td>
+<td>大肠杆菌</td>
+</tr>
+<tr>
+<td>Flybase</td>
+<td><a target="_blank" rel="noopener" href="http://flybase.org/">http://flybase.org</a></td>
+<td>果蝇</td>
+</tr>
+<tr>
+<td>ZFIN</td>
+<td><a target="_blank" rel="noopener" href="http://zfin.org/">http://zfin.org</a></td>
+<td>斑马鱼</td>
+</tr>
+<tr>
+<td>TAIR</td>
+<td><a target="_blank" rel="noopener" href="http://www.arabidopsis.org/">http://www.arabidopsis.org</a></td>
+<td>拟南芥</td>
+</tr>
+<tr>
+<td>maizegdb</td>
+<td><a target="_blank" rel="noopener" href="http://www.maizegdb.org/">http://www.maizegdb.org</a></td>
+<td>玉米</td>
+</tr>
+<tr>
+<td>BRAD</td>
+<td><a target="_blank" rel="noopener" href="http://brassicadb.org/brad">http://brassicadb.org/brad</a></td>
+<td>芸薹属</td>
+</tr>
+<tr>
+<td>plantGDB</td>
+<td><a target="_blank" rel="noopener" href="http://www.plantgdb.org/">http://www.plantgdb.org</a></td>
+<td>植物</td>
+</tr>
+</tbody></table>
+<p>以人类基因组为例，最为常用的三大数据库为NCBI、ENSEMBL和USCS，它们都提供了FTP协议来传输文件。对于FTP协议，我们可以通过浏览器自带的下载器进行下载，也可以通过命令行工具进行下载。常见的命令行工具如下：</p>
+<table>
+<thead>
+<tr>
+<th>命令工具</th>
+<th>支持协议</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>wget</td>
+<td>HTTP(S)、FTP</td>
+<td>单线程</td>
+</tr>
+<tr>
+<td>mwget</td>
+<td>HTTP(S)、FTP</td>
+<td>多线程</td>
+</tr>
+<tr>
+<td>axel</td>
+<td>HTTP(S)、FTP(S)</td>
+<td>多线程、断电续传</td>
+</tr>
+<tr>
+<td>aria2</td>
+<td>HTTP(S)、FTP、BitTorrent、Metalink</td>
+<td>多线程</td>
+</tr>
+</tbody></table>
+<p>通常线程数越多，能够从FTP服务器获取的带宽也就越多，下载速度就越快，当然占用的本地资源就越大。</p>
+<p>下面以axel为例下载NCBI上人类参考基因组及其注释文件。</p>
+<p>安装Axel：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install axel</span><br></pre></td></tr></table></figure>
+
+<p>用法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">axel [options] url1 [url2] [url...]</span><br></pre></td></tr></table></figure>
+
+<p>选项：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--max-speed=x , -s x        最高速度x</span><br><span class="line">--num-connections=x , -n x   连接数x</span><br><span class="line">--output=f , -o f           下载为本地文件f</span><br><span class="line">--search[=x] , -S [x]       搜索镜像</span><br><span class="line">--header=x , -H x           添加头文件字符串x（指定 HTTP header）</span><br><span class="line">--user-agent=x , -U x       设置用户代理（指定 HTTP user agent）</span><br><span class="line">--no-proxy ， -N            不使用代理服务器</span><br><span class="line">--quiet ， -q               静默模式</span><br><span class="line">--verbose ，-v              更多状态信息</span><br><span class="line">--alternate ， -a           Alternate progress indicator</span><br><span class="line">--help ，-h                 帮助</span><br><span class="line">--version ，-V              版本信息</span><br></pre></td></tr></table></figure>
+
+<p>打开<a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/">NCBI</a>，选择gnome数据库，然后输入“human”进行搜索。</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/01.png"></p>
+<p>然后页面给出了Homo sapiens(human)的最新参考基因组及注释文件的链接，点击genome和GFF即可通过下载器下载我们需要的人类参考基因组及其注释文件。</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/02.png"></p>
+<p>但这里我选择右键复制其下载链接，并通过命令行工具axel进行下载。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">axel -n 10 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.fna.gz https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gff.gz</span><br></pre></td></tr></table></figure>
+
+<p>-n为最大连接数。支持断点续传，只需将同一命令重输一篇即可。默认下载位置为当前文件夹，使用pwd命令即可查看当前文件夹位置。</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/03.png"></p>
 
     </div>
 

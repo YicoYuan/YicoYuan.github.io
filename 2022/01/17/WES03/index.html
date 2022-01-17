@@ -22,27 +22,29 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="安装必备软件Miniconda关于conda和minicondaConda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates pa">
+<meta name="description" content="Mapping→unique reads + sorting，merging and indexing">
 <meta property="og:type" content="article">
-<meta property="og:title" content="软件准备">
-<meta property="og:url" content="http://yicoyuan.xyz/2022/01/13/WES01/index.html">
+<meta property="og:title" content="测序数据比对到参考基因组">
+<meta property="og:url" content="http://yicoyuan.xyz/2022/01/17/WES03/index.html">
 <meta property="og:site_name" content="YuanYe&#39;s blog">
-<meta property="og:description" content="安装必备软件Miniconda关于conda和minicondaConda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates pa">
+<meta property="og:description" content="Mapping→unique reads + sorting，merging and indexing">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-01-13T14:00:54.000Z">
-<meta property="article:modified_time" content="2022-01-16T04:13:54.834Z">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/01.png">
+<meta property="article:published_time" content="2022-01-17T12:52:47.000Z">
+<meta property="article:modified_time" content="2022-01-17T16:40:07.281Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/01/17/WES03/01.png">
 
 
-<link rel="canonical" href="http://yicoyuan.xyz/2022/01/13/WES01/">
+<link rel="canonical" href="http://yicoyuan.xyz/2022/01/17/WES03/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/01/13/WES01/","path":"2022/01/13/WES01/","title":"软件准备"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/01/17/WES03/","path":"2022/01/17/WES03/","title":"测序数据比对到参考基因组"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>软件准备 | YuanYe's blog</title>
+<title>测序数据比对到参考基因组 | YuanYe's blog</title>
   
 
 
@@ -145,7 +147,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%BF%85%E5%A4%87%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">安装必备软件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Miniconda"><span class="nav-number">1.1.</span> <span class="nav-text">Miniconda</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8Econda%E5%92%8Cminiconda"><span class="nav-number">1.1.1.</span> <span class="nav-text">关于conda和miniconda</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Installing-on-linux"><span class="nav-number">1.1.2.</span> <span class="nav-text">Installing on linux</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87miniconda%E5%AE%89%E8%A3%85WES%E6%89%80%E9%9C%80%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">通过miniconda安装WES所需软件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%88%97%E8%A1%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">软件列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.2.</span> <span class="nav-text">软件安装</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%B0%86%E5%BA%8F%E5%88%97%E6%AF%94%E5%AF%B9%E5%88%B0%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">为什么需要将序列比对到参考基因组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%AF%94%E5%AF%B9%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">常见比对工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AF%94%E5%AF%B9"><span class="nav-number">4.</span> <span class="nav-text">比对</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.1.</span> <span class="nav-text">建立参考基因组索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E5%AF%B9-1"><span class="nav-number">4.2.</span> <span class="nav-text">比对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%AF%94%E5%AF%B9%E4%BF%A1%E6%81%AF"><span class="nav-number">4.3.</span> <span class="nav-text">输出比对信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sam%E6%96%87%E4%BB%B6%E6%8E%92%E5%BA%8F%E5%B9%B6%E8%BD%AC%E6%8D%A2%E4%B8%BAbam"><span class="nav-number">4.4.</span> <span class="nav-text">sam文件排序并转换为bam</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E9%87%8D%E5%A4%8D"><span class="nav-number">4.5.</span> <span class="nav-text">标记重复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8Bbam%E6%96%87%E4%BB%B6%E7%9A%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.6.</span> <span class="nav-text">建立bam文件的索引</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -210,7 +212,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/13/WES01/">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/17/WES03/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/ye.svg">
@@ -223,7 +225,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          软件准备
+          测序数据比对到参考基因组
         </h1>
 
         <div class="post-meta-container">
@@ -234,14 +236,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-13 22:00:54" itemprop="dateCreated datePublished" datetime="2022-01-13T22:00:54+08:00">2022-01-13</time>
+      <time title="创建时间：2022-01-17 20:52:47" itemprop="dateCreated datePublished" datetime="2022-01-17T20:52:47+08:00">2022-01-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-16 12:13:54" itemprop="dateModified" datetime="2022-01-16T12:13:54+08:00">2022-01-16</time>
+      <time title="修改时间：2022-01-18 00:40:07" itemprop="dateModified" datetime="2022-01-18T00:40:07+08:00">2022-01-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -270,99 +272,32 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="安装必备软件"><a href="#安装必备软件" class="headerlink" title="安装必备软件"></a>安装必备软件</h1><h2 id="Miniconda"><a href="#Miniconda" class="headerlink" title="Miniconda"></a>Miniconda</h2><h3 id="关于conda和miniconda"><a href="#关于conda和miniconda" class="headerlink" title="关于conda和miniconda"></a>关于conda和miniconda</h3><p>Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language.</p>
-<p>Miniconda is a free minimal installer for conda. It is a small, bootstrap version of Anaconda that includes only conda, Python, the packages they depend on, and a small number of other useful packages, including pip, zlib and a few others. Use the <code>conda install</code> command to install 720+ additional conda packages from the Anaconda repository.</p>
-<p>简单来说，conda是包和环境管理系统，用于安装软件包及其依赖关系，而miniconda是包含了conda的精简版，通过简单的conda install命令即可安装绝大多数生信所需软件，省去了软件安装和环境配置的麻烦。</p>
+        <p>Mapping→unique reads + sorting，merging and indexing</p>
 <span id="more"></span>
 
-<h3 id="Installing-on-linux"><a href="#Installing-on-linux" class="headerlink" title="Installing on linux"></a>Installing on linux</h3><ol>
-<li><p>Download the installer:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://docs.conda.io/en/latest/miniconda.html#linux-installers">Miniconda installer for Linux</a>.</li>
-</ul>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://conda.io/projects/conda/en/latest/user-guide/install/download.html#hash-verification">Verify your installer hashes</a>.</p>
-</li>
-<li><p>In your terminal window, run:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash Miniconda3-latest-Linux-x86_64.sh</span><br></pre></td></tr></table></figure></li>
-<li><p>Follow the prompts on the installer screens.</p>
-<p>If you are unsure about any setting, accept the defaults. You can change them later.</p>
-</li>
-<li><p>To make the changes take effect, close and then re-open your terminal window.</p>
-</li>
-<li><p>Test your installation. In your terminal window or Anaconda Prompt, run the command <code>conda list</code>. A list of installed packages appears if it has been installed correctly.</p>
-</li>
-<li><p>默认的conda软件源是用来管理python模块的，必须添加bioconda的源才能下载到生物软件，以前推荐大家使用国内的镜像源，速度快很多。不过，前段时间所有国内镜像都不能用了，现在只能使用官方的源，不过速度还可以。在命令行运行以下两条命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">conda config --add channels bioconda</span><br><span class="line">conda config --add channels conda-forge</span><br></pre></td></tr></table></figure>
+<h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
+<h1 id="常见比对工具"><a href="#常见比对工具" class="headerlink" title="常见比对工具"></a>常见比对工具</h1><p>bwa、bowtie2</p>
+<h1 id="比对"><a href="#比对" class="headerlink" title="比对"></a>比对</h1><h2 id="建立参考基因组索引"><a href="#建立参考基因组索引" class="headerlink" title="建立参考基因组索引"></a>建立参考基因组索引</h2><p>绝大多数比对工具都需要先对参考基因组建立索引。我们可以使用下面的命令对参考基因组创建索引文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bwa index &lt;reference.fasta&gt;</span><br></pre></td></tr></table></figure>
 
-<p>然后将.condarc里面的– defaults删去。</p>
-</li>
-<li><p>如需更新miniconda：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda update conda</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="通过miniconda安装WES所需软件"><a href="#通过miniconda安装WES所需软件" class="headerlink" title="通过miniconda安装WES所需软件"></a>通过miniconda安装WES所需软件</h2><h3 id="软件列表"><a href="#软件列表" class="headerlink" title="软件列表"></a>软件列表</h3><table>
-<thead>
-<tr>
-<th>包名</th>
-<th align="left">用途</th>
-<th>替代</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>sra-tools</td>
-<td align="left">下载sra；将sra转换为fastq</td>
-<td>fasterq-dump</td>
-</tr>
-<tr>
-<td>samtools</td>
-<td align="left">用于操作sam和bam文件</td>
-<td></td>
-</tr>
-<tr>
-<td>bcftools</td>
-<td align="left">calling/filtering/summarizing SNP and short INDEL sequence variants</td>
-<td></td>
-</tr>
-<tr>
-<td>vcftools</td>
-<td align="left">对VCF文件和BCF文件进行格式转换及过滤</td>
-<td></td>
-</tr>
-<tr>
-<td>gatk4</td>
-<td align="left">Genome Analysis ToolKit</td>
-<td></td>
-</tr>
-<tr>
-<td>snpeff</td>
-<td align="left">通过基因组结构注释数据(GTF文件),对VCF文件中的SNP/InDel信息进行注释</td>
-<td></td>
-</tr>
-<tr>
-<td>multiqc</td>
-<td align="left">数据质控</td>
-<td></td>
-</tr>
-<tr>
-<td>qualimap</td>
-<td align="left">数据质控</td>
-<td></td>
-</tr>
-<tr>
-<td>gatk的bundle的hg38</td>
-<td align="left">gatk分析流程所需的数据，包括参考基因组、注释及已经注释的SNP等</td>
-<td></td>
-</tr>
-</tbody></table>
-<p>安装前建议先使用conda search搜索以下有没有自己需要的版本，默认安装最新版。</p>
-<h3 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install -y sra-tools=2.11.0 samtools bcftools vcftools multiqc qualimap snpeff gatk4</span><br></pre></td></tr></table></figure>
+<p>因此让我们使用这个命令对我们需要的人类参考基因组hg38建立索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bwa index ~/WES/ref/hg38.fna</span><br></pre></td></tr></table></figure>
 
+<p>执行成功后，会在参考基因组所在目录生成5个新文件，它们的basename都来自hg38。这些索引文件都是BWA比对需要的。</p>
+<p><img src="/2022/01/17/WES03/01.png"></p>
+<p>注意：如果参考基因组大于2GB，那么使用BWA建立索引时需要加参数<code>-a bwtsw</code>,这个算法速度慢，但节省内存。</p>
+<h2 id="比对-1"><a href="#比对-1" class="headerlink" title="比对"></a>比对</h2><p>建立索引后，我们就可以将测序数据比对到参考基因组上了。用法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bwa mem -M -R &lt;ref&gt; &lt;R1.fastq&gt; &lt;R2.fastq&gt; </span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">参数解释：</span><br><span class="line">mem是bwa比对使用的三种算法之一，支持长序列（70bp~1Mbp）比对,官方推荐的最新算法。</span><br><span class="line">-M 将shorter split hits标记为次优，以兼容Picard’s markDuplicates软件</span><br><span class="line">-R 指定每个read前加上@RG\tID:foo\tSM:bar之类的标头，使用\t分隔。内容正确与否不重要，重要是要有，如果没有文件头则GATK不能正常运行</span><br><span class="line">-t 线程数，默认1</span><br><span class="line">&lt;ref&gt; 参考基因组文件。同时，所有的索引文件都要在同一个文件夹。</span><br><span class="line">&lt;R1.fastq&gt;,&lt;R2.fastq&gt; 单端只输入一个即可。bwa不支持压缩文件，使用记得前先解压。</span><br></pre></td></tr></table></figure>
 
+<p>因此运行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tPM:S5\tSM:sample&#x27; ~/WES/ref/hg38.fna ~/WES/clean/ERR3013386.clean.fastq \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> ~/WES/align/ERR3013386.aligned.sam <span class="comment">#使用&gt;将比对结果重定向到.sam文件保存</span></span> </span><br></pre></td></tr></table></figure>
 
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tPM:S5\tSM:sample&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    &gt; ~/WES/align/$i.aligned.sam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
-
-
+<h2 id="输出比对信息"><a href="#输出比对信息" class="headerlink" title="输出比对信息"></a>输出比对信息</h2><h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><h2 id="建立bam文件的索引"><a href="#建立bam文件的索引" class="headerlink" title="建立bam文件的索引"></a>建立bam文件的索引</h2><p>其他</p>
 
     </div>
 
@@ -376,14 +311,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/" rel="prev" title="参考基因组">
-                  <i class="fa fa-chevron-left"></i> 参考基因组
+                <a href="/2022/01/15/WES02/" rel="prev" title="测序数据下载及质控">
+                  <i class="fa fa-chevron-left"></i> 测序数据下载及质控
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/01/15/WES02/" rel="next" title="测序数据下载及质控">
-                  测序数据下载及质控 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

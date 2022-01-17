@@ -157,6 +157,40 @@
       </categories>
   </entry>
   <entry>
+    <title>测序数据比对到参考基因组</title>
+    <url>/2022/01/17/WES03/</url>
+    <content><![CDATA[<p>Mapping→unique reads + sorting，merging and indexing</p>
+<span id="more"></span>
+
+<h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
+<h1 id="常见比对工具"><a href="#常见比对工具" class="headerlink" title="常见比对工具"></a>常见比对工具</h1><p>bwa、bowtie2</p>
+<h1 id="比对"><a href="#比对" class="headerlink" title="比对"></a>比对</h1><h2 id="建立参考基因组索引"><a href="#建立参考基因组索引" class="headerlink" title="建立参考基因组索引"></a>建立参考基因组索引</h2><p>绝大多数比对工具都需要先对参考基因组建立索引。我们可以使用下面的命令对参考基因组创建索引文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa index &lt;reference.fasta&gt;</span><br></pre></td></tr></table></figure>
+
+<p>因此让我们使用这个命令对我们需要的人类参考基因组hg38建立索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bwa index ~/WES/ref/hg38.fna</span><br></pre></td></tr></table></figure>
+
+<p>执行成功后，会在参考基因组所在目录生成5个新文件，它们的basename都来自hg38。这些索引文件都是BWA比对需要的。</p>
+<p><img src="/2022/01/17/WES03/01.png"></p>
+<p>注意：如果参考基因组大于2GB，那么使用BWA建立索引时需要加参数<code>-a bwtsw</code>,这个算法速度慢，但节省内存。</p>
+<h2 id="比对-1"><a href="#比对-1" class="headerlink" title="比对"></a>比对</h2><p>建立索引后，我们就可以将测序数据比对到参考基因组上了。用法如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa mem -M -R &lt;ref&gt; &lt;R1.fastq&gt; &lt;R2.fastq&gt; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">参数解释：</span><br><span class="line">mem是bwa比对使用的三种算法之一，支持长序列（70bp~1Mbp）比对,官方推荐的最新算法。</span><br><span class="line">-M 将shorter split hits标记为次优，以兼容Picard’s markDuplicates软件</span><br><span class="line">-R 指定每个read前加上@RG\tID:foo\tSM:bar之类的标头，使用\t分隔。内容正确与否不重要，重要是要有，如果没有文件头则GATK不能正常运行</span><br><span class="line">-t 线程数，默认1</span><br><span class="line">&lt;ref&gt; 参考基因组文件。同时，所有的索引文件都要在同一个文件夹。</span><br><span class="line">&lt;R1.fastq&gt;,&lt;R2.fastq&gt; 单端只输入一个即可。bwa不支持压缩文件，使用记得前先解压。</span><br></pre></td></tr></table></figure>
+
+<p>因此运行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tPM:S5\tSM:sample&#x27; ~/WES/ref/hg38.fna ~/WES/clean/ERR3013386.clean.fastq \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> ~/WES/align/ERR3013386.aligned.sam <span class="comment">#使用&gt;将比对结果重定向到.sam文件保存</span></span> </span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tPM:S5\tSM:sample&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    &gt; ~/WES/align/$i.aligned.sam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h2 id="输出比对信息"><a href="#输出比对信息" class="headerlink" title="输出比对信息"></a>输出比对信息</h2><h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><h2 id="建立bam文件的索引"><a href="#建立bam文件的索引" class="headerlink" title="建立bam文件的索引"></a>建立bam文件的索引</h2><p>其他</p>
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
     <title>参考基因组</title>
     <url>/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/</url>
     <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>–为什么需要参考基因组？</p>

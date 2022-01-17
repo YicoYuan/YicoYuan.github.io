@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>软件准备</title>
+    <url>/2022/01/13/WES01/</url>
+    <content><![CDATA[<h1 id="安装必备软件"><a href="#安装必备软件" class="headerlink" title="安装必备软件"></a>安装必备软件</h1><h2 id="Miniconda"><a href="#Miniconda" class="headerlink" title="Miniconda"></a>Miniconda</h2><h3 id="关于conda和miniconda"><a href="#关于conda和miniconda" class="headerlink" title="关于conda和miniconda"></a>关于conda和miniconda</h3><p>Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language.</p>
+<p>Miniconda is a free minimal installer for conda. It is a small, bootstrap version of Anaconda that includes only conda, Python, the packages they depend on, and a small number of other useful packages, including pip, zlib and a few others. Use the <code>conda install</code> command to install 720+ additional conda packages from the Anaconda repository.</p>
+<p>简单来说，conda是包和环境管理系统，用于安装软件包及其依赖关系，而miniconda是包含了conda的精简版，通过简单的conda install命令即可安装绝大多数生信所需软件，省去了软件安装和环境配置的麻烦。</p>
+<span id="more"></span>
+
+<h3 id="Installing-on-linux"><a href="#Installing-on-linux" class="headerlink" title="Installing on linux"></a>Installing on linux</h3><ol>
+<li><p>Download the installer:</p>
+<ul>
+<li><a href="https://docs.conda.io/en/latest/miniconda.html#linux-installers">Miniconda installer for Linux</a>.</li>
+</ul>
+</li>
+<li><p><a href="https://conda.io/projects/conda/en/latest/user-guide/install/download.html#hash-verification">Verify your installer hashes</a>.</p>
+</li>
+<li><p>In your terminal window, run:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bash Miniconda3-latest-Linux-x86_64.sh</span><br></pre></td></tr></table></figure></li>
+<li><p>Follow the prompts on the installer screens.</p>
+<p>If you are unsure about any setting, accept the defaults. You can change them later.</p>
+</li>
+<li><p>To make the changes take effect, close and then re-open your terminal window.</p>
+</li>
+<li><p>Test your installation. In your terminal window or Anaconda Prompt, run the command <code>conda list</code>. A list of installed packages appears if it has been installed correctly.</p>
+</li>
+<li><p>默认的conda软件源是用来管理python模块的，必须添加bioconda的源才能下载到生物软件，以前推荐大家使用国内的镜像源，速度快很多。不过，前段时间所有国内镜像都不能用了，现在只能使用官方的源，不过速度还可以。在命令行运行以下两条命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda config --add channels bioconda</span><br><span class="line">conda config --add channels conda-forge</span><br></pre></td></tr></table></figure>
+
+<p>然后将.condarc里面的– defaults删去。</p>
+</li>
+<li><p>如需更新miniconda：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda update conda</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="通过miniconda安装WES所需软件"><a href="#通过miniconda安装WES所需软件" class="headerlink" title="通过miniconda安装WES所需软件"></a>通过miniconda安装WES所需软件</h2><h3 id="软件列表"><a href="#软件列表" class="headerlink" title="软件列表"></a>软件列表</h3><table>
+<thead>
+<tr>
+<th>包名</th>
+<th align="left">用途</th>
+<th>替代</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sra-tools</td>
+<td align="left">下载sra；将sra转换为fastq</td>
+<td>fasterq-dump</td>
+</tr>
+<tr>
+<td>samtools</td>
+<td align="left">用于操作sam和bam文件</td>
+<td></td>
+</tr>
+<tr>
+<td>bcftools</td>
+<td align="left">calling/filtering/summarizing SNP and short INDEL sequence variants</td>
+<td></td>
+</tr>
+<tr>
+<td>vcftools</td>
+<td align="left">对VCF文件和BCF文件进行格式转换及过滤</td>
+<td></td>
+</tr>
+<tr>
+<td>gatk4</td>
+<td align="left">Genome Analysis ToolKit</td>
+<td></td>
+</tr>
+<tr>
+<td>snpeff</td>
+<td align="left">通过基因组结构注释数据(GTF文件),对VCF文件中的SNP/InDel信息进行注释</td>
+<td></td>
+</tr>
+<tr>
+<td>multiqc</td>
+<td align="left">数据质控</td>
+<td></td>
+</tr>
+<tr>
+<td>qualimap</td>
+<td align="left">数据质控</td>
+<td></td>
+</tr>
+<tr>
+<td>gatk的bundle的hg38</td>
+<td align="left">gatk分析流程所需的数据，包括参考基因组、注释及已经注释的SNP等</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>安装前建议先使用conda search搜索以下有没有自己需要的版本，默认安装最新版。</p>
+<h3 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install -y sra-tools=2.11.0 samtools bcftools vcftools multiqc qualimap snpeff gatk4</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>测序数据下载及质控</title>
+    <url>/2022/01/15/WES02/</url>
+    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
+
+<p>然后进入WES文件夹创建以下子文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
+
+<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
+<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
+
+<p>或者使用for循环：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ncbi.nlm.nih.gov/bioproject/PRJEB30330">PRJEB30330</a>下载fastq的压缩文件。</p>
+<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
+<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
+
+<p>可以写一个shell脚本自动安装</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
+<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
+<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
+<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>法二、xargs</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
+
+<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
+
+<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
+<p>写个脚本进行批量质控</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>参考基因组</title>
+    <url>/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/</url>
+    <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>–为什么需要参考基因组？</p>
+<hr>
+<p>基因组分析的中心法则：所有的基因组分析都是（应该）基于一个正常的参考序列。</p>
+<span id="more"></span>
+
+<p>为什么？让我们思考一个更简单但是相类似的问题。现在我们知道有来源于同一普通古语的三种现代表达：</p>
+<ol>
+<li>The quick brown f<strong>a</strong>x jumped over the lazy dog<strong>e</strong>.</li>
+<li>The quick <strong>_</strong> fox jump<strong>s</strong> over the lazy dog<strong>e</strong>. </li>
+<li>The quick brown fox jump<strong>s</strong> over the lazy <strong>brown</strong> dog. </li>
+</ol>
+<p>我们希望有一种方法能找出他们的差异，但又不偏向于其中任何一个，并且当我们再次碰到新句子时，这种方法也足够可靠地发现其中可能的突变。因此我们创建了一个包含它们所有共性的杂合句：</p>
+<p>The quick brown fox jumped over the lazy dog<strong>e</strong>.</p>
+<p>我们能够使用这个句子作为一个共同的参考坐标系，并将每个突变句子的差异标记在上面：</p>
+<p>第一句：第4个词发生o→a替换；第9个词e缺失。</p>
+<p>第二句：第3个词缺失；第5个词发生ed→s替换；第9个词e增加。</p>
+<p>第三句：第5个词发生ed→s替换；第3个词复制后插到第8个词后面。</p>
+<p>很明显，这不是一个完美的方法。并且，它没有给出一个祖先句，因为我们怀疑“dog”不是“狗”最初的拼写方式，我们也不确定原始的时态是什么（jumps OR jumped）。但是，它使我们从不同差异中区分出，哪种差异是常态。</p>
+<p>刚开始用于创建参考的句子越多、越具有代表性，未来我们在遇到变异时就越能更准确地去定义它。</p>
+<p>这正是我们在使用参考基因组时所做的：相较于试着去描绘不同基因组序列之间的差异（事实上当序列大于2条时这将变得十分困难），我们不如描绘它们与同一个标准相比时的差异。基于这点，我们只需去证明哪些变异是这些序列所共有的，哪些变异是独属于一个个体，而这将变得容易得多。</p>
+<p>所以通常我们应该使用谁的基因组作为标准？理论上，任何一个基因组都能被用作参考基因组。但是，当参考基因组越能代表我们可能想研究的最广泛的群体，分析的质量和灵敏度也就越高。因此，参考基因组序列的每一个片段都应该表现为在可利用的个体基因组群中最常见的序列。据此产生的参考基因组是作为原型存在的杂合体，所以任何一个个体的基因组也都不具备该参考基因组一模一样的序列。</p>
+<p>此外，值得注意的是，目前所有的参考基因组都是单倍体，这意味着它们仅能代表染色体的其中一条。最直接的后果就是，在诸如人类这样的二倍体生物中，对于处于杂合状态位点而言，标准序列的选择很大程度上的随机的。而这在多数植物中表现得更加明显，诸如小麦、草莓之类的它们具有更高倍数的染色体。虽然使用图示是可以将参考基因组的不同染色体表示出来，但是目前几乎没有合适的分析工具来处理这样表示的数据。更多讨论可详见这篇<a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0587-3">文章</a>。</p>
+<p>–以上内容来自<a href="https://gatk.broadinstitute.org/hc/en-us/articles/360035891071">译文</a>。</p>
+<h1 id="参考基因组文件和注释文件"><a href="#参考基因组文件和注释文件" class="headerlink" title="参考基因组文件和注释文件"></a>参考基因组文件和注释文件</h1><p>参考基因组文件一般是以.fa结尾的文本文件。在生物信息学中，FASTA是一种基于文本的、用于表示核苷酸序列或氨基酸序列的格式。FASTA以序列表示和序列作为一个基本单元，一个单元包括两行：</p>
+<ul>
+<li><p>第一行是以 &gt; 开头的文字说明，用于序列标记，标识需具有唯一性。</p>
+</li>
+<li><p>第二行是由A\T\C\G四个字母组成的碱基序列。</p>
+</li>
+</ul>
+<p>以人类参考基因组hg38为例：</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/05.png"></p>
+<p>值得注意的是：由于FASTA除序列外的头信息没有被严格地限制格式，因此不同数据库中的参考基因组其都信息都有差别。在使用程序进行分析时可能会出现错误。</p>
+<p>由于参考基因组文件是一段无序的序列，因此需要注释文件对其进行注释，来告诉我们某一段所对应的基因结构，包括Gene、CDS、mRNA、5’UTR、3’UTR、exon等。</p>
+<p>基因注释文件较多，其中GFF和GTF是最常用的基因注释文件。其中GTF是GFF的扩展。前八个字段，GTF与GFF相同；但GTF还包含可选字段：5’UTR、3’UTR、inter、inter_CNS、intro_CNS。</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>前八个字段</strong></th>
+<th align="center"><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">seq_id</td>
+<td align="center">序列编号。一般为chr编号。</td>
+</tr>
+<tr>
+<td align="center">source</td>
+<td align="center">注释来源。一般为数据库或注释机构。</td>
+</tr>
+<tr>
+<td align="center">type</td>
+<td align="center">注释信息类型。如Gene、cDNA、CDS、mRNA等。</td>
+</tr>
+<tr>
+<td align="center">start</td>
+<td align="center">该基因或转录本在参考序列的起始位置。</td>
+</tr>
+<tr>
+<td align="center">end</td>
+<td align="center">该基因或转录本在参考序列的结束位置。</td>
+</tr>
+<tr>
+<td align="center">score</td>
+<td align="center">该行序列相似性的分数。</td>
+</tr>
+<tr>
+<td align="center">strand</td>
+<td align="center">+表示正链，-表示负链。</td>
+</tr>
+<tr>
+<td align="center">phase</td>
+<td align="center">仅对CDS类型有效。表示读码框起始位置，有效值为0、1、2。</td>
+</tr>
+</tbody></table>
+<p>以人类参考基因组hg38的GFF注释文件为例：</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/04.png"></p>
+<h1 id="如何获取参考基因组？"><a href="#如何获取参考基因组？" class="headerlink" title="如何获取参考基因组？"></a>如何获取参考基因组？</h1><p>如何组装参考基因组这不是我们应该考虑的事，至少目前我们还不具备de nova所需的硬件条件。因此，我们主要需要了解如何从公共数据库中获取我们需要的参考基因组及其注释文件。</p>
+<p>数据库的种类有很多，其中主要基因组数据库如下：</p>
+<table>
+<thead>
+<tr>
+<th>数据库</th>
+<th>网址</th>
+<th>包含物种</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ensembl</td>
+<td><a href="http://www.ensembl.org/index.html">http://www.ensembl.org/index.html</a></td>
+<td>人类、鼠、脊椎动物和真核生物</td>
+</tr>
+<tr>
+<td>Ensembl Genomes</td>
+<td><a href="http://wnsemblgenomes.org/">http://wnsemblgenomes.org</a></td>
+<td>细菌、原生生物、真菌、植物及无脊椎动物</td>
+</tr>
+<tr>
+<td>NCBI</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/genome">https://www.ncbi.nlm.nih.gov/genome</a></td>
+<td>综合</td>
+</tr>
+<tr>
+<td>UCSC</td>
+<td><a href="http://genome.ucsc.edu/index.html">http://genome.ucsc.edu/index.html</a></td>
+<td>脊椎动物</td>
+</tr>
+<tr>
+<td>CAMERA</td>
+<td><a href="http://camera.calit2.net/index.php">http://camera.calit2.net/index.php</a></td>
+<td>微生物</td>
+</tr>
+<tr>
+<td>The 1000 Genomes Project</td>
+<td><a href="http://www.1000genomes.org/">http://www.1000genomes.org</a></td>
+<td>千人基因组</td>
+</tr>
+<tr>
+<td>Personal Genome Project</td>
+<td><a href="http://www.personalgenomes.org/">http://www.personalgenomes.org</a></td>
+<td>人类个体</td>
+</tr>
+<tr>
+<td>GDB</td>
+<td><a href="http://www.gdb.org/">http://www.gdb.org</a></td>
+<td>人类</td>
+</tr>
+<tr>
+<td>RGD</td>
+<td>http:/rgd.mcw.edu</td>
+<td>鼠</td>
+</tr>
+<tr>
+<td>EcoCye</td>
+<td><a href="http://ecocye.org/">http://ecocye.org</a></td>
+<td>大肠杆菌</td>
+</tr>
+<tr>
+<td>Flybase</td>
+<td><a href="http://flybase.org/">http://flybase.org</a></td>
+<td>果蝇</td>
+</tr>
+<tr>
+<td>ZFIN</td>
+<td><a href="http://zfin.org/">http://zfin.org</a></td>
+<td>斑马鱼</td>
+</tr>
+<tr>
+<td>TAIR</td>
+<td><a href="http://www.arabidopsis.org/">http://www.arabidopsis.org</a></td>
+<td>拟南芥</td>
+</tr>
+<tr>
+<td>maizegdb</td>
+<td><a href="http://www.maizegdb.org/">http://www.maizegdb.org</a></td>
+<td>玉米</td>
+</tr>
+<tr>
+<td>BRAD</td>
+<td><a href="http://brassicadb.org/brad">http://brassicadb.org/brad</a></td>
+<td>芸薹属</td>
+</tr>
+<tr>
+<td>plantGDB</td>
+<td><a href="http://www.plantgdb.org/">http://www.plantgdb.org</a></td>
+<td>植物</td>
+</tr>
+</tbody></table>
+<p>以人类基因组为例，最为常用的三大数据库为NCBI、ENSEMBL和USCS，它们都提供了FTP协议来传输文件。对于FTP协议，我们可以通过浏览器自带的下载器进行下载，也可以通过命令行工具进行下载。常见的命令行工具如下：</p>
+<table>
+<thead>
+<tr>
+<th>命令工具</th>
+<th>支持协议</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>wget</td>
+<td>HTTP(S)、FTP</td>
+<td>单线程</td>
+</tr>
+<tr>
+<td>mwget</td>
+<td>HTTP(S)、FTP</td>
+<td>多线程</td>
+</tr>
+<tr>
+<td>axel</td>
+<td>HTTP(S)、FTP(S)</td>
+<td>多线程、断电续传</td>
+</tr>
+<tr>
+<td>aria2</td>
+<td>HTTP(S)、FTP、BitTorrent、Metalink</td>
+<td>多线程</td>
+</tr>
+</tbody></table>
+<p>通常线程数越多，能够从FTP服务器获取的带宽也就越多，下载速度就越快，当然占用的本地资源就越大。</p>
+<p>下面以axel为例下载NCBI上人类参考基因组及其注释文件。</p>
+<p>安装Axel：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install axel</span><br></pre></td></tr></table></figure>
+
+<p>用法：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">axel [options] url1 [url2] [url...]</span><br></pre></td></tr></table></figure>
+
+<p>选项：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--max-speed=x , -s x        最高速度x</span><br><span class="line">--num-connections=x , -n x   连接数x</span><br><span class="line">--output=f , -o f           下载为本地文件f</span><br><span class="line">--search[=x] , -S [x]       搜索镜像</span><br><span class="line">--header=x , -H x           添加头文件字符串x（指定 HTTP header）</span><br><span class="line">--user-agent=x , -U x       设置用户代理（指定 HTTP user agent）</span><br><span class="line">--no-proxy ， -N            不使用代理服务器</span><br><span class="line">--quiet ， -q               静默模式</span><br><span class="line">--verbose ，-v              更多状态信息</span><br><span class="line">--alternate ， -a           Alternate progress indicator</span><br><span class="line">--help ，-h                 帮助</span><br><span class="line">--version ，-V              版本信息</span><br></pre></td></tr></table></figure>
+
+<p>打开<a href="https://www.ncbi.nlm.nih.gov/">NCBI</a>，选择gnome数据库，然后输入“human”进行搜索。</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/01.png"></p>
+<p>然后页面给出了Homo sapiens(human)的最新参考基因组及注释文件的链接，点击genome和GFF即可通过下载器下载我们需要的人类参考基因组及其注释文件。</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/02.png"></p>
+<p>但这里我选择右键复制其下载链接，并通过命令行工具axel进行下载。建议白天进行下载以避开国外使用的高峰期。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">axel -n 10 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.fna.gz </span><br><span class="line">axel -n 10 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gff.gz</span><br></pre></td></tr></table></figure>
+
+<p>-n为最大连接数。支持断点续传，只需将同一命令重输一篇即可。默认下载位置为当前文件夹，使用pwd命令即可查看当前文件夹位置。</p>
+<p><img src="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/03.png"></p>
+]]></content>
+      <categories>
+        <category>生物信息学</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>hexo博客插入图片和视频</title>
+    <url>/2022/01/07/%E5%9B%BE%E7%89%87&amp;%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/</url>
+    <content><![CDATA[<p>在博客中插入视频和图片能让人通俗易懂，生动形象。下面是我找到的一些方法，主要介绍了本地图片和在线视频的插入方法。</p>
+<span id="more"></span>
+
+<h1 id="图片插入"><a href="#图片插入" class="headerlink" title="图片插入"></a>图片插入</h1><h2 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h2><p>因为hexo本身不支持通用的markdown图片插入语法，因此需要借助插件hexo-asset-image。</p>
+<p>在站点目录执行如下脚本进行安装：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure>
+
+<h2 id="插件修正"><a href="#插件修正" class="headerlink" title="插件修正"></a>插件修正</h2><p>但这个插件有点bug，会导致转换出来的img的路径不对，因此需要手动定位修改。</p>
+<p>具体原理和方法超出了我的认知。具体操作只需将下列代码替换到/node_modules/hexo-asset-image/index.js即可。替换前建议对index.js备份。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> cheerio = <span class="built_in">require</span>(<span class="string">&#x27;cheerio&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// http://stackoverflow.com/questions/14480345/how-to-get-the-nth-occurrence-in-a-string</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getPosition</span>(<span class="params">str, m, i</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> str.split(m, i).join(m).length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> version = <span class="built_in">String</span>(hexo.version).split(<span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">hexo.extend.filter.register(<span class="string">&#x27;after_post_render&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> config = hexo.config;</span><br><span class="line">  <span class="keyword">if</span>(config.post_asset_folder)&#123;</span><br><span class="line">        <span class="keyword">var</span> link = data.permalink;</span><br><span class="line">    <span class="keyword">if</span>(version.length &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">Number</span>(version[<span class="number">0</span>]) == <span class="number">3</span>)</span><br><span class="line">       <span class="keyword">var</span> beginPos = getPosition(link, <span class="string">&#x27;/&#x27;</span>, <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">       <span class="keyword">var</span> beginPos = getPosition(link, <span class="string">&#x27;/&#x27;</span>, <span class="number">3</span>) + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// In hexo 3.1.1, the permalink of &quot;about&quot; page is like &quot;.../about/index.html&quot;.</span></span><br><span class="line">    <span class="keyword">var</span> endPos = link.lastIndexOf(<span class="string">&#x27;/&#x27;</span>) + <span class="number">1</span>;</span><br><span class="line">    link = link.substring(beginPos, endPos);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> toprocess = [<span class="string">&#x27;excerpt&#x27;</span>, <span class="string">&#x27;more&#x27;</span>, <span class="string">&#x27;content&#x27;</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; toprocess.length; i++)&#123;</span><br><span class="line">      <span class="keyword">var</span> key = toprocess[i];</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">var</span> $ = cheerio.load(data[key], &#123;</span><br><span class="line">        <span class="attr">ignoreWhitespace</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">xmlMode</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">lowerCaseTags</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">decodeEntities</span>: <span class="literal">false</span></span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      $(<span class="string">&#x27;img&#x27;</span>).each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($(<span class="built_in">this</span>).attr(<span class="string">&#x27;src&#x27;</span>))&#123;</span><br><span class="line">            <span class="comment">// For windows style path, we replace &#x27;\&#x27; to &#x27;/&#x27;.</span></span><br><span class="line">            <span class="keyword">var</span> src = $(<span class="built_in">this</span>).attr(<span class="string">&#x27;src&#x27;</span>).replace(<span class="string">&#x27;\\&#x27;</span>, <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">            <span class="keyword">if</span>(!<span class="regexp">/http[s]*.*|\/\/.*/</span>.test(src) &amp;&amp;</span><br><span class="line">               !<span class="regexp">/^\s*\//</span>.test(src)) &#123;</span><br><span class="line">              <span class="comment">// For &quot;about&quot; page, the first part of &quot;src&quot; can&#x27;t be removed.</span></span><br><span class="line">              <span class="comment">// In addition, to support multi-level local directory.</span></span><br><span class="line">              <span class="keyword">var</span> linkArray = link.split(<span class="string">&#x27;/&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">elem</span>)</span>&#123;</span><br><span class="line">                <span class="keyword">return</span> elem != <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">              &#125;);</span><br><span class="line">              <span class="keyword">var</span> srcArray = src.split(<span class="string">&#x27;/&#x27;</span>).filter(<span class="function"><span class="keyword">function</span>(<span class="params">elem</span>)</span>&#123;</span><br><span class="line">                <span class="keyword">return</span> elem != <span class="string">&#x27;&#x27;</span> &amp;&amp; elem != <span class="string">&#x27;.&#x27;</span>;</span><br><span class="line">              &#125;);</span><br><span class="line">              <span class="keyword">if</span>(srcArray.length &gt; <span class="number">1</span>)</span><br><span class="line">                srcArray.shift();</span><br><span class="line">              src = srcArray.join(<span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">              $(<span class="built_in">this</span>).attr(<span class="string">&#x27;src&#x27;</span>, config.root + link + src);</span><br><span class="line">              <span class="built_in">console</span>.info&amp;&amp;<span class="built_in">console</span>.info(<span class="string">&quot;update link as:--&gt;&quot;</span>+config.root + link + src);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.info&amp;&amp;<span class="built_in">console</span>.info(<span class="string">&quot;no src attr, skipped...&quot;</span>);</span><br><span class="line">            <span class="built_in">console</span>.info&amp;&amp;<span class="built_in">console</span>.info($(<span class="built_in">this</span>));</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">      data[key] = $.html();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="图片插入-1"><a href="#图片插入-1" class="headerlink" title="图片插入"></a>图片插入</h2><p>执行代码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo n &quot;图片&amp;视频插入&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在站点的source/_posts会里生成图片&amp;视频插入.md的文本文件和一个同名的文件夹。</p>
+<p><img src="/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/02.png"></p>
+<p>将需要插入这篇文章的图片放入文件夹。</p>
+<p><img src="/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/03.png"></p>
+<p>md文档里的引用格式为</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">![<span class="string">jay</span>](<span class="link">jay.jpeg</span>) #方括号[]内添加图片描述，可忽略；圆括号（）内为图片相对地址，即图片文件名。</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<p><img src="/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/jay.jpeg" alt="jay"></p>
+<h1 id="视频插入"><a href="#视频插入" class="headerlink" title="视频插入"></a>视频插入</h1><p>视频的插入与图片不同，需要在文档里插入一段html代码，这里以b站视频为例。</p>
+<p>随意点开某个b站视频，然后选择分享，复制下面的的嵌入代码，粘贴到文档里。</p>
+<p><img src="/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/04.png"></p>
+<p>嵌入代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;//player.bilibili.com/player.html?aid=800358811&amp;bvid=BV1Gy4y1q7ZS&amp;cid=257606677&amp;page=1&quot;</span> <span class="attr">scrolling</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">framespacing</span>=<span class="string">&quot;0&quot;</span> <span class="attr">allowfullscreen</span>=<span class="string">&quot;true&quot;</span>&gt;</span> <span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>添加参数width和height，并设置为100%，使得视频页面布局能自适应。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;iframe src=&quot;//player.bilibili.com/player.html?aid=800358811&amp;bvid=BV1Gy4y1q7ZS&amp;cid=257606677&amp;page=1&quot; scrolling=&quot;no&quot; border=&quot;0&quot; frameborder=&quot;no&quot; framespacing=&quot;0&quot; allowfullscreen=&quot;true&quot; width=&quot;100%&quot; height=&quot;100%&quot;&gt; &lt;/iframe&gt;</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<iframe src="//player.bilibili.com/player.html?aid=800358811&bvid=BV1Gy4y1q7ZS&cid=257606677&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="100%" height="100%"> </iframe>
+
+
+
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+</search>

@@ -30,8 +30,10 @@
 <meta property="og:description" content="Mapping→unique reads + sorting，merging and indexing">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/01.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/02.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/03.png">
 <meta property="article:published_time" content="2022-01-17T12:52:47.000Z">
-<meta property="article:modified_time" content="2022-01-17T16:40:07.281Z">
+<meta property="article:modified_time" content="2022-01-18T05:44:01.014Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yicoyuan.xyz/2022/01/17/WES03/01.png">
@@ -243,7 +245,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-18 00:40:07" itemprop="dateModified" datetime="2022-01-18T00:40:07+08:00">2022-01-18</time>
+      <time title="修改时间：2022-01-18 13:44:01" itemprop="dateModified" datetime="2022-01-18T13:44:01+08:00">2022-01-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -297,7 +299,20 @@
 <p>批处理</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tPM:S5\tSM:sample&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    &gt; ~/WES/align/$i.aligned.sam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
-<h2 id="输出比对信息"><a href="#输出比对信息" class="headerlink" title="输出比对信息"></a>输出比对信息</h2><h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><h2 id="建立bam文件的索引"><a href="#建立bam文件的索引" class="headerlink" title="建立bam文件的索引"></a>建立bam文件的索引</h2><p>其他</p>
+<h2 id="输出比对信息"><a href="#输出比对信息" class="headerlink" title="输出比对信息"></a>输出比对信息</h2><p>使用samtools flagstat工具对比对结果进行统计：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">samtools flagstat [options] &lt;in.bam&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以单端测序数据ERR3013386的sam比对文件为例：</p>
+<p><img src="/2022/01/17/WES03/02.png"></p>
+<p>比对结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">2166159 + 0 in total (QC-passed reads + QC-failed reads)  #reads总数</span><br><span class="line">5038 + 0 secondary  #比对到参考基因组多个位置的reads数</span><br><span class="line">0 + 0 supplementary  #可能存在嵌合的reads数</span><br><span class="line">0 + 0 duplicates  #重复的reads数</span><br><span class="line">2153012 + 0 mapped (99.39% : N/A)  #比对到参考基因组的reads数</span><br><span class="line">0 + 0 paired in sequencing  #属于PE的reads数</span><br><span class="line">0 + 0 read1  #PE中Read_1的reads数</span><br><span class="line">0 + 0 read2  #PE中Read_2的reads数</span><br><span class="line">0 + 0 properly paired (N/A : N/A)  #完美比对的reads数：PE两端reads比对到同一条序列，且根据比对结果推断的插入片段大小符合设置的阈值</span><br><span class="line">0 + 0 with itself and mate mapped  #PE两端都比对上参考序列的reads数</span><br><span class="line">0 + 0 singletons (N/A : N/A)  #PE两端，一端比对上而另一端没比对上的reads数</span><br><span class="line">0 + 0 with mate mapped to a different chr  #PE两端分别比对到不同染色体上的reads数</span><br><span class="line">0 + 0 with mate mapped to a different chr (mapQ&gt;=5)  #PE中两端分别比对到两条不同染色体，且mapQ&gt;=5的reads数</span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">touch ~/WES/align/flagstat.txt #建立一个空txt保存比对结果</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	echo $i &gt;&gt; flagstat.txt #追加标头</span><br><span class="line">	samtools flagstat ~/WES/align/$i* &gt;&gt; flagstat.txt #追加比对结果</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>运行完cat一下：</p>
+<p><img src="/2022/01/17/WES03/03.png"></p>
+<h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><h2 id="建立bam文件的索引"><a href="#建立bam文件的索引" class="headerlink" title="建立bam文件的索引"></a>建立bam文件的索引</h2><p>其他</p>
 
     </div>
 

@@ -159,7 +159,7 @@
   <entry>
     <title>测序数据比对到参考基因组</title>
     <url>/2022/01/17/WES03/</url>
-    <content><![CDATA[<p>Mapping→unique reads + sorting，merging and indexing</p>
+    <content><![CDATA[<p>Pipeline：Mapping→sorting→unique reads(mark duplicates)→indexing</p>
 <span id="more"></span>
 
 <h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
@@ -197,8 +197,29 @@
 
 <p>运行完cat一下：</p>
 <p><img src="/2022/01/17/WES03/03.png"></p>
-<h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><h2 id="建立bam文件的索引"><a href="#建立bam文件的索引" class="headerlink" title="建立bam文件的索引"></a>建立bam文件的索引</h2><p>其他</p>
-]]></content>
+<h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><p>比对数据的下游分析要求按坐标顺序排好序的bam格式。因此，我们使用samtools工具来操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools sort ~/WES/align/ERR3013386.aligned.sam -O BAM -o ~/WES/align/ERR3013386.aligned.sorted.bam</span><br></pre></td></tr></table></figure>
+
+<p>看一下转换前后有什么不同：</p>
+<p><img src="/2022/01/17/WES03/04.png" alt="aligned.sam"></p>
+<p><img src="/2022/01/17/WES03/05.png" alt="aligned.sorted.bam"></p>
+<p>简单来说就是按照第四列的坐标由小到大重新进行了排列。关于SAM格式文件说明可以详见这篇<a href="https://www.jianshu.com/p/ab133ee9712c">文章</a>。</p>
+<p>批处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">  do</span><br><span class="line">  samtools sort ~/WES/align/$i.aligned.sam -O BAM -o ~/WES/align/$i.aligned.sorted.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><p>测序过程中，同一条DNA片段可能会被多次测序。这些重复的reads不是有效信息，也不能作为支持或反对潜在变异的证据。最常见的引起duplicates的原因就是文库构建过程中的PCR。如果不去除这些<strong>PCR duplicates</strong>，PCR扩增偏好性的区域就存在过表达的风险。生成测序cluster时，如果某一个cluster中的DNA序列搭到附近另一个cluster的生成位点，就会又生成一个相同的cluster，产生<strong>Cluster duplicates</strong>。cluster在测序时，捕获的荧光亮点由于光波的衍射，导致形状出现重影，而被当做两个荧光点来处理，从而被认作两条相同的reads，这类称为<strong>Optical duplicates</strong>。</p>
+<p>因此我们需要将这些duplicates标记出来，从而得到未被标记的unique reads。最常见的Mark Duplicates工具主要有samtools、picard和sambamba。其中，samtools步骤较繁琐，picard使用最广泛，sambamba处理速度快且用法简单。因此这里推荐使用sambamba。实际上，sambamba开发之初就是为了替代samtools，详细功能参见这篇<a href="https://github.com/biod/sambamba/wiki/Command-line-tools">文档</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#用法</span><br><span class="line">sambamba markdup OPTIONS &lt;input.bam&gt; &lt;output.bam&gt;</span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">  do</span><br><span class="line">  sambamba markdup ~/WES/align/$i.aligned.sorted.bam $i.aligned.sorted.markdup.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h2 id="建立bam文件的索引"><a href="#建立bam文件的索引" class="headerlink" title="建立bam文件的索引"></a>建立bam文件的索引</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#用法</span><br><span class="line">sambamba index [-p|--show-progress] &lt;input.bam&gt; [&lt;output.bai&gt;]</span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sambamba index -p ~/WES/align/*.markdup.bam</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2>]]></content>
       <categories>
         <category>WES</category>
       </categories>

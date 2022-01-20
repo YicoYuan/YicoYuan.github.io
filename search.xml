@@ -159,7 +159,7 @@
   <entry>
     <title>测序数据比对到参考基因组</title>
     <url>/2022/01/17/WES03/</url>
-    <content><![CDATA[<p>Pipeline：Mapping→sorting→unique reads(mark duplicates)→indexing</p>
+    <content><![CDATA[<p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
 <span id="more"></span>
 
 <h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
@@ -219,7 +219,19 @@
 <p>批处理</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sambamba index -p ~/WES/align/*.markdup.bam</span><br></pre></td></tr></table></figure>
 
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2>]]></content>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>下载GATK提供的resource bundle，里面提供了下游分析需要的数据。目前提供FTP 和 Google Cloud bucket 2种下载方式，由于用不了Google，只能使用FTP。GATK官网推荐使用lftp工具进行访问ftp和下载数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#远程访问ftp服务器</span><br><span class="line">lftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/</span><br><span class="line">没有密码，因此直接敲回车即可。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls	#查看以下当前目录下的内容</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/01/17/WES03/06.png"></p>
+<p>这里我们只需将hg38文件夹里的所有内容下载到本地即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mirror hg38</span><br></pre></td></tr></table></figure>
+
+<p>常见ftp服务器的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">get [OPTS] &lt;rfile&gt; [-o &lt;lfile&gt;] #下载文件</span><br><span class="line">mget [OPTS] &lt;files&gt;  #支持使用通配符来下载文件</span><br><span class="line">mirror [OPTS] [remote [local]]  #下载整个文件夹</span><br><span class="line"></span><br><span class="line">help  #查看所有命令</span><br><span class="line">help &lt;cmd&gt;  #查看某条命令的help</span><br></pre></td></tr></table></figure>
+
+]]></content>
       <categories>
         <category>WES</category>
       </categories>

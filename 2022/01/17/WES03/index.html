@@ -22,20 +22,21 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Pipeline：Mapping→sorting→unique reads(mark duplicates)→indexing">
+<meta name="description" content="Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing">
 <meta property="og:type" content="article">
 <meta property="og:title" content="测序数据比对到参考基因组">
 <meta property="og:url" content="http://yicoyuan.xyz/2022/01/17/WES03/index.html">
 <meta property="og:site_name" content="YuanYe&#39;s blog">
-<meta property="og:description" content="Pipeline：Mapping→sorting→unique reads(mark duplicates)→indexing">
+<meta property="og:description" content="Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/01.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/02.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/03.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/04.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/05.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/17/WES03/06.png">
 <meta property="article:published_time" content="2022-01-17T12:52:47.000Z">
-<meta property="article:modified_time" content="2022-01-19T16:05:31.290Z">
+<meta property="article:modified_time" content="2022-01-20T05:24:27.575Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yicoyuan.xyz/2022/01/17/WES03/01.png">
@@ -151,7 +152,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%B0%86%E5%BA%8F%E5%88%97%E6%AF%94%E5%AF%B9%E5%88%B0%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">为什么需要将序列比对到参考基因组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%AF%94%E5%AF%B9%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">常见比对工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AF%94%E5%AF%B9"><span class="nav-number">4.</span> <span class="nav-text">比对</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.1.</span> <span class="nav-text">建立参考基因组索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E5%AF%B9-1"><span class="nav-number">4.2.</span> <span class="nav-text">比对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%AF%94%E5%AF%B9%E4%BF%A1%E6%81%AF"><span class="nav-number">4.3.</span> <span class="nav-text">输出比对信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sam%E6%96%87%E4%BB%B6%E6%8E%92%E5%BA%8F%E5%B9%B6%E8%BD%AC%E6%8D%A2%E4%B8%BAbam"><span class="nav-number">4.4.</span> <span class="nav-text">sam文件排序并转换为bam</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E9%87%8D%E5%A4%8D"><span class="nav-number">4.5.</span> <span class="nav-text">标记重复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8Bbam%E6%96%87%E4%BB%B6%E7%9A%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.6.</span> <span class="nav-text">建立bam文件的索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.7.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%B0%86%E5%BA%8F%E5%88%97%E6%AF%94%E5%AF%B9%E5%88%B0%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">为什么需要将序列比对到参考基因组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%AF%94%E5%AF%B9%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">常见比对工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AF%94%E5%AF%B9"><span class="nav-number">4.</span> <span class="nav-text">比对</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.1.</span> <span class="nav-text">建立参考基因组索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E5%AF%B9-1"><span class="nav-number">4.2.</span> <span class="nav-text">比对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%AF%94%E5%AF%B9%E4%BF%A1%E6%81%AF"><span class="nav-number">4.3.</span> <span class="nav-text">输出比对信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sam%E6%96%87%E4%BB%B6%E6%8E%92%E5%BA%8F%E5%B9%B6%E8%BD%AC%E6%8D%A2%E4%B8%BAbam"><span class="nav-number">4.4.</span> <span class="nav-text">sam文件排序并转换为bam</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E9%87%8D%E5%A4%8D"><span class="nav-number">4.5.</span> <span class="nav-text">标记重复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8Bbam%E6%96%87%E4%BB%B6%E7%9A%84%E7%B4%A2%E5%BC%95"><span class="nav-number">4.6.</span> <span class="nav-text">建立bam文件的索引</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -247,7 +248,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-20 00:05:31" itemprop="dateModified" datetime="2022-01-20T00:05:31+08:00">2022-01-20</time>
+      <time title="修改时间：2022-01-20 13:24:27" itemprop="dateModified" datetime="2022-01-20T13:24:27+08:00">2022-01-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,7 +277,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Pipeline：Mapping→sorting→unique reads(mark duplicates)→indexing</p>
+        <p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
 <span id="more"></span>
 
 <h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
@@ -336,7 +337,19 @@
 <p>批处理</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sambamba index -p ~/WES/align/*.markdup.bam</span><br></pre></td></tr></table></figure>
 
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>下载GATK提供的resource bundle，里面提供了下游分析需要的数据。目前提供FTP 和 Google Cloud bucket 2种下载方式，由于用不了Google，只能使用FTP。GATK官网推荐使用lftp工具进行访问ftp和下载数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#远程访问ftp服务器</span><br><span class="line">lftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/</span><br><span class="line">没有密码，因此直接敲回车即可。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls	#查看以下当前目录下的内容</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/01/17/WES03/06.png"></p>
+<p>这里我们只需将hg38文件夹里的所有内容下载到本地即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mirror hg38</span><br></pre></td></tr></table></figure>
+
+<p>常见ftp服务器的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">get [OPTS] &lt;rfile&gt; [-o &lt;lfile&gt;] #下载文件</span><br><span class="line">mget [OPTS] &lt;files&gt;  #支持使用通配符来下载文件</span><br><span class="line">mirror [OPTS] [remote [local]]  #下载整个文件夹</span><br><span class="line"></span><br><span class="line">help  #查看所有命令</span><br><span class="line">help &lt;cmd&gt;  #查看某条命令的help</span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     

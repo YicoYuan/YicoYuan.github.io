@@ -22,25 +22,30 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Things To Be Passionate About In Life.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="YuanYe&#39;s blog">
-<meta property="og:url" content="http://yicoyuan.xyz/index.html">
+<meta name="description" content="GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。 之所以需要进行Indel局部区域重比对，一是因为BWA和bowtie等全局搜索最优匹配的算法在Indel区域及附近的比对情况往往不是很理想。二是这些算法对于碱基错配和gap的容忍度不同，如果发现碱基错配和gap都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="碱基质量重矫正">
+<meta property="og:url" content="http://yicoyuan.xyz/2022/01/20/WES04/index.html">
 <meta property="og:site_name" content="YuanYe&#39;s blog">
-<meta property="og:description" content="Things To Be Passionate About In Life.">
+<meta property="og:description" content="GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。 之所以需要进行Indel局部区域重比对，一是因为BWA和bowtie等全局搜索最优匹配的算法在Indel区域及附近的比对情况往往不是很理想。二是这些算法对于碱基错配和gap的容忍度不同，如果发现碱基错配和gap都">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/20/WES04/01.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/20/WES04/02.png">
+<meta property="article:published_time" content="2022-01-20T05:25:27.000Z">
+<meta property="article:modified_time" content="2022-01-23T16:11:29.065Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/01/20/WES04/01.png">
 
 
-<link rel="canonical" href="http://yicoyuan.xyz/">
+<link rel="canonical" href="http://yicoyuan.xyz/2022/01/20/WES04/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/01/20/WES04/","path":"2022/01/20/WES04/","title":"碱基质量重矫正"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>YuanYe's blog</title>
+<title>碱基质量重矫正 | YuanYe's blog</title>
   
 
 
@@ -69,7 +74,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">YuanYe's blog</h1>
+      <p class="site-title">YuanYe's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -130,7 +135,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -143,6 +148,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A2%B1%E5%9F%BA%E8%B4%A8%E9%87%8F%E9%87%8D%E7%9F%AB%E6%AD%A3"><span class="nav-number">1.</span> <span class="nav-text">碱基质量重矫正</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BQSR%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">BQSR过程详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">1.2.1.</span> <span class="nav-text">overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9ABaseRecalibrator%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.2.2.</span> <span class="nav-text">第一步：BaseRecalibrator建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AApplyBQSR-adjusts-the-scores"><span class="nav-number">1.2.3.</span> <span class="nav-text">第二步：ApplyBQSR adjusts the scores</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BQSR%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">BQSR具体操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%8D%8F%E5%8F%98%E9%87%8F%E5%88%86%E6%9E%90"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一步：协变量分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E8%B0%83%E6%95%B4%E8%B4%A8%E9%87%8F%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二步：调整质量值</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -196,16 +202,17 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/20/WES04/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -218,9 +225,9 @@
       <meta itemprop="name" content="YuanYe's blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/20/WES04/" class="post-title-link" itemprop="url">碱基质量重矫正</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          碱基质量重矫正
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -250,6 +257,13 @@
     </span>
 
   
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
 </div>
 
         </div>
@@ -259,7 +273,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。</p>
+        <p>GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。</p>
 <p>之所以需要进行Indel局部区域重比对，一是因为BWA和bowtie等全局搜索最优匹配的算法在Indel区域及附近的比对情况往往不是很理想。二是这些算法对于碱基错配和gap的容忍度不同，如果发现碱基错配和gap都可以的情况，会更偏向于错配，这就可能导致基因组上原本应该是一个长Indel的区域被错误地比对为多个错配和短Indel，必然导致检测到错误的变异。</p>
 <p>Indel的Realignment就是将BWA比对过程中发现的有潜在Indel的区域进行局部比对，从而重新矫正，降低识别到错误变异的几率。</p>
 <p>GATK表示如果使用了最新的HaplotypeCaller或者MuTect2，就不需要这一步了，很可能是GATK4的新工具HaplotypeCaller具备了这一功能。如果使用传统的caller工具，如UnifiedGenotyper或者MuTect，则这一步还是需要的。</p>
@@ -390,7 +404,6 @@
 <h3 id="第二步：调整质量值"><a href="#第二步：调整质量值" class="headerlink" title="第二步：调整质量值"></a>第二步：调整质量值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gatk ApplyVQSR \</span><br><span class="line">		 -R ~/WES/ref/hg38.fna \</span><br><span class="line">		 -I ~/WES/ERR3013386.sorted.markdup.bam \</span><br><span class="line">		 -bqsr ERR3013386.recal_data.table \</span><br><span class="line">		 -O ~/WES/align/ERR3013386.markdup.recal.bam</span><br></pre></td></tr></table></figure>
 
 
-      
     </div>
 
     
@@ -398,454 +411,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/17/WES03/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/17/WES03/" class="post-title-link" itemprop="url">测序数据比对到参考基因组</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-17 20:52:47" itemprop="dateCreated datePublished" datetime="2022-01-17T20:52:47+08:00">2022-01-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-23 18:41:35" itemprop="dateModified" datetime="2022-01-23T18:41:35+08:00">2022-01-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/17/WES03/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/15/WES02/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/15/WES02/" class="post-title-link" itemprop="url">测序数据下载及质控</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-15 12:07:40" itemprop="dateCreated datePublished" datetime="2022-01-15T12:07:40+08:00">2022-01-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-17 18:53:29" itemprop="dateModified" datetime="2022-01-17T18:53:29+08:00">2022-01-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
-
-<p>然后进入WES文件夹创建以下子文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/15/WES02/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/17/WES03/" rel="prev" title="测序数据比对到参考基因组">
+                  <i class="fa fa-chevron-left"></i> 测序数据比对到参考基因组
+                </a>
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/13/WES01/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/13/WES01/" class="post-title-link" itemprop="url">软件准备</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-13 22:00:54" itemprop="dateCreated datePublished" datetime="2022-01-13T22:00:54+08:00">2022-01-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-16 12:13:54" itemprop="dateModified" datetime="2022-01-16T12:13:54+08:00">2022-01-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="安装必备软件"><a href="#安装必备软件" class="headerlink" title="安装必备软件"></a>安装必备软件</h1><h2 id="Miniconda"><a href="#Miniconda" class="headerlink" title="Miniconda"></a>Miniconda</h2><h3 id="关于conda和miniconda"><a href="#关于conda和miniconda" class="headerlink" title="关于conda和miniconda"></a>关于conda和miniconda</h3><p>Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language.</p>
-<p>Miniconda is a free minimal installer for conda. It is a small, bootstrap version of Anaconda that includes only conda, Python, the packages they depend on, and a small number of other useful packages, including pip, zlib and a few others. Use the <code>conda install</code> command to install 720+ additional conda packages from the Anaconda repository.</p>
-<p>简单来说，conda是包和环境管理系统，用于安装软件包及其依赖关系，而miniconda是包含了conda的精简版，通过简单的conda install命令即可安装绝大多数生信所需软件，省去了软件安装和环境配置的麻烦。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/13/WES01/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+            <div class="post-nav-item">
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/" class="post-title-link" itemprop="url">参考基因组</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-10 20:49:31" itemprop="dateCreated datePublished" datetime="2022-01-10T20:49:31+08:00">2022-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-14 13:47:35" itemprop="dateModified" datetime="2022-01-14T13:47:35+08:00">2022-01-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%94%9F%E7%89%A9%E4%BF%A1%E6%81%AF%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">生物信息学</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>–为什么需要参考基因组？</p>
-<hr>
-<p>基因组分析的中心法则：所有的基因组分析都是（应该）基于一个正常的参考序列。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/" class="post-title-link" itemprop="url">hexo博客插入图片和视频</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-07 22:35:53" itemprop="dateCreated datePublished" datetime="2022-01-07T22:35:53+08:00">2022-01-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-08 22:28:16" itemprop="dateModified" datetime="2022-01-08T22:28:16+08:00">2022-01-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在博客中插入视频和图片能让人通俗易懂，生动形象。下面是我找到的一些方法，主要介绍了本地图片和在线视频的插入方法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/07/%E5%9B%BE%E7%89%87&%E8%A7%86%E9%A2%91%E6%8F%92%E5%85%A5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 

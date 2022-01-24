@@ -31,8 +31,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/20/WES04/01.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/01/20/WES04/02.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/01/20/WES04/03.png">
 <meta property="article:published_time" content="2022-01-20T05:25:27.000Z">
-<meta property="article:modified_time" content="2022-01-24T05:42:14.561Z">
+<meta property="article:modified_time" content="2022-01-24T16:04:31.923Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yicoyuan.xyz/2022/01/20/WES04/01.png">
@@ -148,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A2%B1%E5%9F%BA%E8%B4%A8%E9%87%8F%E9%87%8D%E7%9F%AB%E6%AD%A3"><span class="nav-number">1.</span> <span class="nav-text">碱基质量重矫正</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BQSR%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">BQSR过程详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">1.2.1.</span> <span class="nav-text">overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9ABaseRecalibrator%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.2.2.</span> <span class="nav-text">第一步：BaseRecalibrator建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AApplyBQSR-adjusts-the-scores"><span class="nav-number">1.2.3.</span> <span class="nav-text">第二步：ApplyBQSR adjusts the scores</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BQSR%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">BQSR具体操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%8D%8F%E5%8F%98%E9%87%8F%E5%88%86%E6%9E%90"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一步：协变量分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E8%B0%83%E6%95%B4%E8%B4%A8%E9%87%8F%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二步：调整质量值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WHAT-IF"><span class="nav-number">1.3.3.</span> <span class="nav-text">WHAT IF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">（一）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">（二）</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A2%B1%E5%9F%BA%E8%B4%A8%E9%87%8F%E9%87%8D%E7%9F%AB%E6%AD%A3"><span class="nav-number">1.</span> <span class="nav-text">碱基质量重矫正</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BQSR%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">BQSR过程详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">1.2.1.</span> <span class="nav-text">overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9ABaseRecalibrator%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.2.2.</span> <span class="nav-text">第一步：BaseRecalibrator建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AApplyBQSR-adjusts-the-scores"><span class="nav-number">1.2.3.</span> <span class="nav-text">第二步：ApplyBQSR adjusts the scores</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BQSR%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">BQSR具体操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%8D%8F%E5%8F%98%E9%87%8F%E5%88%86%E6%9E%90"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一步：协变量分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E8%B0%83%E6%95%B4%E8%B4%A8%E9%87%8F%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二步：调整质量值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%B9%E5%A4%84%E7%90%86"><span class="nav-number">1.3.3.</span> <span class="nav-text">批处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WHAT-IF"><span class="nav-number">1.3.4.</span> <span class="nav-text">WHAT IF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">（一）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">（二）</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -163,7 +164,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -244,7 +245,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-24 13:42:14" itemprop="dateModified" datetime="2022-01-24T13:42:14+08:00">2022-01-24</time>
+      <time title="修改时间：2022-01-25 00:04:31" itemprop="dateModified" datetime="2022-01-25T00:04:31+08:00">2022-01-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -318,18 +319,19 @@
 <li>plus the cycle x qual and dinucleotide x qual effect</li>
 </ul>
 <p>Following recalibration, the read quality scores are much closer to their empirical scores than before. This means they can be used in a statistically robust manner for downstream processing, such as variant calling. In addition, by accounting for quality changes by cycle and sequence context, we can identify truly high quality bases in the reads, often finding a subset of bases that are Q30 even when no bases were originally labeled as such.</p>
-<h2 id="BQSR具体操作"><a href="#BQSR具体操作" class="headerlink" title="BQSR具体操作"></a>BQSR具体操作</h2><h3 id="第一步：协变量分析"><a href="#第一步：协变量分析" class="headerlink" title="第一步：协变量分析"></a>第一步：协变量分析</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br><span class="line"></span><br><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br></pre></td></tr></table></figure>
+<h2 id="BQSR具体操作"><a href="#BQSR具体操作" class="headerlink" title="BQSR具体操作"></a>BQSR具体操作</h2><h3 id="第一步：协变量分析"><a href="#第一步：协变量分析" class="headerlink" title="第一步：协变量分析"></a>第一步：协变量分析</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br></pre></td></tr></table></figure>
 
 
 
 
 
-<h3 id="第二步：调整质量值"><a href="#第二步：调整质量值" class="headerlink" title="第二步：调整质量值"></a>第二步：调整质量值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gatk ApplyVQSR \</span><br><span class="line">		 -R ~/WES/ref/hg38.fna \</span><br><span class="line">		 -I ~/WES/ERR3013386.sorted.markdup.bam \</span><br><span class="line">		 -bqsr ERR3013386.recal_data.table \</span><br><span class="line">		 -O ~/WES/align/ERR3013386.markdup.recal.bam</span><br></pre></td></tr></table></figure>
+<h3 id="第二步：调整质量值"><a href="#第二步：调整质量值" class="headerlink" title="第二步：调整质量值"></a>第二步：调整质量值</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gatk ApplyBQSR \</span><br><span class="line">		 -I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">		 -bqsr ~/WES/align/ERR3013386.recal_data.table \</span><br><span class="line">		 -O ~/WES/align/ERR3013386.markdup.recal.bam</span><br></pre></td></tr></table></figure>
 
+<h3 id="批处理"><a href="#批处理" class="headerlink" title="批处理"></a>批处理</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	gatk BaseRecalibrator \</span><br><span class="line">		-R ~/WES/ref/hg38.fna \</span><br><span class="line">		-I ~/WES/align/$i.sorted.markdup.bam \</span><br><span class="line">		-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">		-known-sites ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">		-known-sites ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">		-O ~/WES/align/$i.recal_data.table </span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	gatk ApplyBQSR \</span><br><span class="line">		-I ~/WES/align/$i.sorted.markdup.bam \</span><br><span class="line">		-bqsr ~/WES/align/$i.recal_data.table \</span><br><span class="line">		-O ~/WES/align/$i.markdup.recal.bam </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
-
+<p>PS:暂时没想到更简洁的批处理方式。</p>
 <h3 id="WHAT-IF"><a href="#WHAT-IF" class="headerlink" title="WHAT IF"></a>WHAT IF</h3><h4 id="（一）"><a href="#（一）" class="headerlink" title="（一）"></a>（一）</h4><p>如果提示：<code>A USER ERROR has occurred: Input files reference and features have incompatible contigs: No overlapping contigs found.</code>可能是因为从GATK的resource bundle里下载的VCF文件里染色体的命名方式与参考基因组不一致。</p>
-<p>NCBI参考基因组文件的标头：NC_000001.11 Homo sapiens chromosome 1, GRCh38.p13 Primary Assembly</p>
+<p>NCBI参考基因组文件的标头：<code>NC_000001.11 Homo sapiens chromosome 1, GRCh38.p13 Primary Assembly</code></p>
 <p>GRCh38.p13参考基因组NC编号与对应染色体</p>
 <table>
 <thead>
@@ -406,7 +408,7 @@
 </tr>
 </tbody></table>
 <p>PS:NC编号中小数点后的数字表示版本。</p>
-<p>dbsnp.vcf里的染色体命名格式是UCSC风格：chr1    10019   rs775809821     TA      T       .       .       RS=775809821;RSPOS=10020;dbSNPBuildID=144;SSR=0;SAO=0;VP=0x050000020005000002000200;GENEINFO=DDX11L1:100287102;WGT=1;VC=DIV;R5;ASP</p>
+<p>dbsnp.vcf里的染色体命名格式是UCSC风格：<code>chr1    10019   rs775809821     TA      T       .       .       RS=775809821;RSPOS=10020;dbSNPBuildID=144;SSR=0;SAO=0;VP=0x050000020005000002000200;GENEINFO=DDX11L1:100287102;WGT=1;VC=DIV;R5;ASP</code></p>
 <p>因此在进行比对时匹配不上。所以解决办法要么改变基因组，要么改变VCF。而改变又有两种方式，要么手动修改，要么下载匹配的格式。</p>
 <p>这里选择最头铁的方式，将vcf里UCSC style的染色体名改为NCBI的编号形式。感谢这位兄弟提供的小工具<a target="_blank" rel="noopener" href="https://github.com/vkkodali/cthreepo">cthreepo</a>，支持GFF、GTF、BED、VCF、SAM等文件的染色体ID在NCBI、UCSC和Ensembl之间转换。</p>
 <p>安装cthreepo：</p>
@@ -419,7 +421,13 @@
 <p>看看转换前后对比：</p>
 <p><img src="/2022/01/20/WES04/01.png" alt="before"></p>
 <p><img src="/2022/01/20/WES04/02.png" alt="after"></p>
-<h4 id="（二）"><a href="#（二）" class="headerlink" title="（二）"></a>（二）</h4><p>如果提示：<code>A USER ERROR has occurred: Input /home/yico/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf must support random access to enable queries by interval. If it&#39;s a file, please index it using the bundled tool IndexFeatureFile</code>，则根据提示使用IndexFeatureFile对VCF文件建立索引。</p>
+<p>但是再次运行gatk BaseRecalibrator后发现还是提示reference和features的contigs还是不匹配。单独指定vcf后运行发现，仅dbsnp_146运行成功。通过比较与另外两个VCF的差别后发现，dbsnp_146没有<code>##contig=&lt; &gt;</code>这部分codecs：</p>
+<p><img src="/2022/01/20/WES04/03.png"></p>
+<p>因此猜想是这部分编码内容误导了gatk，于是将这两个VCF里的删去，并重建索引：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">以下代码在文件所在目录运行</span></span><br><span class="line">mv Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf Mills_and_1000G_gold_standard.indels.hg38.ncbi.old.vcf</span><br><span class="line">grep -v &quot;##contig=&quot; Mills_and_1000G_gold_standard.indels.hg38.ncbi.old.vcf &gt; Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf </span><br><span class="line">gatk IndexFeatureFile -I Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf</span><br><span class="line">rm -rf Mills_and_1000G_gold_standard.indels.hg38.ncbi.old.vcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">另一个同理</span></span><br><span class="line">mv 1000G_phase1.snps.high_confidence.hg38.ncbi.vcf 1000G_phase1.snps.high_confidence.hg38.ncbi.old.vcf</span><br><span class="line">grep -v &quot;##contig=&quot; 1000G_phase1.snps.high_confidence.hg38.ncbi.old.vcf &gt; 1000G_phase1.snps.high_confidence.hg38.ncbi.vcf </span><br><span class="line">gatk IndexFeatureFile -I 1000G_phase1.snps.high_confidence.hg38.ncbi.vcf</span><br><span class="line">rm -rf 1000G_phase1.snps.high_confidence.hg38.ncbi.old.vcf</span><br></pre></td></tr></table></figure>
+
+<p>再次运行，提示<code>success</code>。</p>
+<h4 id="（二）"><a href="#（二）" class="headerlink" title="（二）"></a>（二）</h4><p>如果提示：<code>A USER ERROR has occurred: Input /home/yico/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf must support random access to enable queries by interval. If it&#39;s a file, please index it using the bundled tool IndexFeatureFile</code>或下载了原始的tbi索引，则需使用IndexFeatureFile对VCF文件重新建立索引。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">gatk IndexFeatureFile -I &lt;input.vcf&gt;  </span><br></pre></td></tr></table></figure>
 
 
@@ -440,6 +448,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/01/24/WES05/" rel="next" title="Call variants">
+                  Call variants <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

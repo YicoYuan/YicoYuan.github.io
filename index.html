@@ -237,7 +237,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-24 00:11:29" itemprop="dateModified" datetime="2022-01-24T00:11:29+08:00">2022-01-24</time>
+      <time title="修改时间：2022-01-24 13:42:14" itemprop="dateModified" datetime="2022-01-24T13:42:14+08:00">2022-01-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -260,136 +260,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。</p>
-<p>之所以需要进行Indel局部区域重比对，一是因为BWA和bowtie等全局搜索最优匹配的算法在Indel区域及附近的比对情况往往不是很理想。二是这些算法对于碱基错配和gap的容忍度不同，如果发现碱基错配和gap都可以的情况，会更偏向于错配，这就可能导致基因组上原本应该是一个长Indel的区域被错误地比对为多个错配和短Indel，必然导致检测到错误的变异。</p>
-<p>Indel的Realignment就是将BWA比对过程中发现的有潜在Indel的区域进行局部比对，从而重新矫正，降低识别到错误变异的几率。</p>
-<p>GATK表示如果使用了最新的HaplotypeCaller或者MuTect2，就不需要这一步了，很可能是GATK4的新工具HaplotypeCaller具备了这一功能。如果使用传统的caller工具，如UnifiedGenotyper或者MuTect，则这一步还是需要的。</p>
-<h1 id="碱基质量重矫正"><a href="#碱基质量重矫正" class="headerlink" title="碱基质量重矫正"></a>碱基质量重矫正</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>BQSR就是Base Quality Score Recalibration，即碱基质量重矫正。这也是数据预处理的最后一步，主要是为了纠正测序仪在测序过程中产生的系统性错误。这类错误有些是因为测序反应中物理或化学反应导致的，有些可能是设备操作上出错了。</p>
-<h2 id="BQSR过程详解"><a href="#BQSR过程详解" class="headerlink" title="BQSR过程详解"></a>BQSR过程详解</h2><h3 id="overview"><a href="#overview" class="headerlink" title="overview"></a>overview</h3><p>1.首先提供GATK Base Recalibrator一些列已知的变异集。</p>
-<p>2.GATK Base Recalibrator会分析所有的reads，寻找read和reference存在错配的位置，然后排除已知的变异位置。</p>
-<p>3.GATK Base Recalibrator根据错配序列碱基原有的质量值、位置和序列内容计算错配碱基的相关数据。</p>
-<p>4.基于第3步计算的数据和经验，通过机器学习给每个错配碱基重新计算出新的质量值，代替原来的。</p>
-<h3 id="第一步：BaseRecalibrator建模"><a href="#第一步：BaseRecalibrator建模" class="headerlink" title="第一步：BaseRecalibrator建模"></a>第一步：BaseRecalibrator建模</h3><p>为了建立协变量模型，这个工具会遍历输入的BAM文件中所有的reads，然后按列输出碱基的以下特征：</p>
-<ul>
-<li>read的read group。Read group即前面比对过程中添加以@RG开头的标头，需要通过Read group标签来对reads进行分组矫正。其中：</li>
-</ul>
-<p>​        <code>ID</code>=Read group ID，每个read group都有独自的ID。Illumina测序数据中，ID由flowcell、lane name和number组成。矫正碱基质量时，ID对区分技术批次效应是必须的。在这个过程，同一ID的read被假定为有同样的技术误差。</p>
-<p>​        <code>PU</code>=Platform unit。由三部分组成，<flowcell_barcode>.&lt;lane&gt;.<sample_barcode>。PU不是必须要求的，但是PU的优先级高于ID。</sample_barcode></flowcell_barcode></p>
-<p>​        <code>SM</code>=Sample。reads所属的样品名。SM要设定正确，因为GATK产生的VCF文件也使用这个名字。</p>
-<p>​        <code>PL</code>=platform。主要有ILLUMINA、SOLID、LS454、HELICOS和PACBIO等。</p>
-<p>​        <code>LB</code>=DNA preparation library identifier。对一个read group的reads进行重复序列标记时，需要使用LB来区分reads来自哪条lane。有时同一个库可能在不同的lane上完成的测序，为了加以区分，只要是来自不同的lane都要单独赋予一个ID。</p>
-<ul>
-<li>测序仪给出的碱基质量值</li>
-<li>碱基产生的轮次（Nth cycle = Nth base from the start of the read）</li>
-<li>连续两个碱基（dinucleotide）</li>
-</ul>
-<p>For each bin, we count the number of bases within the bin and how often such bases mismatch the reference base, excluding loci known to vary in the population, according to the known variants resource (typically dbSNP). This information is output to a recalibration file in GATKReport format.</p>
-<p>Note that the recalibrator applies a “yates” correction for low occupancy bins. Rather than inferring the true Q score from # mismatches / # bases we actually infer it from (# mismatches + 1) / (# bases + 2). This deals very nicely with overfitting problems, which has only a minor impact on data sets with billions of bases but is critical to avoid overconfidence in rare bins in sparse data.</p>
-<p>这个目前还不是很理解，暂时搬到这里，以后有更深的理解后再更新吧。</p>
-<h3 id="第二步：ApplyBQSR-adjusts-the-scores"><a href="#第二步：ApplyBQSR-adjusts-the-scores" class="headerlink" title="第二步：ApplyBQSR adjusts the scores"></a>第二步：ApplyBQSR adjusts the scores</h3><p>This second tool goes through all the reads again, using the recalibration file to adjust each base’s score based on which bins it falls in. So effectively the new quality score is:</p>
-<ul>
-<li>the sum of the global difference between reported quality scores and the empirical quality</li>
-<li>plus the quality bin specific shift</li>
-<li>plus the cycle x qual and dinucleotide x qual effect</li>
-</ul>
-<p>Following recalibration, the read quality scores are much closer to their empirical scores than before. This means they can be used in a statistically robust manner for downstream processing, such as variant calling. In addition, by accounting for quality changes by cycle and sequence context, we can identify truly high quality bases in the reads, often finding a subset of bases that are Q30 even when no bases were originally labeled as such.</p>
-<h2 id="BQSR具体操作"><a href="#BQSR具体操作" class="headerlink" title="BQSR具体操作"></a>BQSR具体操作</h2><h3 id="第一步：协变量分析"><a href="#第一步：协变量分析" class="headerlink" title="第一步：协变量分析"></a>第一步：协变量分析</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p>如果提示：<code>A USER ERROR has occurred: Input files reference and features have incompatible contigs: No overlapping contigs found.</code>可能是因为从GATK的resource bundle里下载的VCF文件里染色体的命名方式与参考基因组不一致。</p>
-<p>NCBI参考基因组文件的标头：NC_000001.11 Homo sapiens chromosome 1, GRCh38.p13 Primary Assembly</p>
-<p>GRCh38.p13参考基因组NC编号与对应染色体</p>
-<table>
-<thead>
-<tr>
-<th align="center">NC_000001.11</th>
-<th align="center">NC_000002.12</th>
-<th align="center">NC_000003.12</th>
-<th align="center">NC_000004.12</th>
-<th align="center">NC_000005.10</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">chr1</td>
-<td align="center">chr2</td>
-<td align="center">chr3</td>
-<td align="center">chr4</td>
-<td align="center">chr5</td>
-</tr>
-<tr>
-<td align="center"><strong>NC_000006.12</strong></td>
-<td align="center"><strong>NC_000007.14</strong></td>
-<td align="center"><strong>NC_000008.11</strong></td>
-<td align="center"><strong>NC_000009.12</strong></td>
-<td align="center"><strong>NC_000010.11</strong></td>
-</tr>
-<tr>
-<td align="center">chr6</td>
-<td align="center">chr7</td>
-<td align="center">chr8</td>
-<td align="center">chr9</td>
-<td align="center">chr10</td>
-</tr>
-<tr>
-<td align="center"><strong>NC_000011.10</strong></td>
-<td align="center"><strong>NC_000012.12</strong></td>
-<td align="center"><strong>NC_000013.11</strong></td>
-<td align="center"><strong>NC_000014.9</strong></td>
-<td align="center"><strong>NC_000015.10</strong></td>
-</tr>
-<tr>
-<td align="center">chr11</td>
-<td align="center">chr12</td>
-<td align="center">chr13</td>
-<td align="center">chr14</td>
-<td align="center">chr15</td>
-</tr>
-<tr>
-<td align="center"><strong>NC_000016.10</strong></td>
-<td align="center"><strong>NC_000017.11</strong></td>
-<td align="center"><strong>NC_000018.10</strong></td>
-<td align="center"><strong>NC_000019.10</strong></td>
-<td align="center"><strong>NC_000020.11</strong></td>
-</tr>
-<tr>
-<td align="center">chr16</td>
-<td align="center">chr17</td>
-<td align="center">chr18</td>
-<td align="center">chr19</td>
-<td align="center">chr20</td>
-</tr>
-<tr>
-<td align="center"><strong>NC_000021.9</strong></td>
-<td align="center"><strong>NC_000022.11</strong></td>
-<td align="center"><strong>NC_000023.11</strong></td>
-<td align="center"><strong>NC_000024.10</strong></td>
-<td align="center"><strong>NC_012920.1</strong></td>
-</tr>
-<tr>
-<td align="center">chr21</td>
-<td align="center">chr22</td>
-<td align="center">chrX</td>
-<td align="center">chrY</td>
-<td align="center">mitochondrion</td>
-</tr>
-</tbody></table>
-<p>PS:NC编号中小数点后的数字表示版本。</p>
-<p>dbsnp.vcf里的染色体命名格式是UCSC风格：chr1    10019   rs775809821     TA      T       .       .       RS=775809821;RSPOS=10020;dbSNPBuildID=144;SSR=0;SAO=0;VP=0x050000020005000002000200;GENEINFO=DDX11L1:100287102;WGT=1;VC=DIV;R5;ASP</p>
-<p>因此在进行比对时匹配不上。所以解决办法要么改变基因组，要么改变VCF。而改变又有两种方式，要么手动修改，要么下载匹配的格式。</p>
-<p>这里选择最头铁的方式，将vcf里UCSC style的染色体名改为NCBI的编号形式。感谢这位兄弟提供的小工具<a target="_blank" rel="noopener" href="https://github.com/vkkodali/cthreepo">cthreepo</a>，支持GFF、GTF、BED、VCF、SAM等文件的染色体ID在NCBI、UCSC和Ensembl之间转换。</p>
-<p>安装cthreepo：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">clone</span> the repository</span></span><br><span class="line">git clone https://github.com/vkkodali/cthreepo.git</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">run the following to install</span></span><br><span class="line">python3 setup.py install</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">execute as follows</span></span><br><span class="line"><span class="meta">#</span><span class="bash">convert seq-ids <span class="keyword">in</span> &lt;input.gff3&gt; from refseq format (NC_000001.11) to UCSC format (chr1) using the Human GRCh38 mapping dictionary</span></span><br><span class="line">cthreepo \</span><br><span class="line">    --infile &lt;input.gff3&gt; \</span><br><span class="line">    --id_from rs \</span><br><span class="line">    --id_to uc \</span><br><span class="line">    --format gff3 \</span><br><span class="line">    --mapfile h38 \</span><br><span class="line">    --outfile &lt;output.gff3&gt;</span><br><span class="line">    </span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">help</span></span></span><br><span class="line">cthreepo --help</span><br></pre></td></tr></table></figure>
-
-<p>然后下载NCBI提供的<a target="_blank" rel="noopener" href="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt">assembly report</a>文件到本地或者添加-a参数指定NCBI Assembly Accession with version来在线获取，cthreepo就是根据这个文件的ID注释进行转换的。</p>
-<p>将3个vcf文件转换为我们所需要的：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">Mills_and_1000G</span></span><br><span class="line">cthreepo \</span><br><span class="line">--infile ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.vcf \</span><br><span class="line">--id_from uc --id_to rs --format vcf \</span><br><span class="line">-a GCF_000001405.39 \</span><br><span class="line">--outfile ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">1000G</span></span><br><span class="line">cthreepo \</span><br><span class="line">--infile ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.vcf \</span><br><span class="line">--id_from uc --id_to rs --format vcf \</span><br><span class="line">-a GCF_000001405.39 \</span><br><span class="line">--outfile ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">dbsnp_146</span></span><br><span class="line">cthreepo \</span><br><span class="line">--infile ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.vcf \</span><br><span class="line">--id_from uc --id_to rs --format vcf \</span><br><span class="line">-a GCF_000001405.39 \</span><br><span class="line">--outfile ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf</span><br></pre></td></tr></table></figure>
-
-<p>看看转换前后对比：</p>
-<p><img src="/2022/01/20/WES04/01.png" alt="before"></p>
-<p><img src="/2022/01/20/WES04/02.png" alt="after"></p>
-<hr>
-<h3 id="第二步：调整质量值"><a href="#第二步：调整质量值" class="headerlink" title="第二步：调整质量值"></a>第二步：调整质量值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gatk ApplyVQSR \</span><br><span class="line">		 -R ~/WES/ref/hg38.fna \</span><br><span class="line">		 -I ~/WES/ERR3013386.sorted.markdup.bam \</span><br><span class="line">		 -bqsr ERR3013386.recal_data.table \</span><br><span class="line">		 -O ~/WES/align/ERR3013386.markdup.recal.bam</span><br></pre></td></tr></table></figure>
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/20/WES04/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

@@ -250,6 +250,8 @@
     <title>碱基质量重矫正</title>
     <url>/2022/01/20/WES04/</url>
     <content><![CDATA[<p>GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。</p>
+<span id="more"></span>
+
 <p>之所以需要进行Indel局部区域重比对，一是因为BWA和bowtie等全局搜索最优匹配的算法在Indel区域及附近的比对情况往往不是很理想。二是这些算法对于碱基错配和gap的容忍度不同，如果发现碱基错配和gap都可以的情况，会更偏向于错配，这就可能导致基因组上原本应该是一个长Indel的区域被错误地比对为多个错配和短Indel，必然导致检测到错误的变异。</p>
 <p>Indel的Realignment就是将BWA比对过程中发现的有潜在Indel的区域进行局部比对，从而重新矫正，降低识别到错误变异的几率。</p>
 <p>GATK表示如果使用了最新的HaplotypeCaller或者MuTect2，就不需要这一步了，很可能是GATK4的新工具HaplotypeCaller具备了这一功能。如果使用传统的caller工具，如UnifiedGenotyper或者MuTect，则这一步还是需要的。</p>
@@ -262,11 +264,21 @@
 <ul>
 <li>read的read group。Read group即前面比对过程中添加以@RG开头的标头，需要通过Read group标签来对reads进行分组矫正。其中：</li>
 </ul>
-<p>​        <code>ID</code>=Read group ID，每个read group都有独自的ID。Illumina测序数据中，ID由flowcell、lane name和number组成。矫正碱基质量时，ID对区分技术批次效应是必须的。在这个过程，同一ID的read被假定为有同样的技术误差。</p>
-<p>​        <code>PU</code>=Platform unit。由三部分组成，<flowcell_barcode>.&lt;lane&gt;.<sample_barcode>。PU不是必须要求的，但是PU的优先级高于ID。</sample_barcode></flowcell_barcode></p>
-<p>​        <code>SM</code>=Sample。reads所属的样品名。SM要设定正确，因为GATK产生的VCF文件也使用这个名字。</p>
-<p>​        <code>PL</code>=platform。主要有ILLUMINA、SOLID、LS454、HELICOS和PACBIO等。</p>
-<p>​        <code>LB</code>=DNA preparation library identifier。对一个read group的reads进行重复序列标记时，需要使用LB来区分reads来自哪条lane。有时同一个库可能在不同的lane上完成的测序，为了加以区分，只要是来自不同的lane都要单独赋予一个ID。</p>
+<blockquote>
+<p><code>ID</code>=Read group ID，每个read group都有独自的ID。Illumina测序数据中，ID由flowcell、lane name和number组成。矫正碱基质量时，ID对区分技术批次效应是必须的。在这个过程，同一ID的read被假定为有同样的技术误差。</p>
+</blockquote>
+<blockquote>
+<p><code>PU</code>=Platform unit。由三部分组成，<flowcell_barcode>.&lt;lane&gt;.<sample_barcode>。PU不是必须要求的，但是PU的优先级高于ID。</sample_barcode></flowcell_barcode></p>
+</blockquote>
+<blockquote>
+<p><code>SM</code>=Sample。reads所属的样品名。SM要设定正确，因为GATK产生的VCF文件也使用这个名字。</p>
+</blockquote>
+<blockquote>
+<p><code>PL</code>=platform。主要有ILLUMINA、SOLID、LS454、HELICOS和PACBIO等。</p>
+</blockquote>
+<blockquote>
+<p><code>LB</code>=DNA preparation library identifier。对一个read group的reads进行重复序列标记时，需要使用LB来区分reads来自哪条lane。有时同一个库可能在不同的lane上完成的测序，为了加以区分，只要是来自不同的lane都要单独赋予一个ID。</p>
+</blockquote>
 <ul>
 <li>测序仪给出的碱基质量值</li>
 <li>碱基产生的轮次（Nth cycle = Nth base from the start of the read）</li>
@@ -282,10 +294,17 @@
 <li>plus the cycle x qual and dinucleotide x qual effect</li>
 </ul>
 <p>Following recalibration, the read quality scores are much closer to their empirical scores than before. This means they can be used in a statistically robust manner for downstream processing, such as variant calling. In addition, by accounting for quality changes by cycle and sequence context, we can identify truly high quality bases in the reads, often finding a subset of bases that are Q30 even when no bases were originally labeled as such.</p>
-<h2 id="BQSR具体操作"><a href="#BQSR具体操作" class="headerlink" title="BQSR具体操作"></a>BQSR具体操作</h2><h3 id="第一步：协变量分析"><a href="#第一步：协变量分析" class="headerlink" title="第一步：协变量分析"></a>第一步：协变量分析</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br></pre></td></tr></table></figure>
+<h2 id="BQSR具体操作"><a href="#BQSR具体操作" class="headerlink" title="BQSR具体操作"></a>BQSR具体操作</h2><h3 id="第一步：协变量分析"><a href="#第一步：协变量分析" class="headerlink" title="第一步：协变量分析"></a>第一步：协变量分析</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br><span class="line"></span><br><span class="line">gatk BaseRecalibrator \</span><br><span class="line">-R ~/WES/ref/hg38.fna \</span><br><span class="line">-I ~/WES/align/ERR3013386.sorted.markdup.bam \</span><br><span class="line">-known-sites ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">-O ~/WES/align/ERR3013386.recal_data.table</span><br></pre></td></tr></table></figure>
 
-<hr>
-<p>如果提示：<code>A USER ERROR has occurred: Input files reference and features have incompatible contigs: No overlapping contigs found.</code>可能是因为从GATK的resource bundle里下载的VCF文件里染色体的命名方式与参考基因组不一致。</p>
+
+
+
+
+<h3 id="第二步：调整质量值"><a href="#第二步：调整质量值" class="headerlink" title="第二步：调整质量值"></a>第二步：调整质量值</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gatk ApplyVQSR \</span><br><span class="line">		 -R ~/WES/ref/hg38.fna \</span><br><span class="line">		 -I ~/WES/ERR3013386.sorted.markdup.bam \</span><br><span class="line">		 -bqsr ERR3013386.recal_data.table \</span><br><span class="line">		 -O ~/WES/align/ERR3013386.markdup.recal.bam</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="WHAT-IF"><a href="#WHAT-IF" class="headerlink" title="WHAT IF"></a>WHAT IF</h3><h4 id="（一）"><a href="#（一）" class="headerlink" title="（一）"></a>（一）</h4><p>如果提示：<code>A USER ERROR has occurred: Input files reference and features have incompatible contigs: No overlapping contigs found.</code>可能是因为从GATK的resource bundle里下载的VCF文件里染色体的命名方式与参考基因组不一致。</p>
 <p>NCBI参考基因组文件的标头：NC_000001.11 Homo sapiens chromosome 1, GRCh38.p13 Primary Assembly</p>
 <p>GRCh38.p13参考基因组NC编号与对应染色体</p>
 <table>
@@ -376,8 +395,8 @@
 <p>看看转换前后对比：</p>
 <p><img src="/2022/01/20/WES04/01.png" alt="before"></p>
 <p><img src="/2022/01/20/WES04/02.png" alt="after"></p>
-<hr>
-<h3 id="第二步：调整质量值"><a href="#第二步：调整质量值" class="headerlink" title="第二步：调整质量值"></a>第二步：调整质量值</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gatk ApplyVQSR \</span><br><span class="line">		 -R ~/WES/ref/hg38.fna \</span><br><span class="line">		 -I ~/WES/ERR3013386.sorted.markdup.bam \</span><br><span class="line">		 -bqsr ERR3013386.recal_data.table \</span><br><span class="line">		 -O ~/WES/align/ERR3013386.markdup.recal.bam</span><br></pre></td></tr></table></figure>
+<h4 id="（二）"><a href="#（二）" class="headerlink" title="（二）"></a>（二）</h4><p>如果提示：<code>A USER ERROR has occurred: Input /home/yico/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf must support random access to enable queries by interval. If it&#39;s a file, please index it using the bundled tool IndexFeatureFile</code>，则根据提示使用IndexFeatureFile对VCF文件建立索引。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">gatk IndexFeatureFile -I &lt;input.vcf&gt;  </span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>

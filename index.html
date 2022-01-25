@@ -157,7 +157,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -206,6 +206,104 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/25/WES06/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/25/WES06/" class="post-title-link" itemprop="url">Variants Filtering</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-25 23:57:33" itemprop="dateCreated datePublished" datetime="2022-01-25T23:57:33+08:00">2022-01-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-26 00:08:21" itemprop="dateModified" datetime="2022-01-26T00:08:21+08:00">2022-01-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>今天来学习DNA-seq下游分析的第二个内容<code>Filter variants</code>。</p>
+<ul>
+<li><p>Call variants</p>
+</li>
+<li><p><strong>Filter variants</strong></p>
+</li>
+<li><p>Annotation</p>
+</li>
+<li><p>Visualization</p>
+</li>
+</ul>
+<p>本篇内容包括了变异质控<code>VQSR</code>建模和<code>hard-filters</code>硬过滤两种不同的方法及原理的介绍。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/25/WES06/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/24/WES05/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -219,7 +317,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/24/WES05/" class="post-title-link" itemprop="url">Variants Calling & Filtering</a>
+          <a href="/2022/01/24/WES05/" class="post-title-link" itemprop="url">Variants Calling</a>
         </h2>
 
         <div class="post-meta-container">
@@ -237,7 +335,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-25 13:02:20" itemprop="dateModified" datetime="2022-01-25T13:02:20+08:00">2022-01-25</time>
+      <time title="修改时间：2022-01-26 00:06:55" itemprop="dateModified" datetime="2022-01-26T00:06:55+08:00">2022-01-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -264,35 +362,22 @@
 <ul>
 <li><p><strong>Call variants</strong></p>
 </li>
-<li><p><strong>Filter variants</strong></p>
+<li><p>Filter variants</p>
 </li>
 <li><p>Annotation</p>
 </li>
 <li><p>Visualization</p>
 </li>
 </ul>
-<p>今天我们先学习Call variants和Filter variants。</p>
-<p>Variant calling使用的是gatk的HaplotypeCaller工具。它能够通过对活跃区域（与参考基因组不同处较多的区域）局部单倍型重组装，同时找出SNP和Indel。这一步最大化了对变异的敏感度，从而减少假阴性的结果。</p>
-<p>HaplotypeCaller的核心操作就是四步：</p>
-<ol>
-<li><p>寻找活跃区域，就是和参考基因组不同部分较多的区域</p>
-</li>
-<li><p>通过对该区域进行局部重组装，确定单倍型（haplotypes）。就是这一步可以省去indel realignment</p>
-</li>
-<li><p>在给定的read数据下，计算单倍型的可能性。</p>
-</li>
-<li><p>分配样本的基因型</p>
-</li>
-</ol>
-<p>HaplotypeCaller使用起来比较简单：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">gatk HaplotypeCaller -R &lt;reference&gt; -I &lt;in.bam&gt; -O &lt;raw.vcf&gt;</span><br></pre></td></tr></table></figure>
-
-<p>批处理：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	gatk HaplotypeCaller -R ~/WES/ref/hg38.fna -I ~/WES/align/$i.markdup.recal.bam -O ~/WES/mutation/$i.raw.vcf</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-
-
-
+<p>今天我们先学习Call variants。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/24/WES05/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

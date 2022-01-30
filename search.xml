@@ -1,6 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>测序数据比对到参考基因组</title>
+    <url>/2022/01/17/WES03/</url>
+    <content><![CDATA[<p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
+<span id="more"></span>
+
+<h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
+<h1 id="常见比对工具"><a href="#常见比对工具" class="headerlink" title="常见比对工具"></a>常见比对工具</h1><p>bwa、bowtie2</p>
+<h1 id="比对"><a href="#比对" class="headerlink" title="比对"></a>比对</h1><h2 id="建立参考基因组索引"><a href="#建立参考基因组索引" class="headerlink" title="建立参考基因组索引"></a>建立参考基因组索引</h2><p>绝大多数比对工具都需要先对参考基因组建立索引。我们可以使用下面的命令对参考基因组创建索引文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa index &lt;reference.fasta&gt;</span><br></pre></td></tr></table></figure>
+
+<p>因此让我们使用这个命令对我们需要的人类参考基因组hg38建立索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bwa index ~/WES/ref/hg38.fna</span><br></pre></td></tr></table></figure>
+
+<p>执行成功后，会在参考基因组所在目录生成5个新文件，它们的basename都来自hg38。这些索引文件都是BWA比对需要的。</p>
+<p><img src="/2022/01/17/WES03/01.png"></p>
+<p>注意：如果参考基因组大于2GB，那么使用BWA建立索引时需要加参数<code>-a bwtsw</code>,这个算法速度慢，但节省内存。</p>
+<h2 id="比对-1"><a href="#比对-1" class="headerlink" title="比对"></a>比对</h2><p>建立索引后，我们就可以将测序数据比对到参考基因组上了。用法如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa mem -M -R &lt;ref&gt; &lt;R1.fastq&gt; &lt;R2.fastq&gt; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">参数解释：</span><br><span class="line">mem是bwa比对使用的三种算法之一，支持长序列（70bp~1Mbp）比对,官方推荐的最新算法。</span><br><span class="line">-M 将shorter split hits标记为次优，以兼容Picard’s markDuplicates软件</span><br><span class="line">-R 指定每个read前加上@RG\tID:foo\tSM:bar之类的标头，使用\t分隔。</span><br><span class="line">-t 线程数，默认1</span><br><span class="line">&lt;ref&gt; 参考基因组文件。同时，所有的索引文件都要在同一个文件夹。</span><br><span class="line">&lt;R1.fastq&gt;,&lt;R2.fastq&gt; 单端只输入一个即可。bwa不支持压缩文件，使用记得前先解压。</span><br></pre></td></tr></table></figure>
+
+<p>因此运行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tSM:sample&#x27; ~/WES/ref/hg38.fna ~/WES/clean/ERR3013386.clean.fastq \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> ~/WES/align/ERR3013386.sam <span class="comment">#使用&gt;将比对结果重定向到.sam文件保存</span></span> </span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:$i\tLB:$i\tPL:Ion\tSM:$i&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    &gt; ~/WES/align/$i.sam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h2 id="输出比对信息"><a href="#输出比对信息" class="headerlink" title="输出比对信息"></a>输出比对信息</h2><p>使用samtools flagstat工具对比对结果进行统计：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools flagstat [options] &lt;in.bam&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以单端测序数据ERR3013386的sam比对文件为例：</p>
+<p><img src="/2022/01/17/WES03/02.png"></p>
+<p>比对结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2166159 + 0 in total (QC-passed reads + QC-failed reads)  #reads总数</span><br><span class="line">5038 + 0 secondary  #比对到参考基因组多个位置的reads数</span><br><span class="line">0 + 0 supplementary  #可能存在嵌合的reads数</span><br><span class="line">0 + 0 duplicates  #重复的reads数</span><br><span class="line">2153012 + 0 mapped (99.39% : N/A)  #比对到参考基因组的reads数</span><br><span class="line">0 + 0 paired in sequencing  #属于PE的reads数</span><br><span class="line">0 + 0 read1  #PE中Read_1的reads数</span><br><span class="line">0 + 0 read2  #PE中Read_2的reads数</span><br><span class="line">0 + 0 properly paired (N/A : N/A)  #完美比对的reads数：PE两端reads比对到同一条序列，且根据比对结果推断的插入片段大小符合设置的阈值</span><br><span class="line">0 + 0 with itself and mate mapped  #PE两端都比对上参考序列的reads数</span><br><span class="line">0 + 0 singletons (N/A : N/A)  #PE两端，一端比对上而另一端没比对上的reads数</span><br><span class="line">0 + 0 with mate mapped to a different chr  #PE两端分别比对到不同染色体上的reads数</span><br><span class="line">0 + 0 with mate mapped to a different chr (mapQ&gt;=5)  #PE中两端分别比对到两条不同染色体，且mapQ&gt;=5的reads数</span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">touch ~/WES/align/flagstat.txt #建立一个空txt保存比对结果</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	echo $i &gt;&gt; flagstat.txt #追加标头</span><br><span class="line">	samtools flagstat ~/WES/align/$i* &gt;&gt; flagstat.txt #追加比对结果</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>运行完cat一下：</p>
+<p><img src="/2022/01/17/WES03/03.png"></p>
+<h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><p>比对数据的下游分析要求按坐标顺序排好序的bam格式。因此，我们使用samtools工具来操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools sort ~/WES/align/ERR3013386.sam -O BAM -o ~/WES/align/ERR3013386.sorted.bam</span><br></pre></td></tr></table></figure>
+
+<p>看一下转换前后有什么不同：</p>
+<p><img src="/2022/01/17/WES03/04.png" alt="aligned.sam"></p>
+<p><img src="/2022/01/17/WES03/05.png" alt="aligned.sorted.bam"></p>
+<p>简单来说就是按照第四列的坐标由小到大重新进行了排列。关于SAM格式文件说明可以详见这篇<a href="https://www.jianshu.com/p/ab133ee9712c">文章</a>。</p>
+<p>批处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">  do</span><br><span class="line">  samtools sort ~/WES/align/$i.sam -O BAM -o ~/WES/align/$i.sorted.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>比对＋sort</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#使用管道避免产生中间的SAM比对文件</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:$i\tLB:$i\tPL:Ion\tSM:$i&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    | samtools sort -O BAM -o ~/WES/align/$i.sorted.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><p>测序过程中，同一条DNA片段可能会被多次测序。这些重复的reads不是有效信息，也不能作为支持或反对潜在变异的证据。最常见的引起duplicates的原因就是文库构建过程中的PCR。如果不去除这些<strong>PCR duplicates</strong>，PCR扩增偏好性的区域就存在过表达的风险。生成测序cluster时，如果某一个cluster中的DNA序列搭到附近另一个cluster的生成位点，就会又生成一个相同的cluster，产生<strong>Cluster duplicates</strong>。cluster在测序时，捕获的荧光亮点由于光波的衍射，导致形状出现重影，而被当做两个荧光点来处理，从而被认作两条相同的reads，这类称为<strong>Optical duplicates</strong>。</p>
+<p>因此我们需要将这些duplicates标记出来，从而得到未被标记的unique reads。最常见的Mark Duplicates工具主要有samtools、picard和sambamba。其中，samtools步骤较繁琐，picard使用最广泛，sambamba处理速度快且用法简单。因此这里推荐使用sambamba。实际上，sambamba开发之初就是为了替代samtools，详细功能参见这篇<a href="https://github.com/biod/sambamba/wiki/Command-line-tools">文档</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#用法</span><br><span class="line">sambamba markdup OPTIONS &lt;input.bam&gt; &lt;output.bam&gt;</span><br></pre></td></tr></table></figure>
+
+<p>批处理</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#这一步会同时建立索引</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">  do</span><br><span class="line">  sambamba markdup ~/WES/align/$i.sorted.bam $i.sorted.markdup.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h1 id="GATK-resource-bundle"><a href="#GATK-resource-bundle" class="headerlink" title="GATK resource bundle"></a>GATK resource bundle</h1><p>下载GATK提供的resource bundle，里面提供了下游分析需要的数据。目前提供FTP 和 Google Cloud bucket 2种下载方式，由于用不了Google，只能使用FTP。GATK官网推荐使用lftp工具进行访问ftp和下载数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#远程访问ftp服务器</span><br><span class="line">lftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/</span><br><span class="line">没有密码，因此直接敲回车即可。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls	#查看以下当前目录下的内容</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/01/17/WES03/06.png"></p>
+<p>这里我们只需将hg38文件夹里的所有内容下载到本地即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mirror hg38</span><br></pre></td></tr></table></figure>
+
+<p>常见ftp服务器的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">get [OPTS] &lt;rfile&gt; [-o &lt;lfile&gt;] #下载文件</span><br><span class="line">mget [OPTS] &lt;files&gt;  #支持使用通配符来下载文件</span><br><span class="line">mirror [OPTS] [remote [local]]  #下载整个文件夹</span><br><span class="line"></span><br><span class="line">help  #查看所有命令</span><br><span class="line">help &lt;cmd&gt;  #查看某条命令的help</span><br></pre></td></tr></table></figure>
+
+<h1 id="Prepare-reference-dictionary-fasta-index-and-bam-index"><a href="#Prepare-reference-dictionary-fasta-index-and-bam-index" class="headerlink" title="Prepare reference dictionary, fasta index, and bam index"></a>Prepare reference dictionary, fasta index, and bam index</h1><p>使用GATK整合的picard工具建立参考基因组字典文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gatk --java-options &quot;-Xmx8G&quot; CreateSequenceDictionary \</span><br><span class="line">     -R ~/WES/ref/hg38.fna \</span><br><span class="line">     -O ~/WES/ref/hg38.dict</span><br></pre></td></tr></table></figure>
+
+<p>使用samtools建立参考基因组索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools faidx ~/WES/ref/hg38.fna  #在参考基因组同位置生成一个.fai索引文件</span><br></pre></td></tr></table></figure>
+
+<p>使用samtools建立markdup.bam文件的索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools index markdup.bam  #上面已经生成，这里就简单提一下</span><br></pre></td></tr></table></figure>
+
+<p>这三类索引文件都是GATK下游分析所需要的。其中，前两个文件resource bundle里也有。</p>
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
     <title>软件准备</title>
     <url>/2022/01/13/WES01/</url>
     <content><![CDATA[<h1 id="安装必备软件"><a href="#安装必备软件" class="headerlink" title="安装必备软件"></a>安装必备软件</h1><h2 id="Miniconda"><a href="#Miniconda" class="headerlink" title="Miniconda"></a>Miniconda</h2><h3 id="关于conda和miniconda"><a href="#关于conda和miniconda" class="headerlink" title="关于conda和miniconda"></a>关于conda和miniconda</h3><p>Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language.</p>
@@ -91,61 +181,6 @@
 <h3 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install -y sra-tools=2.11.0 samtools bcftools vcftools multiqc qualimap snpeff gatk4</span><br></pre></td></tr></table></figure>
 
 
-
-
-
-
-
-]]></content>
-      <categories>
-        <category>WES</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>测序数据下载及质控</title>
-    <url>/2022/01/15/WES02/</url>
-    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
-
-<p>然后进入WES文件夹创建以下子文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
-
-<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
-<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
-
-<p>或者使用for循环：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ebi.ac.uk/ena/browser/view/PRJEB30330?show=reads">PRJEB30330</a>下载fastq的压缩文件。</p>
-<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
-<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
-
-<p>可以写一个shell脚本自动安装</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
-
-<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
-<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
-<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
-<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>法二、xargs</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
-
-<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
-
-<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
-
-<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
-<p>写个脚本进行批量质控</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
 
 
@@ -321,6 +356,61 @@
       </categories>
   </entry>
   <entry>
+    <title>测序数据下载及质控</title>
+    <url>/2022/01/15/WES02/</url>
+    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
+
+<p>然后进入WES文件夹创建以下子文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
+
+<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
+<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
+
+<p>或者使用for循环：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ebi.ac.uk/ena/browser/view/PRJEB30330?show=reads">PRJEB30330</a>下载fastq的压缩文件。</p>
+<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
+<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
+
+<p>可以写一个shell脚本自动安装</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
+<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
+<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
+<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>法二、xargs</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
+
+<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
+
+<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
+<p>写个脚本进行批量质控</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Variants Calling</title>
     <url>/2022/01/24/WES05/</url>
     <content><![CDATA[<p>经过前面的预处理工作得到处理好的bam文件，我们就可以开始下游的找变异分析了。</p>
@@ -359,168 +449,6 @@
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">首先生成中间的gVCF文件</span></span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">gatk --java-options &quot;-Xmx8G&quot; HaplotypeCaller \</span><br><span class="line">	-R ~/WES/ref/hg38.fna \</span><br><span class="line">	--emit-ref-confidence GVCF \</span><br><span class="line">	-I ~/WES/align/$i.markdup.recal.bam \</span><br><span class="line">	-O ~/WES/align/$i.gvcf</span><br><span class="line">done</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">然后将多个样本的gVCF文件合并在一起</span></span><br><span class="line">gatk CombineGVCFs -R ~/WES/ref/hg38.fna --arguments_file ~/WES/align/gvcf_input.list -O ~/WES/align/final.gvcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">根据gVCF检出变异</span></span><br><span class="line">gatk --java-options &quot;-Xmx8G -Djava.io.tmpdir=/home/yico/tmp&quot; GenotypeGVCFs \</span><br><span class="line">	-R ~/WES/ref/hg38.fna 	\</span><br><span class="line">	-V ~/WES/align/final.gvcf \</span><br><span class="line">	-O ~/WES/mutation/raw.vcf</span><br></pre></td></tr></table></figure>
 
 <p>虽然是外显子，但不指定-L参数的exon.bed反而可以运行得很顺利，目前不清楚这样对结果有什么影响。</p>
-<p>后续分析如不能直接指定SNP或Indel，可以通过gatk SelectVariants的<code>-selectType</code>参数来将VCF里的SNP和Indel分开，以便分别分析</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gatk SelectVariants -R ~/WES/ref/hg38.fna -V ~/WES/mutation/raw.vcf -select-type SNP -O ~/WES/mutation/raw_snps.vcf</span><br><span class="line">gatk SelectVariants -R ~/WES/ref/hg38.fna -V ~/WES/mutation/raw.vcf -select-type INDEL -O ~/WES/mutation/raw_indels.vcf</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-]]></content>
-      <categories>
-        <category>WES</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>测序数据比对到参考基因组</title>
-    <url>/2022/01/17/WES03/</url>
-    <content><![CDATA[<p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
-<span id="more"></span>
-
-<h1 id="为什么需要将序列比对到参考基因组"><a href="#为什么需要将序列比对到参考基因组" class="headerlink" title="为什么需要将序列比对到参考基因组"></a>为什么需要将序列比对到参考基因组</h1><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Burrows Wheeler Transformation</p>
-<h1 id="常见比对工具"><a href="#常见比对工具" class="headerlink" title="常见比对工具"></a>常见比对工具</h1><p>bwa、bowtie2</p>
-<h1 id="比对"><a href="#比对" class="headerlink" title="比对"></a>比对</h1><h2 id="建立参考基因组索引"><a href="#建立参考基因组索引" class="headerlink" title="建立参考基因组索引"></a>建立参考基因组索引</h2><p>绝大多数比对工具都需要先对参考基因组建立索引。我们可以使用下面的命令对参考基因组创建索引文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa index &lt;reference.fasta&gt;</span><br></pre></td></tr></table></figure>
-
-<p>因此让我们使用这个命令对我们需要的人类参考基因组hg38建立索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bwa index ~/WES/ref/hg38.fna</span><br></pre></td></tr></table></figure>
-
-<p>执行成功后，会在参考基因组所在目录生成5个新文件，它们的basename都来自hg38。这些索引文件都是BWA比对需要的。</p>
-<p><img src="/2022/01/17/WES03/01.png"></p>
-<p>注意：如果参考基因组大于2GB，那么使用BWA建立索引时需要加参数<code>-a bwtsw</code>,这个算法速度慢，但节省内存。</p>
-<h2 id="比对-1"><a href="#比对-1" class="headerlink" title="比对"></a>比对</h2><p>建立索引后，我们就可以将测序数据比对到参考基因组上了。用法如下：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa mem -M -R &lt;ref&gt; &lt;R1.fastq&gt; &lt;R2.fastq&gt; </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">参数解释：</span><br><span class="line">mem是bwa比对使用的三种算法之一，支持长序列（70bp~1Mbp）比对,官方推荐的最新算法。</span><br><span class="line">-M 将shorter split hits标记为次优，以兼容Picard’s markDuplicates软件</span><br><span class="line">-R 指定每个read前加上@RG\tID:foo\tSM:bar之类的标头，使用\t分隔。</span><br><span class="line">-t 线程数，默认1</span><br><span class="line">&lt;ref&gt; 参考基因组文件。同时，所有的索引文件都要在同一个文件夹。</span><br><span class="line">&lt;R1.fastq&gt;,&lt;R2.fastq&gt; 单端只输入一个即可。bwa不支持压缩文件，使用记得前先解压。</span><br></pre></td></tr></table></figure>
-
-<p>因此运行以下命令：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bwa mem -t 8 -M -R &#x27;@RG\tID:sample\tLB:sample\tPL:Ion\tSM:sample&#x27; ~/WES/ref/hg38.fna ~/WES/clean/ERR3013386.clean.fastq \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> ~/WES/align/ERR3013386.sam <span class="comment">#使用&gt;将比对结果重定向到.sam文件保存</span></span> </span><br></pre></td></tr></table></figure>
-
-<p>批处理</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:$i\tLB:$i\tPL:Ion\tSM:$i&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    &gt; ~/WES/align/$i.sam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<h2 id="输出比对信息"><a href="#输出比对信息" class="headerlink" title="输出比对信息"></a>输出比对信息</h2><p>使用samtools flagstat工具对比对结果进行统计：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools flagstat [options] &lt;in.bam&gt;</span><br></pre></td></tr></table></figure>
-
-<p>以单端测序数据ERR3013386的sam比对文件为例：</p>
-<p><img src="/2022/01/17/WES03/02.png"></p>
-<p>比对结果如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2166159 + 0 in total (QC-passed reads + QC-failed reads)  #reads总数</span><br><span class="line">5038 + 0 secondary  #比对到参考基因组多个位置的reads数</span><br><span class="line">0 + 0 supplementary  #可能存在嵌合的reads数</span><br><span class="line">0 + 0 duplicates  #重复的reads数</span><br><span class="line">2153012 + 0 mapped (99.39% : N/A)  #比对到参考基因组的reads数</span><br><span class="line">0 + 0 paired in sequencing  #属于PE的reads数</span><br><span class="line">0 + 0 read1  #PE中Read_1的reads数</span><br><span class="line">0 + 0 read2  #PE中Read_2的reads数</span><br><span class="line">0 + 0 properly paired (N/A : N/A)  #完美比对的reads数：PE两端reads比对到同一条序列，且根据比对结果推断的插入片段大小符合设置的阈值</span><br><span class="line">0 + 0 with itself and mate mapped  #PE两端都比对上参考序列的reads数</span><br><span class="line">0 + 0 singletons (N/A : N/A)  #PE两端，一端比对上而另一端没比对上的reads数</span><br><span class="line">0 + 0 with mate mapped to a different chr  #PE两端分别比对到不同染色体上的reads数</span><br><span class="line">0 + 0 with mate mapped to a different chr (mapQ&gt;=5)  #PE中两端分别比对到两条不同染色体，且mapQ&gt;=5的reads数</span><br></pre></td></tr></table></figure>
-
-<p>批处理</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">touch ~/WES/align/flagstat.txt #建立一个空txt保存比对结果</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	echo $i &gt;&gt; flagstat.txt #追加标头</span><br><span class="line">	samtools flagstat ~/WES/align/$i* &gt;&gt; flagstat.txt #追加比对结果</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p>运行完cat一下：</p>
-<p><img src="/2022/01/17/WES03/03.png"></p>
-<h2 id="sam文件排序并转换为bam"><a href="#sam文件排序并转换为bam" class="headerlink" title="sam文件排序并转换为bam"></a>sam文件排序并转换为bam</h2><p>比对数据的下游分析要求按坐标顺序排好序的bam格式。因此，我们使用samtools工具来操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools sort ~/WES/align/ERR3013386.sam -O BAM -o ~/WES/align/ERR3013386.sorted.bam</span><br></pre></td></tr></table></figure>
-
-<p>看一下转换前后有什么不同：</p>
-<p><img src="/2022/01/17/WES03/04.png" alt="aligned.sam"></p>
-<p><img src="/2022/01/17/WES03/05.png" alt="aligned.sorted.bam"></p>
-<p>简单来说就是按照第四列的坐标由小到大重新进行了排列。关于SAM格式文件说明可以详见这篇<a href="https://www.jianshu.com/p/ab133ee9712c">文章</a>。</p>
-<p>批处理：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">  do</span><br><span class="line">  samtools sort ~/WES/align/$i.sam -O BAM -o ~/WES/align/$i.sorted.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>比对＋sort</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#使用管道避免产生中间的SAM比对文件</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">	do</span><br><span class="line">	bwa mem -t 8 -M -R &#x27;@RG\tID:$i\tLB:$i\tPL:Ion\tSM:$i&#x27; \</span><br><span class="line">    ~/WES/ref/hg38.fna \</span><br><span class="line">    ~/WES/clean/$i.clean.fastq \</span><br><span class="line">    | samtools sort -O BAM -o ~/WES/align/$i.sorted.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<h2 id="标记重复"><a href="#标记重复" class="headerlink" title="标记重复"></a>标记重复</h2><p>测序过程中，同一条DNA片段可能会被多次测序。这些重复的reads不是有效信息，也不能作为支持或反对潜在变异的证据。最常见的引起duplicates的原因就是文库构建过程中的PCR。如果不去除这些<strong>PCR duplicates</strong>，PCR扩增偏好性的区域就存在过表达的风险。生成测序cluster时，如果某一个cluster中的DNA序列搭到附近另一个cluster的生成位点，就会又生成一个相同的cluster，产生<strong>Cluster duplicates</strong>。cluster在测序时，捕获的荧光亮点由于光波的衍射，导致形状出现重影，而被当做两个荧光点来处理，从而被认作两条相同的reads，这类称为<strong>Optical duplicates</strong>。</p>
-<p>因此我们需要将这些duplicates标记出来，从而得到未被标记的unique reads。最常见的Mark Duplicates工具主要有samtools、picard和sambamba。其中，samtools步骤较繁琐，picard使用最广泛，sambamba处理速度快且用法简单。因此这里推荐使用sambamba。实际上，sambamba开发之初就是为了替代samtools，详细功能参见这篇<a href="https://github.com/biod/sambamba/wiki/Command-line-tools">文档</a>。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#用法</span><br><span class="line">sambamba markdup OPTIONS &lt;input.bam&gt; &lt;output.bam&gt;</span><br></pre></td></tr></table></figure>
-
-<p>批处理</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#这一步会同时建立索引</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">  do</span><br><span class="line">  sambamba markdup ~/WES/align/$i.sorted.bam $i.sorted.markdup.bam</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<h1 id="GATK-resource-bundle"><a href="#GATK-resource-bundle" class="headerlink" title="GATK resource bundle"></a>GATK resource bundle</h1><p>下载GATK提供的resource bundle，里面提供了下游分析需要的数据。目前提供FTP 和 Google Cloud bucket 2种下载方式，由于用不了Google，只能使用FTP。GATK官网推荐使用lftp工具进行访问ftp和下载数据。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#远程访问ftp服务器</span><br><span class="line">lftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/</span><br><span class="line">没有密码，因此直接敲回车即可。</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls	#查看以下当前目录下的内容</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/01/17/WES03/06.png"></p>
-<p>这里我们只需将hg38文件夹里的所有内容下载到本地即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mirror hg38</span><br></pre></td></tr></table></figure>
-
-<p>常见ftp服务器的命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">get [OPTS] &lt;rfile&gt; [-o &lt;lfile&gt;] #下载文件</span><br><span class="line">mget [OPTS] &lt;files&gt;  #支持使用通配符来下载文件</span><br><span class="line">mirror [OPTS] [remote [local]]  #下载整个文件夹</span><br><span class="line"></span><br><span class="line">help  #查看所有命令</span><br><span class="line">help &lt;cmd&gt;  #查看某条命令的help</span><br></pre></td></tr></table></figure>
-
-<h1 id="Prepare-reference-dictionary-fasta-index-and-bam-index"><a href="#Prepare-reference-dictionary-fasta-index-and-bam-index" class="headerlink" title="Prepare reference dictionary, fasta index, and bam index"></a>Prepare reference dictionary, fasta index, and bam index</h1><p>使用GATK整合的picard工具建立参考基因组字典文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gatk --java-options &quot;-Xmx8G&quot; CreateSequenceDictionary \</span><br><span class="line">     -R ~/WES/ref/hg38.fna \</span><br><span class="line">     -O ~/WES/ref/hg38.dict</span><br></pre></td></tr></table></figure>
-
-<p>使用samtools建立参考基因组索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools faidx ~/WES/ref/hg38.fna  #在参考基因组同位置生成一个.fai索引文件</span><br></pre></td></tr></table></figure>
-
-<p>使用samtools建立markdup.bam文件的索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools index markdup.bam  #上面已经生成，这里就简单提一下</span><br></pre></td></tr></table></figure>
-
-<p>这三类索引文件都是GATK下游分析所需要的。其中，前两个文件resource bundle里也有。</p>
-]]></content>
-      <categories>
-        <category>WES</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Variants Filtering</title>
-    <url>/2022/01/25/WES06/</url>
-    <content><![CDATA[<p>今天来学习DNA-seq下游分析的第二个内容<code>Filter variants</code>。</p>
-<ul>
-<li><p>Call variants</p>
-</li>
-<li><p><strong>Filter variants</strong></p>
-</li>
-<li><p>Annotation</p>
-</li>
-<li><p>Visualization</p>
-</li>
-</ul>
-<p>本篇内容包括了变异质控<code>VQSR</code>建模和<code>hard-filters</code>硬过滤两种不同的方法及原理的介绍。</p>
-<span id="more"></span>
-
-<h1 id="VQSR"><a href="#VQSR" class="headerlink" title="VQSR"></a>VQSR</h1><p>得到变异数据后，通常需要对其进行过滤质控，筛去假阳性。通常会使用gatk VQSR工具来过滤。</p>
-<h2 id="人类变异数据集"><a href="#人类变异数据集" class="headerlink" title="人类变异数据集"></a>人类变异数据集</h2><p>VQSR需要已知的高质量变异数据集作为训练数据进行建模。对于人类而言常见的数据集按质量排序包括SNP: HapMap &gt; Omni &gt; 1000G &gt; dbSNP; Indel: Mills &gt; dbSNP。</p>
-<h3 id="训练集参数说明"><a href="#训练集参数说明" class="headerlink" title="训练集参数说明"></a>训练集参数说明</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--resource:hapmap,known=false,training=true,truth=true,prior=15.0 hapmap_3.3.hg38.sites.vcf.gz</span><br></pre></td></tr></table></figure>
-
-<p>这个<code>--resource</code>指定VQSR用于建模的变异数据集，从左往右用<code>,</code>隔开，依次为：</p>
-<ul>
-<li>训练集名字，这个名字是可以随便改动的，但是为了便于交流，一般按照数据集的名字来设置。</li>
-<li>known：该数据是否作为已知变异数据集，用于对变异数据的标注。</li>
-<li>training：该数据是否作为模型训练的数据集，用于训练VQSR模型。</li>
-<li>truth：该数据是否作为验证模型训练的真集数据，这个数据同时还是VQSR训练bad model时自动进行参数选择的重要数据。</li>
-<li>prior：该数据集在VQSR模型训练中的权重（这里使用Phred值，如20表示0.99）。</li>
-</ul>
-<h3 id="SNP变异数据集"><a href="#SNP变异数据集" class="headerlink" title="SNP变异数据集"></a>SNP变异数据集</h3><p>HapMap，它来自国际人类单倍体型图计划，HapMap的名字也是源自于此。这个项目刚启动之时，只有270样本，其中有60个家系。项目一共有三期，到第三期HapMap3的时候这个数据已经扩增到1301个样本了，其中有部分样本和千人基因组项目有重叠。由于这个数据集包含了大量家系数据，并且有非常严格的质控和严密的实验验证，因此它的准确性是目前公认最高的。所以VQSR进行质控模型训练的时候，会将其作为一个很重要的训练集（training=true）。它的权重也会被设置得很高，比如在WES数据分析中常常设为prior=15——这里的Prior是Prior likelihood的Phred-scale，我们如果把15转换为likelihood，那么就是0.96838。此外，由于它的高准确性，通常还将作为模型验证的一个真集数据（truth=true）。</p>
-<p>Omni，这个数据源自Illumina的Omni基因型芯片，大概2.5百万个位点（我在知识星球中说是1M，这里纠正一下，应该是2.5M），它的验证结果常常作为基因型的金标准。比如用Omni芯片对千人基因组数据进行了验证的结果：1000G_omni2.5.hg38.vcf（这里hg38是参考序列版本），它也是一个高可信的变异结果，我们在VQSR模型训练的时候，同样可以为其设置很高的权重，一般为Prior=12(likelihood为0.9369)。通常情况下也可以把它作为验证结果的真集数据，但我这里所举的例子有些保守，把它设置为truth=false了，大家不必效仿，假如你没太大的“洁癖”把它设置为true都是没问题的（这也是GATK最佳实践的一般做法）。</p>
-<p>1000G，千人基因组计划（1000 genomes project）质控后的变异数据，目前也是第三期，一共包含了2504个人的数据。通常来说质控后，它包含的绝大部分都是真实的变异，但由于没办法做全面的实验验证，并不能排除含有少部分假阳的结果。所以模型训练时给的权重虽然比较高——prior=10(likelihood为0.9)，但是一般就不作为模型验证的真集数据了，即truth=false。</p>
-<p>dbSNP。说到dbSNP，这是一个绝对不可以作为训练集位点的数据——太脏了，为什么这么说呢？因为，dbSNP收集的数据，实际都是研究者们发表了相关文章提交上来的变异，这些变异很多是没做过严格验证的，很多甚至还是假的，在没被反复验证之前，是不可信的。因此，不会把它们作为模型的训练集，更不会把它作为真集看待（training=false,truth=false），权重也一般设置得很低，比如这里是prior=2（差不多才0.37）。dbSNP的唯一作用就是用于标注我们的变异集中哪些是已经在其它研究中出现过的——即属于已经被发现过的（已知）变异，给这些已知的变异位点标上RS id。</p>
-<h3 id="Indel变异数据集"><a href="#Indel变异数据集" class="headerlink" title="Indel变异数据集"></a>Indel变异数据集</h3><p>Mills，对于Indel来说能正在算得上真集的并不多，Mills_and_1000G_gold_standard.indels.hg38.vcf算是其中一个，并被专门做过验证。但其实Indel并不那么容易验证，很多时候也是挑一些比较容易验证的结果。但不管如何，这是目前最佳的一个！所以权重各方面也都设置的比较高，比如prior=12，并且truth=true。</p>
-<p>dbSNP，这个就和上面SNP模式下的作用是一样的。不过假如这一步对Indel进行VQSR的VCF数据是顺着上面SNP VQSR后下来的话，那么这个dbSNP的参数可以省略，因为已知变异的标注已经在SNP model下做好了。</p>
-<h2 id="VQSR的原理"><a href="#VQSR的原理" class="headerlink" title="VQSR的原理"></a>VQSR的原理</h2><p><img src="/2022/01/25/WES06/01.png" alt="From: 黄树嘉"></p>
-<h2 id="VQSR使用方法"><a href="#VQSR使用方法" class="headerlink" title="VQSR使用方法"></a>VQSR使用方法</h2><h3 id="VariantRecalibrator"><a href="#VariantRecalibrator" class="headerlink" title="VariantRecalibrator"></a>VariantRecalibrator</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#SNP</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">gatk VariantRecalibrator \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/$i.raw.vcf \</span><br><span class="line">   --resource:hapmap,known=false,training=true,truth=true,prior=15.0 ~/WES/gatk_resource_bundle/hg38/hapmap_3.3.hg38.ncbi.vcf \</span><br><span class="line">   --resource:omni,known=false,training=true,truth=false,prior=12.0 ~/WES/gatk_resource_bundle/hg38/1000G_omni2.5.hg38.ncbi.vcf \</span><br><span class="line">   --resource:1000G,known=false,training=true,truth=false,prior=10.0 ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">   --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">   -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \</span><br><span class="line">   --mode SNP \</span><br><span class="line">   --max-gaussians 6 \</span><br><span class="line">   -O ~/WES/mutation/VQSR/$i.SNP.recal \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/$i.SNP.tranches \</span><br><span class="line">   --rscript-file ~/WES/mutation/VQSR/$i.SNP.plots.R</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#Indel</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">gatk VariantRecalibrator \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/$i.raw.vcf \</span><br><span class="line">   --resource:mills,known=false,training=true,truth=true,prior=12.0 ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">   --resource:ddbsnp,known=true,training=false,truth=false,prior=2.0 ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">   -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \</span><br><span class="line">   --mode INDEL \</span><br><span class="line">   -O ~/WES/mutation/VQSR/$i.Indel.recal \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/$i.Indel.tranches \</span><br><span class="line">   --rscript-file ~/WES/mutation/VQSR/$i.Indel.plots.R</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="ApplyVQSR"><a href="#ApplyVQSR" class="headerlink" title="ApplyVQSR"></a>ApplyVQSR</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#SNP</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">gatk ApplyVQSR \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/$i.raw.vcf \</span><br><span class="line">   -O ~/WES/mutation/VQSR/$i.VQSR.SNP.vcf \</span><br><span class="line">   --truth-sensitivity-filter-level 99.0 \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/$i.SNP.tranches \</span><br><span class="line">   --recal-file ~/WES/mutation/VQSR/$i.SNP.recal \</span><br><span class="line">   --mode SNP</span><br><span class="line">done   </span><br><span class="line"></span><br><span class="line">#Indel</span><br><span class="line">for i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">gatk ApplyVQSR \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/$i.raw.vcf \</span><br><span class="line">   -O ~/WES/mutation/VQSR/$i.VQSR.Indel.vcf \</span><br><span class="line">   --truth-sensitivity-filter-level 99.0 \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/$i.Indel.tranches \</span><br><span class="line">   --recal-file ~/WES/mutation/VQSR/$i.Indel.recal \</span><br><span class="line">   --mode INDEL</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="Hard-filters"><a href="#Hard-filters" class="headerlink" title="Hard-filters"></a>Hard-filters</h1><p>但是使用VQSR一是要求我们有可信度高的变异数据集，二是要求我们新测序的结果中有足够多的变异用于模型训练。如果未能达到上述要求，就不得不选择硬过滤的方式，即人为设定若干个指标的阈值，将不满足阈值条件的变异采用一刀切的方式排除掉。通常采取硬过滤使用的是gatk SelectVariants工具，它采用了VQSR所用的6个指标，这些指标都属于VCF的INFO字段，包括：</p>
-<ul>
-<li>QualByDepth（QD）</li>
-<li>FisherStrand (FS)</li>
-<li>StrandOddsRatio (SOR)</li>
-<li>RMSMappingQuality (MQ)</li>
-<li>MappingQualityRankSumTest (MQRankSum)</li>
-<li>ReadPosRankSumTest (ReadPosRankSum)</li>
-</ul>
-<p>参考文献：</p>
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/34878471">GATK4.0和全基因组数据分析实践（下）</a></li>
-<li><a href="https://gatk.broadinstitute.org/hc/en-us/articles/4414586833179-VariantRecalibrator">GATK VariantRecalibrator</a></li>
-<li><a href="https://gatk.broadinstitute.org/hc/en-us/articles/4409924805147-ApplyVQSR">GATK ApplyVQSR</a></li>
-<li></li>
-</ol>
 ]]></content>
       <categories>
         <category>WES</category>
@@ -795,6 +723,93 @@
 ]]></content>
       <categories>
         <category>Hexo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Variants Filtering</title>
+    <url>/2022/01/25/WES06/</url>
+    <content><![CDATA[<p>今天来学习DNA-seq下游分析的第二个内容<code>Filter variants</code>。</p>
+<ul>
+<li><p>Call variants</p>
+</li>
+<li><p><strong>Filter variants</strong></p>
+</li>
+<li><p>Annotation</p>
+</li>
+<li><p>Visualization</p>
+</li>
+</ul>
+<p>本篇内容包括了变异质控<code>VQSR</code>建模和<code>hard-filters</code>硬过滤两种不同的方法及原理的介绍。</p>
+<span id="more"></span>
+
+<h1 id="VQSR"><a href="#VQSR" class="headerlink" title="VQSR"></a>VQSR</h1><p>得到变异数据后，通常需要对其进行过滤质控，筛去假阳性。通常会使用gatk VQSR工具来过滤。</p>
+<h2 id="人类变异数据集"><a href="#人类变异数据集" class="headerlink" title="人类变异数据集"></a>人类变异数据集</h2><p>VQSR需要已知的高质量变异数据集作为训练数据进行建模。对于人类而言常见的数据集按质量排序包括SNP: HapMap &gt; Omni &gt; 1000G &gt; dbSNP; Indel: Mills &gt; dbSNP。</p>
+<h3 id="训练集参数说明"><a href="#训练集参数说明" class="headerlink" title="训练集参数说明"></a>训练集参数说明</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--resource:hapmap,known=false,training=true,truth=true,prior=15.0 hapmap_3.3.hg38.sites.vcf.gz</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>--resource</code>指定VQSR用于建模的变异数据集，从左往右用<code>,</code>隔开，依次为：</p>
+<ul>
+<li>训练集名字，这个名字是可以随便改动的，但是为了便于交流，一般按照数据集的名字来设置。</li>
+<li>known：该数据是否作为已知变异数据集，用于对变异数据的标注。</li>
+<li>training：该数据是否作为模型训练的数据集，用于训练VQSR模型。</li>
+<li>truth：该数据是否作为验证模型训练的真集数据，这个数据同时还是VQSR训练bad model时自动进行参数选择的重要数据。</li>
+<li>prior：该数据集在VQSR模型训练中的权重（这里使用Phred值，如20表示0.99）。</li>
+</ul>
+<h3 id="SNP变异数据集"><a href="#SNP变异数据集" class="headerlink" title="SNP变异数据集"></a>SNP变异数据集</h3><p>HapMap，它来自国际人类单倍体型图计划，HapMap的名字也是源自于此。这个项目刚启动之时，只有270样本，其中有60个家系。项目一共有三期，到第三期HapMap3的时候这个数据已经扩增到1301个样本了，其中有部分样本和千人基因组项目有重叠。由于这个数据集包含了大量家系数据，并且有非常严格的质控和严密的实验验证，因此它的准确性是目前公认最高的。所以VQSR进行质控模型训练的时候，会将其作为一个很重要的训练集（training=true）。它的权重也会被设置得很高，比如在WES数据分析中常常设为prior=15——这里的Prior是Prior likelihood的Phred-scale，我们如果把15转换为likelihood，那么就是0.96838。此外，由于它的高准确性，通常还将作为模型验证的一个真集数据（truth=true）。</p>
+<p>Omni，这个数据源自Illumina的Omni基因型芯片，大概2.5百万个位点（我在知识星球中说是1M，这里纠正一下，应该是2.5M），它的验证结果常常作为基因型的金标准。比如用Omni芯片对千人基因组数据进行了验证的结果：1000G_omni2.5.hg38.vcf（这里hg38是参考序列版本），它也是一个高可信的变异结果，我们在VQSR模型训练的时候，同样可以为其设置很高的权重，一般为Prior=12(likelihood为0.9369)。通常情况下也可以把它作为验证结果的真集数据，但我这里所举的例子有些保守，把它设置为truth=false了，大家不必效仿，假如你没太大的“洁癖”把它设置为true都是没问题的（这也是GATK最佳实践的一般做法）。</p>
+<p>1000G，千人基因组计划（1000 genomes project）质控后的变异数据，目前也是第三期，一共包含了2504个人的数据。通常来说质控后，它包含的绝大部分都是真实的变异，但由于没办法做全面的实验验证，并不能排除含有少部分假阳的结果。所以模型训练时给的权重虽然比较高——prior=10(likelihood为0.9)，但是一般就不作为模型验证的真集数据了，即truth=false。</p>
+<p>dbSNP。说到dbSNP，这是一个绝对不可以作为训练集位点的数据——太脏了，为什么这么说呢？因为，dbSNP收集的数据，实际都是研究者们发表了相关文章提交上来的变异，这些变异很多是没做过严格验证的，很多甚至还是假的，在没被反复验证之前，是不可信的。因此，不会把它们作为模型的训练集，更不会把它作为真集看待（training=false,truth=false），权重也一般设置得很低，比如这里是prior=2（差不多才0.37）。dbSNP的唯一作用就是用于标注我们的变异集中哪些是已经在其它研究中出现过的——即属于已经被发现过的（已知）变异，给这些已知的变异位点标上RS id。</p>
+<h3 id="Indel变异数据集"><a href="#Indel变异数据集" class="headerlink" title="Indel变异数据集"></a>Indel变异数据集</h3><p>Mills，对于Indel来说能正在算得上真集的并不多，Mills_and_1000G_gold_standard.indels.hg38.vcf算是其中一个，并被专门做过验证。但其实Indel并不那么容易验证，很多时候也是挑一些比较容易验证的结果。但不管如何，这是目前最佳的一个！所以权重各方面也都设置的比较高，比如prior=12，并且truth=true。</p>
+<p>dbSNP，这个就和上面SNP模式下的作用是一样的。不过假如这一步对Indel进行VQSR的VCF数据是顺着上面SNP VQSR后下来的话，那么这个dbSNP的参数可以省略，因为已知变异的标注已经在SNP model下做好了。</p>
+<h2 id="VQSR的原理"><a href="#VQSR的原理" class="headerlink" title="VQSR的原理"></a>VQSR的原理</h2><p><img src="/2022/01/25/WES06/01.png" alt="From: 黄树嘉"></p>
+<h2 id="VQSR使用方法"><a href="#VQSR使用方法" class="headerlink" title="VQSR使用方法"></a>VQSR使用方法</h2><h3 id="VariantRecalibrator"><a href="#VariantRecalibrator" class="headerlink" title="VariantRecalibrator"></a>VariantRecalibrator</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">SNP</span></span><br><span class="line">gatk VariantRecalibrator \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/raw.vcf \</span><br><span class="line">   --resource:hapmap,known=false,training=true,truth=true,prior=15.0 ~/WES/gatk_resource_bundle/hg38/hapmap_3.3.hg38.ncbi.vcf \</span><br><span class="line">   --resource:omni,known=false,training=true,truth=false,prior=12.0 ~/WES/gatk_resource_bundle/hg38/1000G_omni2.5.hg38.ncbi.vcf \</span><br><span class="line">   --resource:1000G,known=false,training=true,truth=false,prior=10.0 ~/WES/gatk_resource_bundle/hg38/1000G_phase1.snps.high_confidence.hg38.ncbi.vcf \</span><br><span class="line">   --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">   -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \</span><br><span class="line">   --mode SNP \</span><br><span class="line">   -O ~/WES/mutation/VQSR/SNP.recal \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/SNP.tranches \</span><br><span class="line">   --rscript-file ~/WES/mutation/VQSR/SNP.plots.R</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">Indel</span></span><br><span class="line">gatk VariantRecalibrator \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/raw.vcf \</span><br><span class="line">   --resource:mills,known=false,training=true,truth=true,prior=12.0 ~/WES/gatk_resource_bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.ncbi.vcf \</span><br><span class="line">   --resource:ddbsnp,known=true,training=false,truth=false,prior=2.0 ~/WES/gatk_resource_bundle/hg38/dbsnp_146.hg38.ncbi.vcf \</span><br><span class="line">   -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \</span><br><span class="line">   --mode INDEL \</span><br><span class="line">   -O ~/WES/mutation/VQSR/Indel.recal \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/Indel.tranches \</span><br><span class="line">   --rscript-file ~/WES/mutation/VQSR/Indel.plots.R</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="ApplyVQSR"><a href="#ApplyVQSR" class="headerlink" title="ApplyVQSR"></a>ApplyVQSR</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">SNP</span></span><br><span class="line">gatk ApplyVQSR \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/raw.vcf \</span><br><span class="line">   -O ~/WES/mutation/VQSR/VQSR.SNP.vcf \</span><br><span class="line">   --truth-sensitivity-filter-level 99.0 \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/SNP.tranches \</span><br><span class="line">   --recal-file ~/WES/mutation/VQSR/SNP.recal \</span><br><span class="line">   --mode SNP</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">Indel</span></span><br><span class="line">gatk ApplyVQSR \</span><br><span class="line">   -R ~/WES/ref/hg38.fna \</span><br><span class="line">   -V ~/WES/mutation/raw.vcf \</span><br><span class="line">   -O ~/WES/mutation/VQSR/VQSR.Indel.vcf \</span><br><span class="line">   --truth-sensitivity-filter-level 99.0 \</span><br><span class="line">   --tranches-file ~/WES/mutation/VQSR/Indel.tranches \</span><br><span class="line">   --recal-file ~/WES/mutation/VQSR/Indel.recal \</span><br><span class="line">   --mode INDEL</span><br></pre></td></tr></table></figure>
+
+<p>让我们看以下变异位点数量：</p>
+<p><img src="/2022/01/25/WES06/02.png"></p>
+<p>这个项目本身是外显子测序，再加上样本数量和测序深度都不大，因此数据量本身就小。上图也表面一共就1000个变异，远远达不到训练模型所需要的至少5000个位点的要求。所以不能通过VQSR的方法来对其进行过滤。</p>
+<h1 id="Hard-filters"><a href="#Hard-filters" class="headerlink" title="Hard-filters"></a>Hard-filters</h1><p>使用VQSR一是要求我们有可信度高的变异数据集，二是要求我们新测序的结果中有足够多的变异用于模型训练。如果未能达到上述要求，就不得不选择硬过滤的方式，即人为设定若干个指标的阈值，将不满足阈值条件的变异采用一刀切的方式排除掉。通常采取硬过滤使用的是gatk SelectVariants工具，它采用了VQSR所用的6个指标，这些指标都属于VCF的INFO字段（关于VCF文件的说明需要新开一坑），包括：</p>
+<ul>
+<li>QualByDepth（QD）</li>
+<li>FisherStrand (FS)</li>
+<li>StrandOddsRatio (SOR)</li>
+<li>RMSMappingQuality (MQ)</li>
+<li>MappingQualityRankSumTest (MQRankSum)</li>
+<li>ReadPosRankSumTest (ReadPosRankSum)</li>
+</ul>
+<p>那么如何设定合适的阈值呢？</p>
+<p>以QualByDepth（QD）为例。首先，什么是QD？QD=Qual/Allele Depth(AD)，即变异质量值除以覆盖深度，即对变异质量的标准化。因为每一个变异的read都对Qual值做出了贡献，测序深度越大其Qual值一般也越大，若不对其进行标准化，质控指标则会因局部深度不均匀而产生偏差。</p>
+<p>以下是一个多样本VCF的例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1     1429249 .       C       T       1044.77  .  .  GT:AD:DP:GQ:PL  0/1:48,15:63:99:311,0,1644  0/0:47,0:47:99:392,0,0  1/1:0,76:76:99:3010,228,0</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到这个变异位点一共有三个样本，其中第一个是杂合变异(GT=0/1)，第二个一个是纯合非变异(GT=0/0)，最后一个是纯合变异(GT=1/1)。其覆盖深度分别为63、47和76。因此这个位点的QD值等于质量值除以另外两个变异样本的覆盖深度：</p>
+<p><code>QD=QUAL/AD=1429249/(63+76)=7.516</code></p>
+<p>变异位点的QD值越高，其可信度也就越高。那么这个值大于多少，我们才在过滤时判断为真变异呢？简单来说就是一个可信的高深度数据进行VQSR，然后绘出各个指标好坏变异的密度分布图，根据密度分布图来设置阈值。人类的指标阈值就是根据GIAB数据库NA12878的高深度数据进行计算获得的。</p>
+<p>最后还会通过计算变异位点Ti/Tv值来检验质控结果。Ti/Tv值是物种在与自然相互作用和演化过程中在基因组上留下来的一个统计标记，具有一定的稳定性。Ti是指嘧啶取代嘧啶或嘌呤取代嘌呤，称为转换；Tv指嘌呤和嘧啶之间的相互取代，称为颠换。如图：</p>
+<p><img src="/2022/01/25/WES06/03.png"></p>
+<p>对于人来说，全基因组的Ti/Tv在2.1左右，外显子区域在3.0左右，新发生的变异在1.5左右。</p>
+<p>详细说明可以参考<a href="https://zhuanlan.zhihu.com/p/34878471">这篇文章</a>。</p>
+<p>过滤之前需要先通过gatk SelectVariants的<code>-selectType</code>参数来将VC区分为SNP和Indel这两个不同的变异类型来进行，因为它们有些阈值是不同的，需要区别对待。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gatk SelectVariants \</span><br><span class="line">	-R ~/WES/ref/hg38.fna \</span><br><span class="line">	-V ~/WES/mutation/raw.vcf \</span><br><span class="line">	-select-type SNP \</span><br><span class="line">	-O ~/WES/mutation/raw_snps.vcf</span><br><span class="line">	</span><br><span class="line">gatk SelectVariants \</span><br><span class="line">	-R ~/WES/ref/hg38.fna \</span><br><span class="line">	-V ~/WES/mutation/raw.vcf \</span><br><span class="line">	-select-type INDEL \</span><br><span class="line">	-O ~/WES/mutation/raw_indels.vcf</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">过滤SNP</span></span><br><span class="line">gatk VariantFiltration \</span><br><span class="line">	-R ~/WES/ref/hg38.fna \</span><br><span class="line">	-V ~/WES/mutation/raw_snps.vcf \</span><br><span class="line">	--filter-expression &quot;QD &lt; 2.0 || MQ &lt; 40.0 || FS &gt; 60.0 || SOR &gt; 3.0 || MQRankSum &lt; -12.5 || ReadPosRankSum &lt; -8.0&quot; \</span><br><span class="line">	--filter-name &quot;my_filter&quot; \</span><br><span class="line">	-O ~/WES/mutation/hard_filters/snp.filter.vcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">过滤Indel</span></span><br><span class="line">gatk VariantFiltration \</span><br><span class="line">	-R ~/WES/ref/hg38.fna \</span><br><span class="line">	-V ~/WES/mutation/raw_indels.vcf \</span><br><span class="line">	--filter-expression &quot;QD &lt; 2.0 || FS &gt; 200.0 || SOR &gt; 10.0 || MQRankSum &lt; -12.5 || ReadPosRankSum &lt; -8.0&quot; \</span><br><span class="line">	--filter-name &quot;my_filter&quot; \</span><br><span class="line">	-O ~/WES/mutation/hard_filters/indel.filter.vcf</span><br></pre></td></tr></table></figure>
+
+
+
+<p>参考文献：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/34878471">GATK4.0和全基因组数据分析实践（下）</a></li>
+<li><a href="https://gatk.broadinstitute.org/hc/en-us/articles/4414586833179-VariantRecalibrator">GATK VariantRecalibrator</a></li>
+<li><a href="https://gatk.broadinstitute.org/hc/en-us/articles/4409924805147-ApplyVQSR">GATK ApplyVQSR</a></li>
+<li></li>
+</ol>
+]]></content>
+      <categories>
+        <category>WES</category>
       </categories>
   </entry>
 </search>

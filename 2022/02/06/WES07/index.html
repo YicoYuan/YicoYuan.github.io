@@ -29,10 +29,12 @@
 <meta property="og:site_name" content="YuanYe&#39;s blog">
 <meta property="og:description" content="今天来学习DNA-seq下游分析的第三个内容Annotation。  Call variants Filter variants Annotation  得到新的变异位点后，我们希望了解这个位点存在于哪个基因？是有义突变还是无义突变？是否引起了编码氨基酸的变化？等等。一般使用ANNOVAR对过滤后的变异位点进行功能注释。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/06/WES07/01.png">
 <meta property="article:published_time" content="2022-02-06T02:40:05.000Z">
-<meta property="article:modified_time" content="2022-02-09T15:17:42.040Z">
+<meta property="article:modified_time" content="2022-02-12T04:11:43.654Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/02/06/WES07/01.png">
 
 
 <link rel="canonical" href="http://yicoyuan.xyz/2022/02/06/WES07/">
@@ -241,7 +243,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-09 23:17:42" itemprop="dateModified" datetime="2022-02-09T23:17:42+08:00">2022-02-09</time>
+      <time title="修改时间：2022-02-12 12:11:43" itemprop="dateModified" datetime="2022-02-12T12:11:43+08:00">2022-02-12</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -285,20 +287,21 @@
 <li>example：存放示例文件。</li>
 <li>humandb：存放annovar软件自带的注释数据库，也可根据自己的研究需要自行下载。</li>
 <li>annotate_variation.pl：主程序。下载数据库；可使用三种方式注释变异。</li>
-<li>coding_change.pl：判断蛋白石的序列是否发生变化。</li>
+<li>coding_change.pl：判断蛋白质的序列是否发生变化。</li>
 <li>convert2annovar.pl：将其他文本格式（如vcf）转换为annovar可识别格式。</li>
 <li>retrieve_seq_from_fasta.pl：建立其他的转录本。自带数据库只包含人类hg19的转录本。</li>
 <li>table_annovar.pl：一次完成三种不同方式的注释。</li>
 <li>variants_reduction.pl：定制过滤注释流程。</li>
 </ul>
-<h1 id="annovar的三种注释方式"><a href="#annovar的三种注释方式" class="headerlink" title="annovar的三种注释方式"></a>annovar的三种注释方式</h1><h2 id="Gene-based-annotation"><a href="#Gene-based-annotation" class="headerlink" title="Gene-based annotation"></a>Gene-based annotation</h2><p>一般人做到这里就结束了，因为信息量足够了。主要是对exonic_variant_function文件的理解，里面记录每个变异位点的functional consequences，包括nonsynonymous SNV, synonymous SNV, frameshift insertion, frameshift  deletion, nonframeshift insertion, nonframeshift deletion, frameshift  block substitution, nonframshift block substitution。</p>
-<p>通常，我们会关心<code>nonsynonymous SNV</code>非同义替换，因为它表明单核苷酸的变异引起了氨基酸的改变。</p>
+<h1 id="annovar的三种注释方式"><a href="#annovar的三种注释方式" class="headerlink" title="annovar的三种注释方式"></a>annovar的三种注释方式</h1><h2 id="Gene-based-annotation"><a href="#Gene-based-annotation" class="headerlink" title="Gene-based annotation"></a>Gene-based annotation</h2><p>基于基因的注释，揭示变异与已知基因直接的关系以及对其产生的功能性影响。一般人做到这里就结束了，因为信息量足够了。运行后会生成三个文件：<code>variant_function</code>、<code>exonic_variant_function</code>和<code>log</code>文件。</p>
+<p>主要关注exonic_variant_function，里面记录每个变异位点的functional consequences，包括nonsynonymous SNV, synonymous SNV, frameshift insertion, frameshift  deletion, nonframeshift insertion, nonframeshift deletion, frameshift  block substitution, nonframshift block substitution。通常，我们会关心<code>nonsynonymous SNV</code>非同义替换，因为它表明单核苷酸的变异引起了氨基酸的改变。</p>
 <p>但是，这样还是不够的，因为虽然造成了氨基酸的变异，但是这并不意味着这个突变是有害的。</p>
 <p>首先要做的就是判断这个位点是否报道过，是否通过实验证实了这个位点是致病突变。然后可以看看这个突变位点在一系列健康人群数据库里是否也被发现过，一般来说健康人群很高的位点，通常就不会是致病位点。</p>
-<h2 id="Region-based-annotation"><a href="#Region-based-annotation" class="headerlink" title="Region-based annotation"></a>Region-based annotation</h2><p>鉴定特定基因组区域的突变。仅仅注释了变异位点所处的染色体上的位置，用得不多。</p>
-<h2 id="Filter-based-annotation"><a href="#Filter-based-annotation" class="headerlink" title="Filter-based annotation"></a>Filter-based annotation</h2><p>基于筛选的注释。这个使用频率非常高，而且通常是结合多个数据库信息一起过滤。一般的思路是，找到某个基因被注释到外显子区域的nonsynonymous突变，然后又被clinvar数据库记录，则说明找到了有证据支持的致病位点。</p>
+<h2 id="Region-based-annotation"><a href="#Region-based-annotation" class="headerlink" title="Region-based annotation"></a>Region-based annotation</h2><p>鉴定基因组特定区域的突变。例如它是否落在已知的基因组保守区域。基于区域的注释所需的数据库一般由UCSC提供。输出文件以数据库名结尾。</p>
+<h2 id="Filter-based-annotation"><a href="#Filter-based-annotation" class="headerlink" title="Filter-based annotation"></a>Filter-based annotation</h2><p>基于筛选的注释。使用不同的过滤数据库，可以给出这个变异的一系列信息。如在全基因组中的变异频率，可使用1000g、kaviar等数据库；在全外显子基因组中的变异频率，可使用exac03、esp6500siv2等数据库；在孤立的或者低代表人群中的变异频率，可使用ajews等数据库。</p>
+<p>这个使用频率非常高，而且通常是结合多个数据库信息一起过滤。一般的思路是，找到某个基因被注释到外显子区域的nonsynonymous突变，然后又被clinvar数据库记录，则说明找到了有证据支持的致病位点。</p>
 <h1 id="输入文件"><a href="#输入文件" class="headerlink" title="输入文件"></a>输入文件</h1><p>annovar的输入文件为简单文本格式文件，前五列分别为<code>染色体号</code>、<code>突变位点起始位置</code>、<code>突变位点结束位置</code>、<code>该位点在参考基因组上的碱基</code>和<code>该位点的突变碱基</code>，其他列可有可无。使用以下命令，可以将gatk得到的vcf文件转换为annovar所需文本格式：</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">perl convert2annovar.pl \</span><br><span class="line">     -<span class="keyword">format</span> vcf4 input.vcf \</span><br><span class="line">     -outfile input.annovar</span><br></pre></td></tr></table></figure>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">perl convert2annovar.pl \</span><br><span class="line">     -<span class="keyword">format</span> vcf4 input.vcf \</span><br><span class="line">     -outfile input.avinput</span><br></pre></td></tr></table></figure>
 
 <p>不过，因为VCF文件格式的普遍性，现在的table_annovar.pl已经可以支持VCF文件了，只需加上<code>-vcfinput</code>参数就行了。</p>
 <h1 id="数据库下载"><a href="#数据库下载" class="headerlink" title="数据库下载"></a>数据库下载</h1><p>Annovar的注释主要依赖于数据库，因此在进行分析之前，应将所需的数据库下载到humandb文件夹中，下载的命令如下：</p>
@@ -316,22 +319,45 @@
 <li>region-based：cytoBand等。</li>
 <li>filter-based：1000g2015aug (6 data sets)、exac03、ljb26_all、clinvar_20210123、avsnp150等。</li>
 </ul>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#gene-based数据库refGene</span></span><br><span class="line">perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar refGene humandb/</span><br><span class="line"></span><br><span class="line"><span class="comment">#filter-based数据库exac03、avsnp150</span></span><br><span class="line">perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar exac03 ~<span class="regexp">/annovar/</span>humandb</span><br><span class="line">perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar avsnp15<span class="number">0</span> ~<span class="regexp">/annovar/</span>humandb</span><br></pre></td></tr></table></figure>
+<p>refGene：FASTA sequences for all annotated transcripts in RefSeq Gene。</p>
+<p>exact03：ExAC 65000 exome allele frequency data for ALL, AFR (African), AMR  (Admixed American), EAS (East Asian), FIN (Finnish), NFE (Non-finnish  European), OTH (other), SAS (South Asian)). version 0.3. Left  normalization done.</p>
+<p>dbnsfp42c：whole-exome SIFT, PolyPhen2 HDIV, PolyPhen2 HVAR, LRT, MutationTaster,  MutationAssessor, FATHMM, PROVEAN, MetaSVM, MetaLR, VEST, M-CAP, CADD,  GERP++, DANN, fathmm-MKL, Eigen, GenoCanyon, fitCons, PhyloP and SiPhy  scores from dbNSFP version 4.2c.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">gene-based数据库refGene</span></span><br><span class="line">perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar refGene humandb/</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">filter-based数据库exac03、dbnsfp42c</span></span><br><span class="line">perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar exac03 ~/annovar/humandb</span><br><span class="line">perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar dbnsfp42c ~/annovar/humandb</span><br></pre></td></tr></table></figure>
 
 <p>注：所有代码都在annovar文件夹下运行。</p>
+<p>注释数据库的说明：</p>
+<ul>
+<li>refGene：FASTA sequences for all annotated transcripts in RefSeq Gene。</li>
+<li>exact03：ExAC 65000 exome allele frequency data for ALL, AFR (African), AMR  (Admixed American), EAS (East Asian), FIN (Finnish), NFE (Non-finnish  European), OTH (other), SAS (South Asian)). version 0.3. Left  normalization done.</li>
+<li>dbnsfp42c：whole-exome SIFT, PolyPhen2 HDIV, PolyPhen2 HVAR, LRT, MutationTaster,  MutationAssessor, FATHMM, PROVEAN, MetaSVM, MetaLR, VEST, M-CAP, CADD,  GERP++, DANN, fathmm-MKL, Eigen, GenoCanyon, fitCons, PhyloP and SiPhy  scores from dbNSFP version 4.2c.</li>
+</ul>
 <h1 id="变异注释"><a href="#变异注释" class="headerlink" title="变异注释"></a>变异注释</h1><p>准备好输入文件和数据库后，就可以进行注释了。</p>
 <p>可以使用annotate_variation.pl以其中一种方式进行注释。三种不同方式的命令如下：</p>
 <figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">perl annotate_variation.pl -geneanno -dbtype refGene -buildver hg19 example/ex1.avinput humandb/</span><br><span class="line"></span><br><span class="line">perl annotate_variation.pl -regionanno -dbtype cytoBand -buildver hg19 example/ex1.avinput humandb/ </span><br><span class="line"></span><br><span class="line">perl annotate_variation.pl -filter -dbtype exac03 -buildver hg19 example/ex1.avinput humandb/</span><br></pre></td></tr></table></figure>
 
 <p>也可以使用table_annovar.pl同时完成三种方式的注释，当然它也通过调用主程序annotate_variation.pl实现的。命令如下：</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">perl table_annovar.pl \</span><br><span class="line">     input.vcf \</span><br><span class="line">     humandb/ \</span><br><span class="line">     -vcfinput \</span><br><span class="line">     -buildver hg38 \</span><br><span class="line">     -out output \</span><br><span class="line">     -remove \</span><br><span class="line">     -protocol refGene,cytoBand,<span class="number">1000</span>g2014oct_eur,<span class="number">1000</span>g2014oct_afr,exac03,ljb26_all,clinvar_20140929,snp138 \</span><br><span class="line">     -operation g,r,f,f,f,f,f,f</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">perl table_annovar.pl \</span><br><span class="line">     input.vcf \</span><br><span class="line">     humandb/ \</span><br><span class="line">     -vcfinput \</span><br><span class="line">     -buildver hg38 \</span><br><span class="line">     -out output \</span><br><span class="line">     -remove \</span><br><span class="line">     -csvout \</span><br><span class="line">     -polish \</span><br><span class="line">     -protocol refGene,cytoBand,1000g2014oct_eur,1000g2014oct_afr,exac03,ljb26_all,clinvar_20140929,snp138 \</span><br><span class="line">     -operation g,r,f,f,f,f,f,f</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>-out：指定输出文件前缀。</li>
 <li>-remove：删掉中间文件。</li>
+<li>-csvout：输出CSV文件。不加这个参数则输出txt文件。</li>
+<li>-polish：</li>
 <li>-protocal：数据库的名称。</li>
 <li>-operation：对应数据库的类型。g，gene-based；r，region-based；f，filter-based。需按前面数据库顺序一一对应。</li>
 </ul>
+<p>实际操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">需要先将硬过滤生成的SNP和Indel的VCF合并</span></span><br><span class="line">bgzip -c indel.filter.vcf &gt; indel.filter.vcf.bgzip.gz</span><br><span class="line">bgzip -c snp.filter.vcf &gt; snp.filter.vcf.bgzip.gz</span><br><span class="line">bcftools index snp.filter.vcf.bgzip.gz </span><br><span class="line">bcftools index indel.filter.vcf.bgzip.gz </span><br><span class="line">bcftools concat -a snp.filter.vcf.bgzip.gz indel.filter.vcf.bgzip.gz -o filter.vcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">VCF命名变为UCSC命名风格，因为数据库染色体的命名方式都是这样</span></span><br><span class="line">cthreepo --infile filter.vcf --id_from rs --id_to uc --format vcf -a GCF_000001405.39 --outfile filter_ucsc.vcf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">如果想得到csv格式变异注释文件，需先将vcf转换为avinput格式</span></span><br><span class="line">perl convert2annovar.pl \</span><br><span class="line">     -format vcf4 ~/WES/mutation/hard_filters/filter_ucsc.vcf \</span><br><span class="line">     -outfile ~/WES/mutation/hard_filters/filter_ucsc.avinput</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">注释：得到.CSV注释文件</span></span><br><span class="line">perl table_annovar.pl ~/WES/mutation/hard_filters/filter_ucsc.avinput humandb/ -buildver hg38 -out ~/WES/annotation/output -csvout -remove -polish -protocol refGene,exac03,dbnsfp42c -operation g,f,f</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">注释：得到txt和vcf格式注释文件</span></span><br><span class="line">perl table_annovar.pl ~/WES/mutation/hard_filters/filter_ucsc.vcf humandb/ -vcfinput -buildver hg38 -out output -remove -protocol refGene,exac03,dbnsfp42c -operation g,f,f</span><br></pre></td></tr></table></figure>
+
+<p>以.csv注释文件为例：</p>
+<p><img src="/2022/02/06/WES07/01.png"></p>
+<p>前五列为输入文件的内容，包括染色体、起始位置、终止位置、参考基因位点、变异位点。后面几列为注释内容，安装输入的注释数据库排列。其中，refGene包含Func.refGene, Gene.refGene, GeneDetail.refGene, ExonicFunc.refGene, AAChange.refGene；ExAC包含变异位点在6个人种的变异频率；dbnsfp42c注释了non-synonymous SNP的预测分数，包括SIFT scores, PolyPhen2 HDIV scores, PolyPhen2 HVAR scores, LRT scores, MutationTaster scores等。更多内容可参考<a target="_blank" rel="noopener" href="https://brb.nci.nih.gov/seqtools/colexpanno.html#dbnsfp">这里</a>。</p>
+<p>除了命令行工具外，软件作者还提供了网页工具<a target="_blank" rel="noopener" href="https://wannovar.wglab.org/">wAnnovar</a>。</p>
+<p>参考文章：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.nature.com/articles/nprot.2015.105">Genomic variant annotation and prioritization with ANNOVAR and wANNOVAR</a></li>
+<li></li>
+</ol>
 
     </div>
 

@@ -1,6 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>转录组测序数据及参考基因组准备</title>
+    <url>/2022/02/13/RNA-seq-02/</url>
+    <content><![CDATA[<p>首先，建立一个项目所需的文件夹：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification&#125;</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下：</p>
+<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
+<p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
+<p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
+<p>测序数据来源于这篇<a href>文献</a>。EBI搜索PRJNA673578，然后用命令行工具下载到本地：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in &#123;3..6&#125;</span><br><span class="line">do</span><br><span class="line">wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR129/06$i/SRR1296346$i/SRR1296346$i*</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>测序数据如下：</p>
+<p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
+]]></content>
+      <categories>
+        <category>RNA-seq</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>RNA-seq背景知识</title>
+    <url>/2022/02/12/RNA-seq-01/</url>
+    <content><![CDATA[<p>RNA-seq利用NGS测序技术来分析生物样品转录组，以揭示其RNA在某个时刻的表达情况及表达量。其原理如下图所示：</p>
+<p><img src="/2022/02/12/RNA-seq-01/01.png"></p>
+<span id="more"></span>
+
+<p>生物组织内，基因被转录和剪切产生成熟的mRNA转录本（红色）。从组织中提取出mRNA，随机打断成片段，然后反转录为ds-cDNA（蓝色）。ds-cDNA通过高通量短读长方法进行测序。然后将测序得到的序列与参考基因组进行比对。比对得到的数据就可以用来分析基因的表达情况、相对表达量以及可变剪接。</p>
+<p>RNA-seq能够识别基因可变剪接的转录本，转录后修饰，基因融合，SNP，基因不同的时期的表达水平，以及基因表达在不同组织或不同处理间的表达差异。除了mRNA，RNA-seq还可以识别不同类型的RNA。RNA-seq也可以用来测定外显子和内含子的边界，以确认或修缮之间注释的基因5’和3’的边界。单细胞测序是目前RNA-seq的前沿技术。</p>
+<p>在RNA-seq之前，转录组的研究有基于杂交技术的基因芯片（microarray）、基于序列分析的基因表达系列分析（SAGE）和大规模平行信号测序系统（MASS）。Microarray是最早开发的高通量转录组检测技术。该技术成本适中，整个方法较为成熟。但是该技术只限用于已知序列，无法检测新的RNA；灵敏度有限，难以检测低丰度的目标和重复序列；很难检测出融合基因、多顺反子等异常转录产物。SAGE不需要任何基因序列信息，能够全局性的检测所有基因的表达水平；MPSS是对SAGE的改进，它简化了测序过程，提高了精度。但两者都是基于昂贵的Sanger测序，需要大量的测序工作，技术难度大，而且涉及酶切、PCR扩增、克隆等可能会产生碱基偏向性的步骤，因此限制其推广。</p>
+<p>相比之下，RNA-seq具有诸多独特的优势：</p>
+<ul>
+<li>数字化信号。每个转录本片段单个核苷酸分辨率，可以检测单个碱基差异、基因家族中相似基因以及可变剪接造成的不同的转录本。不存在传统microarray荧光模拟信号带来的交叉反应和背景噪音问题。</li>
+<li>高灵敏度。能够检测到细胞中低表达的转录本。</li>
+<li>转录组分析。无需预先设计特异性探针，能够直接对任何物种进行转录组分析，这对非模式生物的研究尤为重要。同时能够检测未知基因，发现新的转录本，并精确地识别可变剪接位点、SNP及UTR区域。</li>
+<li>更广的检测范围和更少的样品检测量。</li>
+</ul>
+<h1 id="RNA-seq测序方法"><a href="#RNA-seq测序方法" class="headerlink" title="RNA-seq测序方法"></a>RNA-seq测序方法</h1><p><img src="/2022/02/12/RNA-seq-01/02.png"></p>
+<h1 id="RNA-seq数据分析流程"><a href="#RNA-seq数据分析流程" class="headerlink" title="RNA-seq数据分析流程"></a>RNA-seq数据分析流程</h1><p><img src="/2022/02/12/RNA-seq-01/03.jpg"></p>
+<p><img src="/2022/02/12/RNA-seq-01/04.png" alt="DGE"></p>
+<h2 id="测序reads的比对和组装"><a href="#测序reads的比对和组装" class="headerlink" title="测序reads的比对和组装"></a>测序reads的比对和组装</h2><p>测序完成后，分析的起点是包含测序碱基的FASTQ文件。通常第一步是将测序reads比对到已知的转录组（或注释的基因组），将每个reads转换为基因组坐标。常用的比对工具有TopHat、STAR和HISAT，其都依赖于参考基因组的存在。由于测序的cDNA来自RNA，可能跨越外显子边界，因此与基因组测序不同的是，转录组测序在与参考基因组比对时需进行剪接比对，即允许reads中出现大片段gap。</p>
+<p>如果没有包含已知外显子边界的高质量基因组注释，或者如果希望将reads与转录本（而不是基因）相关联，则需要在比对后执行转录组组装步骤。诸如StringTie和SOAPdenovo-Trans之类的组装工具使用比对reads的gap来推测外显子边界和可能的剪接位点。转录本重头组装特别适合用于参考基因组注释缺失或不完整的物种，或者对异转录本感兴趣的研究中。但是，通常从有参考基因组的RNA-seq中获取DGE不需要进行从头组装转录本。</p>
+<p>最近，涌现了一些计算效率高的alignment-free工具，例如Salmon和Kallisto。它们会在一步操作中组装转录本并对其进行定量。这些工具在定量高丰度转录本方面表现良好，但是在定量低丰度或短转录本方面不够准确。</p>
+<p>不同的比对工具分配ambiguous reads的策略会影响最后的表达量估计。尤其是存在multimap的reads时，对结果的影响尤为明显。因此对于如何正确处理比对到多个位置的reads，仍是RNA-seq数据分析中一个重点领域。目前一种常见的做法是在定量前过滤掉这些reads，但是这也可能导致结果产生偏差。</p>
+<h2 id="基因-转录本丰度定量"><a href="#基因-转录本丰度定量" class="headerlink" title="基因/转录本丰度定量"></a>基因/转录本丰度定量</h2><p>将reads比对到基因组或转录组后，下一步就是将它们分配给基因或转录本，获得表达矩阵。单个基因的表达量是计算与已知基因重叠的reads数。但是，把短reads分配到特定的转录异变体（同一个基因因可变剪接产生的不同mRNA）则需要统计模型估计，尤其是很多reads不跨越剪接点。即使是在仅研究基因表达差异的情况下，定量转录本也会获得更准确的结果，尤其是基因在不同条件下表达不同长度的转录本时。例如，如果某个基因的一个转录本在A样品中的长度是B样品中的一半，但是表达速率却是后者两倍，则单纯基于基因的定量无法检测到这一基因的差异表达。</p>
+<p>常用的定量工具包括，RSEM、CuffLinks、MMSEQ、HTSeq和featureCounts，以及上述alignment-free的Salmon等工具。基于比对结果计数的工具（例如HTSeq和featureCounts）通常会丢弃许多比对的序列，包括multimap或overlap的reads。RSEM使用期望最大化来分配模糊的reads，alignment-free的定量工具则将这些模糊的reads包括在它们相应的转录本计数中，这可能导致结果有偏差。使用tximport可以将转录本丰度转换成等效的reads数。量化后会得到一个合并的表达矩阵，矩阵的第一列为每个表达特征（基因/转录本），其后每列为每个样品的表达值，该表达值是实际的reads数。</p>
+<h2 id="过滤和标准化"><a href="#过滤和标准化" class="headerlink" title="过滤和标准化"></a>过滤和标准化</h2><p>通常，基因或转录本的reads数需要进行过滤和标准化，以减少测序深度、表达模式和技术偏差带来的影响。过滤掉在所有样本中都低丰度表达的基因是一种很直接的方式，并且已经证明可以改善对真正差异表达基因的检测。表达矩阵的标准化的方法较为复杂。</p>
+<p>研究表明，标准化方法的选择可能对最终结果和生物学结论有重要影响。大多数标准化算法依赖于两个重要假设：一、大多数基因的表达水平在生物重复中变化不大。二、不同的样本组总的mRNA水平没有显著差异。但是当上述假设不成立时，如一些基因在一个样品中高表达，而在同组另一个样品中正常表达，则简单使用RPKM标准化是不合适的，因为相同数目的reads会分配到在第二个样本里更多的基因上。而标准化的方法如edgeR所使用的M-值的加权截断均值（TMM）就能解决这个问题。</p>
+<h2 id="差异表达的统计建模"><a href="#差异表达的统计建模" class="headerlink" title="差异表达的统计建模"></a>差异表达的统计建模</h2><p>获得表达矩阵后，就可以构建统计模型评估哪些转录本表达发生了显著的改变。有几个常用工具可以完成此任务，可分为基于基因水平计数和基于转录本水平计数。基因水平的工具通常依赖于比对的reads数，并使用广义线性模型来进行复杂实验设计的评估。这些工具包括edgeR、DESeq2和limma+voom等，这些工具计算效率高且工具之间结果稳定性好。评估差异转录本的工具包括CuffDiff、MMSEQ和Ballgown，往往需要更多的计算资源，且结果变化也更大。</p>
+<h2 id="差异表达基因注释"><a href="#差异表达基因注释" class="headerlink" title="差异表达基因注释"></a>差异表达基因注释</h2><h3 id="基因功能富集分析"><a href="#基因功能富集分析" class="headerlink" title="基因功能富集分析"></a>基因功能富集分析</h3><h3 id="基因集富集分析（GSEA）"><a href="#基因集富集分析（GSEA）" class="headerlink" title="基因集富集分析（GSEA）"></a>基因集富集分析（GSEA）</h3><h3 id="基因集变异分析（GSVA）"><a href="#基因集变异分析（GSVA）" class="headerlink" title="基因集变异分析（GSVA）"></a>基因集变异分析（GSVA）</h3><h3 id="蛋白质互作分析（PPI）"><a href="#蛋白质互作分析（PPI）" class="headerlink" title="蛋白质互作分析（PPI）"></a>蛋白质互作分析（PPI）</h3><h3 id="转录因子分析"><a href="#转录因子分析" class="headerlink" title="转录因子分析"></a>转录因子分析</h3><h3 id="加权基因共表达网络分析（WGCNA）"><a href="#加权基因共表达网络分析（WGCNA）" class="headerlink" title="加权基因共表达网络分析（WGCNA）"></a>加权基因共表达网络分析（WGCNA）</h3><h3 id><a href="#" class="headerlink" title></a></h3><p>参考文献：</p>
+<ol>
+<li><a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8">A survey of best practices for RNA-seq data analysis</a></li>
+<li><a href="https://www.nature.com/articles/s41576-019-0150-2">RNA sequencing: the teenage years</a></li>
+<li><a href="https://www.sciencedirect.com/science/article/pii/S0965174821001387">A whole transcriptomic approach provides novel insights into the molecular basis of organophosphate and pyrethroid resistance in <em>Anopheles arabiensis</em> from Ethiopia</a></li>
+<li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0168945219300342">AtSPX1-mediated transcriptional regulation duringleaf senescence in Arabidopsis thaliana</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>RNA-seq</category>
+      </categories>
+  </entry>
+  <entry>
     <title>软件准备</title>
     <url>/2022/01/13/WES01/</url>
     <content><![CDATA[<h1 id="安装必备软件"><a href="#安装必备软件" class="headerlink" title="安装必备软件"></a>安装必备软件</h1><h2 id="Miniconda"><a href="#Miniconda" class="headerlink" title="Miniconda"></a>Miniconda</h2><h3 id="关于conda和miniconda"><a href="#关于conda和miniconda" class="headerlink" title="关于conda和miniconda"></a>关于conda和miniconda</h3><p>Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language.</p>
@@ -91,6 +152,61 @@
 <h3 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install -y sra-tools=2.11.0 samtools bcftools vcftools multiqc qualimap snpeff gatk4</span><br></pre></td></tr></table></figure>
 
 
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>测序数据下载及质控</title>
+    <url>/2022/01/15/WES02/</url>
+    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
+
+<p>然后进入WES文件夹创建以下子文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
+
+<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
+<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
+
+<p>或者使用for循环：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ebi.ac.uk/ena/browser/view/PRJEB30330?show=reads">PRJEB30330</a>下载fastq的压缩文件。</p>
+<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
+<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
+
+<p>可以写一个shell脚本自动安装</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
+<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
+<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
+<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>法二、xargs</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
+
+<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
+
+<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
+<p>写个脚本进行批量质控</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
 
 
@@ -794,61 +910,6 @@
 ]]></content>
       <categories>
         <category>生物信息学</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>测序数据下载及质控</title>
-    <url>/2022/01/15/WES02/</url>
-    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
-
-<p>然后进入WES文件夹创建以下子文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
-
-<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
-<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
-
-<p>或者使用for循环：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ebi.ac.uk/ena/browser/view/PRJEB30330?show=reads">PRJEB30330</a>下载fastq的压缩文件。</p>
-<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
-<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
-
-<p>可以写一个shell脚本自动安装</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
-
-<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
-<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
-<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
-<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>法二、xargs</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
-
-<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
-
-<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
-
-<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
-<p>写个脚本进行批量质控</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-]]></content>
-      <categories>
-        <category>WES</category>
       </categories>
   </entry>
   <entry>

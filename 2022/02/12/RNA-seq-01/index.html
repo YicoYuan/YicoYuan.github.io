@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="RNA-seq利用NGS测序技术来分析生物样品转录组，以揭示其RNA在某个时刻的表达情况及表达量。其原理如下图所示：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RNA-seq背景知识">
+<meta property="og:url" content="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/index.html">
+<meta property="og:site_name" content="YuanYe&#39;s blog">
+<meta property="og:description" content="RNA-seq利用NGS测序技术来分析生物样品转录组，以揭示其RNA在某个时刻的表达情况及表达量。其原理如下图所示：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/01.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/02.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/03.jpg">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/04.png">
+<meta property="article:published_time" content="2022-02-12T14:24:50.000Z">
+<meta property="article:modified_time" content="2022-02-14T05:26:27.687Z">
+<meta property="article:author" content="Yico Yuan">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/01.png">
+
+
+<link rel="canonical" href="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/02/12/RNA-seq-01/","path":"2022/02/12/RNA-seq-01/","title":"RNA-seq背景知识"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RNA-seq背景知识 | YuanYe's blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YuanYe's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RNA-seq%E6%B5%8B%E5%BA%8F%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">RNA-seq测序方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RNA-seq%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">RNA-seq数据分析流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E5%BA%8Freads%E7%9A%84%E6%AF%94%E5%AF%B9%E5%92%8C%E7%BB%84%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">测序reads的比对和组装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0-%E8%BD%AC%E5%BD%95%E6%9C%AC%E4%B8%B0%E5%BA%A6%E5%AE%9A%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">基因&#x2F;转录本丰度定量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%92%8C%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">过滤和标准化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E5%BC%82%E8%A1%A8%E8%BE%BE%E7%9A%84%E7%BB%9F%E8%AE%A1%E5%BB%BA%E6%A8%A1"><span class="nav-number">2.4.</span> <span class="nav-text">差异表达的统计建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E5%BC%82%E8%A1%A8%E8%BE%BE%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A"><span class="nav-number">2.5.</span> <span class="nav-text">差异表达基因注释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E5%8A%9F%E8%83%BD%E5%AF%8C%E9%9B%86%E5%88%86%E6%9E%90"><span class="nav-number">2.5.1.</span> <span class="nav-text">基因功能富集分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E9%9B%86%E5%AF%8C%E9%9B%86%E5%88%86%E6%9E%90%EF%BC%88GSEA%EF%BC%89"><span class="nav-number">2.5.2.</span> <span class="nav-text">基因集富集分析（GSEA）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E9%9B%86%E5%8F%98%E5%BC%82%E5%88%86%E6%9E%90%EF%BC%88GSVA%EF%BC%89"><span class="nav-number">2.5.3.</span> <span class="nav-text">基因集变异分析（GSVA）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%9B%8B%E7%99%BD%E8%B4%A8%E4%BA%92%E4%BD%9C%E5%88%86%E6%9E%90%EF%BC%88PPI%EF%BC%89"><span class="nav-number">2.5.4.</span> <span class="nav-text">蛋白质互作分析（PPI）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E5%BD%95%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90"><span class="nav-number">2.5.5.</span> <span class="nav-text">转录因子分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E5%9F%BA%E5%9B%A0%E5%85%B1%E8%A1%A8%E8%BE%BE%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%EF%BC%88WGCNA%EF%BC%89"><span class="nav-number">2.5.6.</span> <span class="nav-text">加权基因共表达网络分析（WGCNA）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.5.7.</span> <span class="nav-text"></span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yico Yuan"
+      src="/images/ye.svg">
+  <p class="site-author-name" itemprop="name">Yico Yuan</p>
+  <div class="site-description" itemprop="description">Things To Be Passionate About In Life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="mailto:yuanyesulli@outlook.com" title="E-Mail → mailto:yuanyesulli@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/12/RNA-seq-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RNA-seq背景知识
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-12 22:24:50" itemprop="dateCreated datePublished" datetime="2022-02-12T22:24:50+08:00">2022-02-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-14 13:26:27" itemprop="dateModified" datetime="2022-02-14T13:26:27+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/RNA-seq/" itemprop="url" rel="index"><span itemprop="name">RNA-seq</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>RNA-seq利用NGS测序技术来分析生物样品转录组，以揭示其RNA在某个时刻的表达情况及表达量。其原理如下图所示：</p>
+<p><img src="/2022/02/12/RNA-seq-01/01.png"></p>
+<span id="more"></span>
+
+<p>生物组织内，基因被转录和剪切产生成熟的mRNA转录本（红色）。从组织中提取出mRNA，随机打断成片段，然后反转录为ds-cDNA（蓝色）。ds-cDNA通过高通量短读长方法进行测序。然后将测序得到的序列与参考基因组进行比对。比对得到的数据就可以用来分析基因的表达情况、相对表达量以及可变剪接。</p>
+<p>RNA-seq能够识别基因可变剪接的转录本，转录后修饰，基因融合，SNP，基因不同的时期的表达水平，以及基因表达在不同组织或不同处理间的表达差异。除了mRNA，RNA-seq还可以识别不同类型的RNA。RNA-seq也可以用来测定外显子和内含子的边界，以确认或修缮之间注释的基因5’和3’的边界。单细胞测序是目前RNA-seq的前沿技术。</p>
+<p>在RNA-seq之前，转录组的研究有基于杂交技术的基因芯片（microarray）、基于序列分析的基因表达系列分析（SAGE）和大规模平行信号测序系统（MASS）。Microarray是最早开发的高通量转录组检测技术。该技术成本适中，整个方法较为成熟。但是该技术只限用于已知序列，无法检测新的RNA；灵敏度有限，难以检测低丰度的目标和重复序列；很难检测出融合基因、多顺反子等异常转录产物。SAGE不需要任何基因序列信息，能够全局性的检测所有基因的表达水平；MPSS是对SAGE的改进，它简化了测序过程，提高了精度。但两者都是基于昂贵的Sanger测序，需要大量的测序工作，技术难度大，而且涉及酶切、PCR扩增、克隆等可能会产生碱基偏向性的步骤，因此限制其推广。</p>
+<p>相比之下，RNA-seq具有诸多独特的优势：</p>
+<ul>
+<li>数字化信号。每个转录本片段单个核苷酸分辨率，可以检测单个碱基差异、基因家族中相似基因以及可变剪接造成的不同的转录本。不存在传统microarray荧光模拟信号带来的交叉反应和背景噪音问题。</li>
+<li>高灵敏度。能够检测到细胞中低表达的转录本。</li>
+<li>转录组分析。无需预先设计特异性探针，能够直接对任何物种进行转录组分析，这对非模式生物的研究尤为重要。同时能够检测未知基因，发现新的转录本，并精确地识别可变剪接位点、SNP及UTR区域。</li>
+<li>更广的检测范围和更少的样品检测量。</li>
+</ul>
+<h1 id="RNA-seq测序方法"><a href="#RNA-seq测序方法" class="headerlink" title="RNA-seq测序方法"></a>RNA-seq测序方法</h1><p><img src="/2022/02/12/RNA-seq-01/02.png"></p>
+<h1 id="RNA-seq数据分析流程"><a href="#RNA-seq数据分析流程" class="headerlink" title="RNA-seq数据分析流程"></a>RNA-seq数据分析流程</h1><p><img src="/2022/02/12/RNA-seq-01/03.jpg"></p>
+<p><img src="/2022/02/12/RNA-seq-01/04.png" alt="DGE"></p>
+<h2 id="测序reads的比对和组装"><a href="#测序reads的比对和组装" class="headerlink" title="测序reads的比对和组装"></a>测序reads的比对和组装</h2><p>测序完成后，分析的起点是包含测序碱基的FASTQ文件。通常第一步是将测序reads比对到已知的转录组（或注释的基因组），将每个reads转换为基因组坐标。常用的比对工具有TopHat、STAR和HISAT，其都依赖于参考基因组的存在。由于测序的cDNA来自RNA，可能跨越外显子边界，因此与基因组测序不同的是，转录组测序在与参考基因组比对时需进行剪接比对，即允许reads中出现大片段gap。</p>
+<p>如果没有包含已知外显子边界的高质量基因组注释，或者如果希望将reads与转录本（而不是基因）相关联，则需要在比对后执行转录组组装步骤。诸如StringTie和SOAPdenovo-Trans之类的组装工具使用比对reads的gap来推测外显子边界和可能的剪接位点。转录本重头组装特别适合用于参考基因组注释缺失或不完整的物种，或者对异转录本感兴趣的研究中。但是，通常从有参考基因组的RNA-seq中获取DGE不需要进行从头组装转录本。</p>
+<p>最近，涌现了一些计算效率高的alignment-free工具，例如Salmon和Kallisto。它们会在一步操作中组装转录本并对其进行定量。这些工具在定量高丰度转录本方面表现良好，但是在定量低丰度或短转录本方面不够准确。</p>
+<p>不同的比对工具分配ambiguous reads的策略会影响最后的表达量估计。尤其是存在multimap的reads时，对结果的影响尤为明显。因此对于如何正确处理比对到多个位置的reads，仍是RNA-seq数据分析中一个重点领域。目前一种常见的做法是在定量前过滤掉这些reads，但是这也可能导致结果产生偏差。</p>
+<h2 id="基因-转录本丰度定量"><a href="#基因-转录本丰度定量" class="headerlink" title="基因/转录本丰度定量"></a>基因/转录本丰度定量</h2><p>将reads比对到基因组或转录组后，下一步就是将它们分配给基因或转录本，获得表达矩阵。单个基因的表达量是计算与已知基因重叠的reads数。但是，把短reads分配到特定的转录异变体（同一个基因因可变剪接产生的不同mRNA）则需要统计模型估计，尤其是很多reads不跨越剪接点。即使是在仅研究基因表达差异的情况下，定量转录本也会获得更准确的结果，尤其是基因在不同条件下表达不同长度的转录本时。例如，如果某个基因的一个转录本在A样品中的长度是B样品中的一半，但是表达速率却是后者两倍，则单纯基于基因的定量无法检测到这一基因的差异表达。</p>
+<p>常用的定量工具包括，RSEM、CuffLinks、MMSEQ、HTSeq和featureCounts，以及上述alignment-free的Salmon等工具。基于比对结果计数的工具（例如HTSeq和featureCounts）通常会丢弃许多比对的序列，包括multimap或overlap的reads。RSEM使用期望最大化来分配模糊的reads，alignment-free的定量工具则将这些模糊的reads包括在它们相应的转录本计数中，这可能导致结果有偏差。使用tximport可以将转录本丰度转换成等效的reads数。量化后会得到一个合并的表达矩阵，矩阵的第一列为每个表达特征（基因/转录本），其后每列为每个样品的表达值，该表达值是实际的reads数。</p>
+<h2 id="过滤和标准化"><a href="#过滤和标准化" class="headerlink" title="过滤和标准化"></a>过滤和标准化</h2><p>通常，基因或转录本的reads数需要进行过滤和标准化，以减少测序深度、表达模式和技术偏差带来的影响。过滤掉在所有样本中都低丰度表达的基因是一种很直接的方式，并且已经证明可以改善对真正差异表达基因的检测。表达矩阵的标准化的方法较为复杂。</p>
+<p>研究表明，标准化方法的选择可能对最终结果和生物学结论有重要影响。大多数标准化算法依赖于两个重要假设：一、大多数基因的表达水平在生物重复中变化不大。二、不同的样本组总的mRNA水平没有显著差异。但是当上述假设不成立时，如一些基因在一个样品中高表达，而在同组另一个样品中正常表达，则简单使用RPKM标准化是不合适的，因为相同数目的reads会分配到在第二个样本里更多的基因上。而标准化的方法如edgeR所使用的M-值的加权截断均值（TMM）就能解决这个问题。</p>
+<h2 id="差异表达的统计建模"><a href="#差异表达的统计建模" class="headerlink" title="差异表达的统计建模"></a>差异表达的统计建模</h2><p>获得表达矩阵后，就可以构建统计模型评估哪些转录本表达发生了显著的改变。有几个常用工具可以完成此任务，可分为基于基因水平计数和基于转录本水平计数。基因水平的工具通常依赖于比对的reads数，并使用广义线性模型来进行复杂实验设计的评估。这些工具包括edgeR、DESeq2和limma+voom等，这些工具计算效率高且工具之间结果稳定性好。评估差异转录本的工具包括CuffDiff、MMSEQ和Ballgown，往往需要更多的计算资源，且结果变化也更大。</p>
+<h2 id="差异表达基因注释"><a href="#差异表达基因注释" class="headerlink" title="差异表达基因注释"></a>差异表达基因注释</h2><h3 id="基因功能富集分析"><a href="#基因功能富集分析" class="headerlink" title="基因功能富集分析"></a>基因功能富集分析</h3><h3 id="基因集富集分析（GSEA）"><a href="#基因集富集分析（GSEA）" class="headerlink" title="基因集富集分析（GSEA）"></a>基因集富集分析（GSEA）</h3><h3 id="基因集变异分析（GSVA）"><a href="#基因集变异分析（GSVA）" class="headerlink" title="基因集变异分析（GSVA）"></a>基因集变异分析（GSVA）</h3><h3 id="蛋白质互作分析（PPI）"><a href="#蛋白质互作分析（PPI）" class="headerlink" title="蛋白质互作分析（PPI）"></a>蛋白质互作分析（PPI）</h3><h3 id="转录因子分析"><a href="#转录因子分析" class="headerlink" title="转录因子分析"></a>转录因子分析</h3><h3 id="加权基因共表达网络分析（WGCNA）"><a href="#加权基因共表达网络分析（WGCNA）" class="headerlink" title="加权基因共表达网络分析（WGCNA）"></a>加权基因共表达网络分析（WGCNA）</h3><h3 id><a href="#" class="headerlink" title></a></h3><p>参考文献：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8">A survey of best practices for RNA-seq data analysis</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.nature.com/articles/s41576-019-0150-2">RNA sequencing: the teenage years</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/pii/S0965174821001387">A whole transcriptomic approach provides novel insights into the molecular basis of organophosphate and pyrethroid resistance in <em>Anopheles arabiensis</em> from Ethiopia</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/abs/pii/S0168945219300342">AtSPX1-mediated transcriptional regulation duringleaf senescence in Arabidopsis thaliana</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/06/WES07/" rel="prev" title="变异注释">
+                  <i class="fa fa-chevron-left"></i> 变异注释
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/13/RNA-seq-02/" rel="next" title="转录组测序数据及参考基因组准备">
+                  转录组测序数据及参考基因组准备 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yico Yuan</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

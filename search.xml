@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>转录组测序数据及参考基因组准备</title>
-    <url>/2022/02/13/RNA-seq-02/</url>
-    <content><![CDATA[<p>首先，建立一个项目所需的文件夹：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification&#125;</span><br></pre></td></tr></table></figure>
-
-<p>目录结构如下：</p>
-<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
-<p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
-<p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
-<p>测序数据来源于这篇<a href>文献</a>。EBI搜索PRJNA673578，然后用命令行工具下载到本地：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in &#123;3..6&#125;</span><br><span class="line">do</span><br><span class="line">wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR129/06$i/SRR1296346$i/SRR1296346$i*</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p>测序数据如下：</p>
-<p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
-]]></content>
-      <categories>
-        <category>RNA-seq</category>
-      </categories>
-  </entry>
-  <entry>
     <title>RNA-seq背景知识</title>
     <url>/2022/02/12/RNA-seq-01/</url>
     <content><![CDATA[<p>RNA-seq利用NGS测序技术来分析生物样品转录组，以揭示其RNA在某个时刻的表达情况及表达量。其原理如下图所示：</p>
@@ -49,13 +29,45 @@
 <h2 id="过滤和标准化"><a href="#过滤和标准化" class="headerlink" title="过滤和标准化"></a>过滤和标准化</h2><p>通常，基因或转录本的reads数需要进行过滤和标准化，以减少测序深度、表达模式和技术偏差带来的影响。过滤掉在所有样本中都低丰度表达的基因是一种很直接的方式，并且已经证明可以改善对真正差异表达基因的检测。表达矩阵的标准化的方法较为复杂。</p>
 <p>研究表明，标准化方法的选择可能对最终结果和生物学结论有重要影响。大多数标准化算法依赖于两个重要假设：一、大多数基因的表达水平在生物重复中变化不大。二、不同的样本组总的mRNA水平没有显著差异。但是当上述假设不成立时，如一些基因在一个样品中高表达，而在同组另一个样品中正常表达，则简单使用RPKM标准化是不合适的，因为相同数目的reads会分配到在第二个样本里更多的基因上。而标准化的方法如edgeR所使用的M-值的加权截断均值（TMM）就能解决这个问题。</p>
 <h2 id="差异表达的统计建模"><a href="#差异表达的统计建模" class="headerlink" title="差异表达的统计建模"></a>差异表达的统计建模</h2><p>获得表达矩阵后，就可以构建统计模型评估哪些转录本表达发生了显著的改变。有几个常用工具可以完成此任务，可分为基于基因水平计数和基于转录本水平计数。基因水平的工具通常依赖于比对的reads数，并使用广义线性模型来进行复杂实验设计的评估。这些工具包括edgeR、DESeq2和limma+voom等，这些工具计算效率高且工具之间结果稳定性好。评估差异转录本的工具包括CuffDiff、MMSEQ和Ballgown，往往需要更多的计算资源，且结果变化也更大。</p>
-<h2 id="差异表达基因注释"><a href="#差异表达基因注释" class="headerlink" title="差异表达基因注释"></a>差异表达基因注释</h2><h3 id="基因功能富集分析"><a href="#基因功能富集分析" class="headerlink" title="基因功能富集分析"></a>基因功能富集分析</h3><h3 id="基因集富集分析（GSEA）"><a href="#基因集富集分析（GSEA）" class="headerlink" title="基因集富集分析（GSEA）"></a>基因集富集分析（GSEA）</h3><h3 id="基因集变异分析（GSVA）"><a href="#基因集变异分析（GSVA）" class="headerlink" title="基因集变异分析（GSVA）"></a>基因集变异分析（GSVA）</h3><h3 id="蛋白质互作分析（PPI）"><a href="#蛋白质互作分析（PPI）" class="headerlink" title="蛋白质互作分析（PPI）"></a>蛋白质互作分析（PPI）</h3><h3 id="转录因子分析"><a href="#转录因子分析" class="headerlink" title="转录因子分析"></a>转录因子分析</h3><h3 id="加权基因共表达网络分析（WGCNA）"><a href="#加权基因共表达网络分析（WGCNA）" class="headerlink" title="加权基因共表达网络分析（WGCNA）"></a>加权基因共表达网络分析（WGCNA）</h3><h3 id><a href="#" class="headerlink" title></a></h3><p>参考文献：</p>
+<h2 id="差异表达基因注释"><a href="#差异表达基因注释" class="headerlink" title="差异表达基因注释"></a>差异表达基因注释</h2><h3 id="基因功能富集分析"><a href="#基因功能富集分析" class="headerlink" title="基因功能富集分析"></a>基因功能富集分析</h3><h3 id="基因集富集分析（GSEA）"><a href="#基因集富集分析（GSEA）" class="headerlink" title="基因集富集分析（GSEA）"></a>基因集富集分析（GSEA）</h3><h3 id="基因集变异分析（GSVA）"><a href="#基因集变异分析（GSVA）" class="headerlink" title="基因集变异分析（GSVA）"></a>基因集变异分析（GSVA）</h3><h3 id="蛋白质互作分析（PPI）"><a href="#蛋白质互作分析（PPI）" class="headerlink" title="蛋白质互作分析（PPI）"></a>蛋白质互作分析（PPI）</h3><h3 id="转录因子分析"><a href="#转录因子分析" class="headerlink" title="转录因子分析"></a>转录因子分析</h3><h3 id="加权基因共表达网络分析（WGCNA）"><a href="#加权基因共表达网络分析（WGCNA）" class="headerlink" title="加权基因共表达网络分析（WGCNA）"></a>加权基因共表达网络分析（WGCNA）</h3><p>参考文献：</p>
 <ol>
 <li><a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8">A survey of best practices for RNA-seq data analysis</a></li>
 <li><a href="https://www.nature.com/articles/s41576-019-0150-2">RNA sequencing: the teenage years</a></li>
 <li><a href="https://www.sciencedirect.com/science/article/pii/S0965174821001387">A whole transcriptomic approach provides novel insights into the molecular basis of organophosphate and pyrethroid resistance in <em>Anopheles arabiensis</em> from Ethiopia</a></li>
 <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0168945219300342">AtSPX1-mediated transcriptional regulation duringleaf senescence in Arabidopsis thaliana</a></li>
 </ol>
+]]></content>
+      <categories>
+        <category>RNA-seq</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>转录组测序数据及参考基因组准备</title>
+    <url>/2022/02/13/RNA-seq-02/</url>
+    <content><![CDATA[<h3 id="项目文件夹"><a href="#项目文件夹" class="headerlink" title="项目文件夹"></a>项目文件夹</h3><p>首先，建立一个项目所需的文件夹：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification&#125;</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下：</p>
+<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
+<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
+<p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
+<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a href="https://www.sciencedirect.com/science/article/abs/pii/S0304423821003150">文献</a>。EBI搜索PRJNA673578，然后用命令行工具下载到本地：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in &#123;3..6&#125;</span><br><span class="line">do</span><br><span class="line">wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR129/06$i/SRR1296346$i/SRR1296346$i*</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>测序数据如下：</p>
+<p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
+<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#原始数据qc报告</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -0 ~/RNA_seq/02raw/qc/ ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">#合并qc报告到一个文件</span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"></span><br><span class="line">#质量过滤：去掉adapter和低质量reads</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 -z 9 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>RNA-seq</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>序列比对</title>
+    <url>/2022/02/14/RNA-seq-03/</url>
+    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#转录组常需要gff格式注释来识别外显子区域</span><br><span class="line">gffread ~/RNA-seq/01ref/Ppersica.gff3 -T -o ~/RNA-seq/01ref/Ppersica.gtf</span><br><span class="line"></span><br><span class="line">#构建参考基因组索引</span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA-seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA-seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA-seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 149</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>RNA-seq</category>

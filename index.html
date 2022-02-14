@@ -157,7 +157,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -206,6 +206,81 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/14/RNA-seq-03/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/14/RNA-seq-03/" class="post-title-link" itemprop="url">序列比对</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-02-14 20:40:04 / 修改时间：23:39:10" itemprop="dateCreated datePublished" datetime="2022-02-14T20:40:04+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/RNA-seq/" itemprop="url" rel="index"><span itemprop="name">RNA-seq</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#转录组常需要gff格式注释来识别外显子区域</span><br><span class="line">gffread ~/RNA-seq/01ref/Ppersica.gff3 -T -o ~/RNA-seq/01ref/Ppersica.gtf</span><br><span class="line"></span><br><span class="line">#构建参考基因组索引</span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA-seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA-seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA-seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 149</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/13/RNA-seq-02/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -237,7 +312,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-14 13:45:50" itemprop="dateModified" datetime="2022-02-14T13:45:50+08:00">2022-02-14</time>
+      <time title="修改时间：2022-02-14 23:39:31" itemprop="dateModified" datetime="2022-02-14T23:39:31+08:00">2022-02-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -259,18 +334,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>首先，建立一个项目所需的文件夹：</p>
+          <h3 id="项目文件夹"><a href="#项目文件夹" class="headerlink" title="项目文件夹"></a>项目文件夹</h3><p>首先，建立一个项目所需的文件夹：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification&#125;</span><br></pre></td></tr></table></figure>
 
 <p>目录结构如下：</p>
 <p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
-<p>我们使用JGI的<a target="_blank" rel="noopener" href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
+<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a target="_blank" rel="noopener" href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
 <p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
-<p>测序数据来源于这篇<a href>文献</a>。EBI搜索PRJNA673578，然后用命令行工具下载到本地：</p>
+<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/abs/pii/S0304423821003150">文献</a>。EBI搜索PRJNA673578，然后用命令行工具下载到本地：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for i in &#123;3..6&#125;</span><br><span class="line">do</span><br><span class="line">wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR129/06$i/SRR1296346$i/SRR1296346$i*</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
 <p>测序数据如下：</p>
 <p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
+<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#原始数据qc报告</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -0 ~/RNA_seq/02raw/qc/ ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">#合并qc报告到一个文件</span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"></span><br><span class="line">#质量过滤：去掉adapter和低质量reads</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 -z 9 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -328,7 +405,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-14 13:26:27" itemprop="dateModified" datetime="2022-02-14T13:26:27+08:00">2022-02-14</time>
+      <time title="修改时间：2022-02-14 23:39:59" itemprop="dateModified" datetime="2022-02-14T23:39:59+08:00">2022-02-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -989,95 +1066,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/01/13/WES01/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/" class="post-title-link" itemprop="url">参考基因组</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-10 20:49:31" itemprop="dateCreated datePublished" datetime="2022-01-10T20:49:31+08:00">2022-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-14 13:47:35" itemprop="dateModified" datetime="2022-01-14T13:47:35+08:00">2022-01-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%94%9F%E7%89%A9%E4%BF%A1%E6%81%AF%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">生物信息学</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>–为什么需要参考基因组？</p>
-<hr>
-<p>基因组分析的中心法则：所有的基因组分析都是（应该）基于一个正常的参考序列。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/10/%E5%8F%82%E8%80%83%E5%9F%BA%E5%9B%A0%E7%BB%84/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

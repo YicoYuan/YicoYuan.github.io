@@ -229,9 +229,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-02-14 20:40:04 / 修改时间：23:39:10" itemprop="dateCreated datePublished" datetime="2022-02-14T20:40:04+08:00">2022-02-14</time>
+      <time title="创建时间：2022-02-14 20:40:04" itemprop="dateCreated datePublished" datetime="2022-02-14T20:40:04+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-15 13:35:51" itemprop="dateModified" datetime="2022-02-15T13:35:51+08:00">2022-02-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -253,7 +259,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#转录组常需要gff格式注释来识别外显子区域</span><br><span class="line">gffread ~/RNA-seq/01ref/Ppersica.gff3 -T -o ~/RNA-seq/01ref/Ppersica.gtf</span><br><span class="line"></span><br><span class="line">#构建参考基因组索引</span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA-seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA-seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA-seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 149</span><br></pre></td></tr></table></figure>
+          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">#转录组常需要gff格式注释来识别外显子区域</span><br><span class="line">gffread ~/RNA_seq/01ref/Ppersica.gff3 -T -o ~/RNA_seq/01ref/Ppersica.gtf</span><br><span class="line"></span><br><span class="line">#构建参考基因组索引</span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA_seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 149</span><br><span class="line">     </span><br><span class="line">#--runThreadN:线程数</span><br><span class="line">#--runMode：运行模式</span><br><span class="line">#--genomeDir：索引文件输出目录（需提前建立）</span><br><span class="line">#--genomeFastaFiles：基因组fasta文件</span><br><span class="line">#--sjdbGTFfile：GTF注释文件</span><br><span class="line">#--sjdbOverhang：reads长度减1。主要用于可变剪接的预测。</span><br><span class="line"></span><br><span class="line">#序列比对</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do</span><br><span class="line">STAR --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --readFilesIn ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">     --readFilesCommand zcat \</span><br><span class="line">     --outFileNamePrefix ~/RNA_seq/04align/$i \</span><br><span class="line">     --runThreadN 20 \</span><br><span class="line">     --sjdbOverhang 149 \</span><br><span class="line">     --outSAMtype BAM SortedByCoordinate \</span><br><span class="line">     --outBAMsortingThreadN 5 \</span><br><span class="line">     --quantMode TranscriptomeSAM GeneCounts \</span><br><span class="line">     --twopassMode Basic</span><br><span class="line"> done    </span><br><span class="line"> </span><br><span class="line"> </span><br></pre></td></tr></table></figure>
 
 
       

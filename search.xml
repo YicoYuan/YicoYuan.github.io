@@ -45,18 +45,21 @@
     <title>转录组测序数据及参考基因组准备</title>
     <url>/2022/02/13/RNA-seq-02/</url>
     <content><![CDATA[<h3 id="项目文件夹"><a href="#项目文件夹" class="headerlink" title="项目文件夹"></a>项目文件夹</h3><p>首先，建立一个项目所需的文件夹：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification,06diff&#125;</span><br></pre></td></tr></table></figure>
 
 <p>目录结构如下：</p>
-<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
-<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
 <p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
-<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a href="https://www.sciencedirect.com/science/article/abs/pii/S0304423821003150">文献</a>。EBI搜索PRJNA673578，然后用命令行工具下载到本地：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in &#123;3..6&#125;</span><br><span class="line">do</span><br><span class="line">wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR129/06$i/SRR1296346$i/SRR1296346$i*</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
+<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
+<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a href="https://www.sciencedirect.com/science/article/abs/pii/S0378111918308138">文献</a>。NCBI搜索<a href="https://www.ncbi.nlm.nih.gov/sra?linkname=bioproject_sra_all&from_uid=477414">PRJNA477414</a>，然后选择send to run selector，下载Accession List，其内容为SRR号：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SRR7410682</span><br><span class="line">SRR7410683</span><br><span class="line">SRR7410684</span><br><span class="line">SRR7410685</span><br><span class="line">SRR7410686</span><br><span class="line">SRR7410687</span><br><span class="line">SRR7410688</span><br><span class="line">SRR7410689</span><br><span class="line">SRR7410690</span><br></pre></td></tr></table></figure>
+
+<p>按官网说明安装sra toolkit工具。先使用prefetch将sra下载到本地，然后fastq-dump将sra转换为fastq格式：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file SRR_Acc_List.txt</span><br><span class="line"></span><br><span class="line">while read id</span><br><span class="line">do</span><br><span class="line">nohup fastq-dump -O ~/RNA_seq/02raw --gzip --split-3 --readids $id &amp;</span><br><span class="line">done &lt; SRR_Acc_List.txt</span><br></pre></td></tr></table></figure>
 
 <p>测序数据如下：</p>
 <p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
-<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#原始数据qc报告</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -0 ~/RNA_seq/02raw/qc/ ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">#合并qc报告到一个文件</span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"></span><br><span class="line">#质量过滤：去掉adapter和低质量reads</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 -z 9 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">原始数据qc报告</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -o ~/RNA_seq/02raw/qc ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">合并qc报告到一个文件</span></span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"><span class="meta">#</span><span class="bash">可以看到duplicates很高，但是不用去除，因为难以区分duplicates是PCR引起的还是基因的高表达。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">质量过滤：去掉adapter和低质量reads</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
@@ -66,12 +69,58 @@
   <entry>
     <title>序列比对</title>
     <url>/2022/02/14/RNA-seq-03/</url>
-    <content><![CDATA[<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#转录组常需要gff格式注释来识别外显子区域</span><br><span class="line">gffread ~/RNA_seq/01ref/Ppersica.gff3 -T -o ~/RNA_seq/01ref/Ppersica.gtf</span><br><span class="line"></span><br><span class="line">#构建参考基因组索引</span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA_seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 149</span><br><span class="line">     </span><br><span class="line">#--runThreadN:线程数</span><br><span class="line">#--runMode：运行模式</span><br><span class="line">#--genomeDir：索引文件输出目录（需提前建立）</span><br><span class="line">#--genomeFastaFiles：基因组fasta文件</span><br><span class="line">#--sjdbGTFfile：GTF注释文件</span><br><span class="line">#--sjdbOverhang：reads长度减1。主要用于可变剪接的预测。</span><br><span class="line"></span><br><span class="line">#序列比对</span><br><span class="line">for i in SRR129634&#123;63..66&#125;</span><br><span class="line">do</span><br><span class="line">STAR --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --readFilesIn ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">     --readFilesCommand zcat \</span><br><span class="line">     --outFileNamePrefix ~/RNA_seq/04align/$i \</span><br><span class="line">     --runThreadN 20 \</span><br><span class="line">     --sjdbOverhang 149 \</span><br><span class="line">     --outSAMtype BAM SortedByCoordinate \</span><br><span class="line">     --outBAMsortingThreadN 5 \</span><br><span class="line">     --quantMode TranscriptomeSAM GeneCounts \</span><br><span class="line">     --twopassMode Basic</span><br><span class="line"> done    </span><br><span class="line"> </span><br><span class="line"> #比对结果质控</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">转录组常需要gff格式注释来识别外显子区域</span></span><br><span class="line">gffread ~/RNA_seq/01ref/Ppersica.gff3 -T -o ~/RNA_seq/01ref/Ppersica.gtf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">构建参考基因组索引</span></span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA_seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 124</span><br><span class="line">     </span><br><span class="line"><span class="meta">#</span><span class="bash">--runThreadN:线程数</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--runMode：运行模式</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--genomeDir：索引文件输出目录（需提前建立）</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--genomeFastaFiles：基因组fasta文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--sjdbGTFfile：GTF注释文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--sjdbOverhang：reads长度减1。主要用于可变剪接的预测。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">序列比对</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">STAR --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --readFilesIn ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">     --readFilesCommand zcat \</span><br><span class="line">     --outFileNamePrefix ~/RNA_seq/04align/$i \</span><br><span class="line">     --runThreadN 20 \</span><br><span class="line">     --sjdbOverhang 124 \</span><br><span class="line">     --outSAMtype BAM SortedByCoordinate \</span><br><span class="line">     --outBAMsortingThreadN 5 \</span><br><span class="line">     --quantMode TranscriptomeSAM GeneCounts \</span><br><span class="line">     --twopassMode Basic</span><br><span class="line"> done     </span><br></pre></td></tr></table></figure>
+
+<p>比对后的输出文件如下：</p>
+<p><img src="/2022/02/14/RNA-seq-03/01.png"></p>
+<p>使用multiqc对比对结果质控：</p>
+]]></content>
+      <categories>
+        <category>RNA-seq</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>表达定量</title>
+    <url>/2022/02/17/RNA-seq-04/</url>
+    <content><![CDATA[<h3 id="如何区分RNA-seq数据来源是否基于链特异性建库"><a href="#如何区分RNA-seq数据来源是否基于链特异性建库" class="headerlink" title="如何区分RNA-seq数据来源是否基于链特异性建库"></a>如何区分RNA-seq数据来源是否基于链特异性建库</h3><p>双端测序中，根据read1和read2与DNA和RNA的比对情况，有三种类型的建库方式：</p>
+<p><img src="/2022/02/17/RNA-seq-04/01.PNG"></p>
+<ul>
+<li>Condition A：如果read1与RNA序列一致，则称为stranded library。</li>
+<li>Condition B：如果read2与RNA序列一致，则称为reversed stranded library。</li>
+<li>Condition C：但如果read1和read2都存在与RNA序列一致的情况，则称为unstranded library。</li>
+</ul>
+<p>STAR比对中，如果设置了–quantMode为GeneCounts，则会输出一个ReadsPerGene.out.tab的文件，里面记录了比对到基因上的reads数。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ENSG00000198804.2       555285  290702  281079</span><br><span class="line">ENSG00000198938.2       471151  238612  232541</span><br><span class="line">ENSG00000198886.2       466966  236203  230767</span><br><span class="line">ENSG00000210082.2       404889  203289  201602</span><br><span class="line">ENSG00000198712.1       359278  175022  184256</span><br><span class="line">ENSG00000198727.2       297601  150393  147574</span><br><span class="line">ENSG00000198763.3       288383  149779  138612</span><br><span class="line">ENSG00000156508.17      189858  96202   93663</span><br></pre></td></tr></table></figure>
+
+<p>第二列：counts for unstranded RNA-seq（Condition C）</p>
+<p>第三列：counts for stranded RNA-seq（Condition A）</p>
+<p>第四列：counts for reverse stranded RNA-seq（Condition B）</p>
+<p>如果是非链特异性建库，则第三列和第四列counts差不多。如果第4列为0，则是链特异性建库。如果第3列为0，则是reverse stranded。</p>
+<h3 id="安装featureCounts"><a href="#安装featureCounts" class="headerlink" title="安装featureCounts"></a>安装featureCounts</h3><p>下载subreads最新<a href="https://sourceforge.net/projects/subread/">安装包</a>，解压后按readme文件操作，然后将bin文件增加至环境变量，即在用户根目录下的.bashrc文件中新增<code>export PATH=&quot;/home/yico/subread/bin:$PATH&quot;</code>。也可以使用conda直接安装。</p>
+<h3 id="使用featurecounts"><a href="#使用featurecounts" class="headerlink" title="使用featurecounts"></a>使用featurecounts</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">featureCounts -T 20 -p --countReadPairs -s 0 \</span><br><span class="line">	-a ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">	-o ~/RNA_seq/05quantification/reads_counts.txt \</span><br><span class="line">  ~/RNA_seq/04align/*sorted*.bam </span><br></pre></td></tr></table></figure>
+
+<h3 id="使用multiqc质控"><a href="#使用multiqc质控" class="headerlink" title="使用multiqc质控"></a>使用multiqc质控</h3><p><img src="/2022/02/17/RNA-seq-04/02.png"></p>
+<h3 id="提取基因原始表达值"><a href="#提取基因原始表达值" class="headerlink" title="提取基因原始表达值"></a>提取基因原始表达值</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep -v &#x27;^#&#x27; ~/RNA_seq/05quantification/reads_counts.txt | cut -f 2-6 --complement &gt; ~/RNA_seq/06diff/counts.txt</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
         <category>RNA-seq</category>
       </categories>
+  </entry>
+  <entry>
+    <title>差异分析</title>
+    <url>/2022/02/19/RNA-seq-05/</url>
+    <content><![CDATA[<p>构建表达矩阵</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#更改行名，字段按顺序排列，同时去除表达总量小于10的基因</span><br><span class="line">awk &#x27;BEGIN&#123;printf &quot;geneid\t105_1\t105_2\t105_3\t120_1\t120_2\t120_3\t135_1\t135_2\t135_3\n&quot;&#125;&#123;if($2+$3+$4+$5+$6+$7+$8+$9+$10&gt;=10)print $1,$6,$8,$9,$4,$5,$7,$2,$3,$NF&#125;&#x27; counts.txt &gt; deseq2_input.txt</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<p><img src="/2022/02/19/RNA-seq-05/01.png" alt="before"></p>
+<p><img src="/2022/02/19/RNA-seq-05/02.png" alt="after"></p>
+<p>差异分析</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置R工作目录</span><br><span class="line">setwd(&quot;/home/yico/RNA_seq/06diff&quot;)</span><br><span class="line"></span><br><span class="line">#加载R包</span><br><span class="line">library(DESeq2)</span><br><span class="line"></span><br><span class="line">#读取counts.txt数据</span><br><span class="line">countsTable &lt;- read.csv(&quot;~/RNA_seq/06diff/deseq2_input.txt&quot;, row.names=1, sep=&quot;&quot;)</span><br><span class="line"></span><br><span class="line">#更改数据行名</span><br><span class="line">sampleNames &lt;- c(&quot;105_1&quot;,&quot;105_2&quot;,&quot;105_3&quot;,&quot;120_1&quot;,&quot;120_2&quot;,&quot;120_3&quot;,&quot;135_1&quot;,&quot;135_2&quot;,&quot;135_3&quot;)</span><br><span class="line">colnames(countsTable) &lt;- sampleNames</span><br><span class="line"></span><br><span class="line">#建立样品分组信息</span><br><span class="line">countsDesign &lt;- data.frame(row.names=sampleNames,group=c(&quot;105&quot;,&quot;105&quot;,&quot;105&quot;,&quot;120&quot;,&quot;120&quot;,&quot;120&quot;,&quot;135&quot;,&quot;135&quot;,&quot;135&quot;))</span><br><span class="line"></span><br><span class="line">#将读入的数据由data.frame转换为matrix</span><br><span class="line">countsMatrix &lt;- as.matrix(countsTable)</span><br><span class="line"></span><br><span class="line">#将countsMatrix转换为DESeq2所需的数据格式,这一步包含了数据的归一化（构建dds）</span><br><span class="line">dds &lt;- DESeqDataSetFromMatrix(countsMatrix,colData=countsDesign,design=~group)</span><br><span class="line"></span><br><span class="line">#DESeq分析：大小因子估计，离差估计，负二项分布的拟合以及计算相应的统计量</span><br><span class="line">dds &lt;- DESeq(dds,parallel=T)</span><br><span class="line"></span><br><span class="line">#分别提取两两之间差异分析的结果</span><br><span class="line">res_105Vs120 &lt;- results(dds,contrast=c(&quot;group&quot;,105,120),parallel=T)</span><br><span class="line">res_105Vs135 &lt;- results(dds,contrast=c(&quot;group&quot;,105,135),parallel=T)</span><br><span class="line">res_120Vs135 &lt;- results(dds,contrast=c(&quot;group&quot;,120,135),parallel=T)</span><br></pre></td></tr></table></figure>
+
+<p>差异结果可视化</p>
+]]></content>
   </entry>
   <entry>
     <title>软件准备</title>

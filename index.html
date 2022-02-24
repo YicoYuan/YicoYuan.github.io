@@ -237,7 +237,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-22 23:32:58" itemprop="dateModified" datetime="2022-02-22T23:32:58+08:00">2022-02-22</time>
+      <time title="修改时间：2022-02-24 21:54:22" itemprop="dateModified" datetime="2022-02-24T21:54:22+08:00">2022-02-24</time>
     </span>
 
   
@@ -315,7 +315,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-21 13:39:57" itemprop="dateModified" datetime="2022-02-21T13:39:57+08:00">2022-02-21</time>
+      <time title="修改时间：2022-02-24 21:55:16" itemprop="dateModified" datetime="2022-02-24T21:55:16+08:00">2022-02-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -339,25 +339,14 @@
     <div class="post-body" itemprop="articleBody">
           <h3 id="如何区分RNA-seq数据来源是否基于链特异性建库"><a href="#如何区分RNA-seq数据来源是否基于链特异性建库" class="headerlink" title="如何区分RNA-seq数据来源是否基于链特异性建库"></a>如何区分RNA-seq数据来源是否基于链特异性建库</h3><p>双端测序中，根据read1和read2与DNA和RNA的比对情况，有三种类型的建库方式：</p>
 <p><img src="/2022/02/17/RNA-seq-04/01.PNG"></p>
-<ul>
-<li>Condition A：如果read1与RNA序列一致，则称为stranded library。</li>
-<li>Condition B：如果read2与RNA序列一致，则称为reversed stranded library。</li>
-<li>Condition C：但如果read1和read2都存在与RNA序列一致的情况，则称为unstranded library。</li>
-</ul>
-<p>STAR比对中，如果设置了–quantMode为GeneCounts，则会输出一个ReadsPerGene.out.tab的文件，里面记录了比对到基因上的reads数。例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ENSG00000198804.2       555285  290702  281079</span><br><span class="line">ENSG00000198938.2       471151  238612  232541</span><br><span class="line">ENSG00000198886.2       466966  236203  230767</span><br><span class="line">ENSG00000210082.2       404889  203289  201602</span><br><span class="line">ENSG00000198712.1       359278  175022  184256</span><br><span class="line">ENSG00000198727.2       297601  150393  147574</span><br><span class="line">ENSG00000198763.3       288383  149779  138612</span><br><span class="line">ENSG00000156508.17      189858  96202   93663</span><br></pre></td></tr></table></figure>
-
-<p>第二列：counts for unstranded RNA-seq（Condition C）</p>
-<p>第三列：counts for stranded RNA-seq（Condition A）</p>
-<p>第四列：counts for reverse stranded RNA-seq（Condition B）</p>
-<p>如果是非链特异性建库，则第三列和第四列counts差不多。如果第4列为0，则是链特异性建库。如果第3列为0，则是reverse stranded。</p>
-<h3 id="安装featureCounts"><a href="#安装featureCounts" class="headerlink" title="安装featureCounts"></a>安装featureCounts</h3><p>下载subreads最新<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/subread/">安装包</a>，解压后按readme文件操作，然后将bin文件增加至环境变量，即在用户根目录下的.bashrc文件中新增<code>export PATH=&quot;/home/yico/subread/bin:$PATH&quot;</code>。也可以使用conda直接安装。</p>
-<h3 id="使用featurecounts"><a href="#使用featurecounts" class="headerlink" title="使用featurecounts"></a>使用featurecounts</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">featureCounts -T 20 -p --countReadPairs -s 0 \</span><br><span class="line">	-a ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">	-o ~/RNA_seq/05quantification/reads_counts.txt \</span><br><span class="line">  ~/RNA_seq/04align/*sorted*.bam </span><br></pre></td></tr></table></figure>
-
-<h3 id="使用multiqc质控"><a href="#使用multiqc质控" class="headerlink" title="使用multiqc质控"></a>使用multiqc质控</h3><p><img src="/2022/02/17/RNA-seq-04/02.png"></p>
-<h3 id="提取基因原始表达值"><a href="#提取基因原始表达值" class="headerlink" title="提取基因原始表达值"></a>提取基因原始表达值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -v &#x27;^#&#x27; ~/RNA_seq/05quantification/reads_counts.txt | cut -f 2-6 --complement &gt; ~/RNA_seq/06diff/counts.txt</span><br></pre></td></tr></table></figure>
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/17/RNA-seq-04/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -414,7 +403,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-21 18:50:47" itemprop="dateModified" datetime="2022-02-21T18:50:47+08:00">2022-02-21</time>
+      <time title="修改时间：2022-02-24 21:59:25" itemprop="dateModified" datetime="2022-02-24T21:59:25+08:00">2022-02-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -436,11 +425,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">转录组常需要gff格式注释来识别外显子区域</span></span><br><span class="line">gffread ~/RNA_seq/01ref/Ppersica.gff3 -T -o ~/RNA_seq/01ref/Ppersica.gtf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">构建参考基因组索引</span></span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA_seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 124</span><br><span class="line">     </span><br><span class="line"><span class="meta">#</span><span class="bash">--runThreadN:线程数</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--runMode：运行模式</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--genomeDir：索引文件输出目录（需提前建立）</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--genomeFastaFiles：基因组fasta文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--sjdbGTFfile：GTF注释文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--sjdbOverhang：reads长度减1。主要用于可变剪接的预测。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">序列比对</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">STAR --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --readFilesIn ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">     --readFilesCommand zcat \</span><br><span class="line">     --outFileNamePrefix ~/RNA_seq/04align/$i \</span><br><span class="line">     --runThreadN 20 \</span><br><span class="line">     --sjdbOverhang 124 \</span><br><span class="line">     --outSAMtype BAM SortedByCoordinate \</span><br><span class="line">     --outBAMsortingThreadN 5 \</span><br><span class="line">     --quantMode TranscriptomeSAM GeneCounts \</span><br><span class="line">     --twopassMode Basic</span><br><span class="line"> done     </span><br></pre></td></tr></table></figure>
+          <span id="more"></span>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">转录组常需要gff格式注释来识别外显子区域</span></span><br><span class="line">gffread ~/RNA_seq/01ref/Ppersica.gff3 -T -o ~/RNA_seq/01ref/Ppersica.gtf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">构建参考基因组索引</span></span><br><span class="line">STAR --runThreadN 20 \</span><br><span class="line">     --runMode genomeGenerate \</span><br><span class="line">     --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --genomeFastaFiles ~/RNA_seq/01ref/Ppersica.fa \</span><br><span class="line">     --sjdbGTFfile ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">     --sjdbOverhang 124</span><br><span class="line">     </span><br><span class="line"><span class="meta">#</span><span class="bash">--runThreadN:线程数</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--runMode：运行模式</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--genomeDir：索引文件输出目录（需提前建立）</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--genomeFastaFiles：基因组fasta文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--sjdbGTFfile：GTF注释文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--sjdbOverhang：reads长度减1。主要用于可变剪接的预测。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">序列比对</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">STAR --genomeDir ~/RNA_seq/01ref/index_dir \</span><br><span class="line">     --readFilesIn ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">     --readFilesCommand zcat \</span><br><span class="line">     --outFileNamePrefix ~/RNA_seq/04align/$i \</span><br><span class="line">     --runThreadN 20 \</span><br><span class="line">     --sjdbOverhang 124 \</span><br><span class="line">     --outSAMtype BAM SortedByCoordinate \</span><br><span class="line">     --outBAMsortingThreadN 5 \</span><br><span class="line">     --quantMode TranscriptomeSAM GeneCounts \</span><br><span class="line">     --twopassMode Basic</span><br><span class="line"> done     </span><br></pre></td></tr></table></figure>
 
 <p>比对后的输出文件如下：</p>
 <p><img src="/2022/02/14/RNA-seq-03/01.png"></p>
 <p>使用multiqc对比对结果质控：</p>
+<p><img src="/2022/02/14/RNA-seq-03/02.png"></p>
 
       
     </div>
@@ -498,7 +490,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-20 11:24:18" itemprop="dateModified" datetime="2022-02-20T11:24:18+08:00">2022-02-20</time>
+      <time title="修改时间：2022-02-24 22:00:04" itemprop="dateModified" datetime="2022-02-24T22:00:04+08:00">2022-02-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -525,19 +517,14 @@
 
 <p>目录结构如下：</p>
 <p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
-<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a target="_blank" rel="noopener" href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
-<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
-<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/abs/pii/S0378111918308138">文献</a>。NCBI搜索<a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/sra?linkname=bioproject_sra_all&from_uid=477414">PRJNA477414</a>，然后选择send to run selector，下载Accession List，其内容为SRR号：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SRR7410682</span><br><span class="line">SRR7410683</span><br><span class="line">SRR7410684</span><br><span class="line">SRR7410685</span><br><span class="line">SRR7410686</span><br><span class="line">SRR7410687</span><br><span class="line">SRR7410688</span><br><span class="line">SRR7410689</span><br><span class="line">SRR7410690</span><br></pre></td></tr></table></figure>
-
-<p>按官网说明安装sra toolkit工具。先使用prefetch将sra下载到本地，然后fastq-dump将sra转换为fastq格式：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">prefetch --option-file SRR_Acc_List.txt</span><br><span class="line"></span><br><span class="line">while read id</span><br><span class="line">do</span><br><span class="line">nohup fastq-dump -O ~/RNA_seq/02raw --gzip --split-3 --readids $id &amp;</span><br><span class="line">done &lt; SRR_Acc_List.txt</span><br></pre></td></tr></table></figure>
-
-<p>测序数据如下：</p>
-<p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
-<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">原始数据qc报告</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -o ~/RNA_seq/02raw/qc ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">合并qc报告到一个文件</span></span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"><span class="meta">#</span><span class="bash">可以看到duplicates很高，但是不用去除，因为难以区分duplicates是PCR引起的还是基因的高表达。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">质量过滤：去掉adapter和低质量reads</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/13/RNA-seq-02/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

@@ -157,13 +157,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -206,6 +206,305 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/26/R-02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/26/R-02/" class="post-title-link" itemprop="url">数据可视化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-26 17:30:02" itemprop="dateCreated datePublished" datetime="2022-02-26T17:30:02+08:00">2022-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-27 10:33:44" itemprop="dateModified" datetime="2022-02-27T10:33:44+08:00">2022-02-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/R/" itemprop="url" rel="index"><span itemprop="name">R</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>安装并加载R包tidyverse</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(&quot;tidyverse&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>每次重新进入R都需要加载一次R包。</p>
+<p>如果我们想说明函数（或数据集）的来源，可以使用package::function()的格式，例如ggplot2::ggplot，同时也可以避免与基础R包里函数重名而发生冲突。</p>
+<h1 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h1><h2 id="数据集mpg"><a href="#数据集mpg" class="headerlink" title="数据集mpg"></a>数据集mpg</h2><p>mpg是ggplot2自带的tibble格式数据框。tibble是在R原有data.frame格式数据框基础上做出的改进。mpg数据集是来自于美国环保局收集的38种车型的相关数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述变量中，displ表示汽车引擎大小，hwy表示汽车高速油耗。</p>
+<h2 id="用ggplot画一幅图"><a href="#用ggplot画一幅图" class="headerlink" title="用ggplot画一幅图"></a>用ggplot画一幅图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这幅图显示引擎大小和油耗成负相关。</p>
+<p>ggplot()函数创建了一个坐标系，使得你可以在其上叠加图层。ggplot里的参数data指定了绘图所使用的数据集，mapping=aes()指定了x、y变量。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/26/R-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/26/R-01/" class="post-title-link" itemprop="url">R简介</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-26 14:14:50" itemprop="dateCreated datePublished" datetime="2022-02-26T14:14:50+08:00">2022-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-27 15:39:34" itemprop="dateModified" datetime="2022-02-27T15:39:34+08:00">2022-02-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/R/" itemprop="url" rel="index"><span itemprop="name">R</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>R 语言是为数学研究工作者设计的一种数学编程语言，主要用于统计分析、绘图、数据挖掘。R 语言是解释运行的语言（与 C 语言的编译运行不同），它的执行速度比 C 语言慢得多，不利于优化。但它在语法层面提供了更加丰富的数据结构操作并且能够十分方便地输出文字和图形信息，所以它广泛应用于数学尤其是统计学领域。</p>
+<p>虽然通常认为用Python操作数据，再用R进行统计分析是一种效率更高的方式，但是最好每次只学习并精通一种工具，因为这可能比泛泛同时学习多个工具掌握得更快。</p>
+<p>R语言的特点：</p>
+<ul>
+<li>R 语言环境软件属于 GNU 开源软件，兼容性好、使用免费</li>
+<li>语法十分有利于复杂的数学运算</li>
+<li>数据类型丰富，包括向量、矩阵、因子、数据集等常用数据结构</li>
+<li>代码风格好，可读性强</li>
+</ul>
+<p>Tidyverse是R语言神级人物Hadley Wickham开发的R包集，包括ggplot2、dplyr、tidyr、readr、purrr、tibble、stringr、forcats等一系列核心包，提供了从数据读入、数据清洗到数据统计分析和可视化，以及编程的一整套函数工具。</p>
+<p><img src="/2022/02/26/R-01/01.png"></p>
+<p><img src="/2022/02/26/R-01/02.jpg"></p>
+<p>Hadley Wickham也是RStudio首席科学家。RStudio是目前R使用最普遍的IDE。</p>
+<p>虽然也有很多人通过《R语言实战》这本书来入门R。但是相对于先学习变量、数据结构这样的base R first的学习方式，tidyverse提供一种更为高效的学习方式，让初学者在最短时间内学会数据的处理与可视化。</p>
+<p>R的安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#准备</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install gdebi-core</span><br><span class="line"></span><br><span class="line">#指定R版本</span><br><span class="line">#clusterprofiler不支持3.x版本的R</span><br><span class="line">export R_VERSION=4.0.5</span><br><span class="line"></span><br><span class="line">#下载并安装R</span><br><span class="line">curl -O https://cdn.rstudio.com/r/ubuntu-2004/pkgs/r-$&#123;R_VERSION&#125;_1_amd64.deb</span><br><span class="line">sudo gdebi r-$&#123;R_VERSION&#125;_1_amd64.deb</span><br><span class="line"></span><br><span class="line">#确定安装</span><br><span class="line">/opt/R/$&#123;R_VERSION&#125;/bin/R --version</span><br><span class="line"></span><br><span class="line">#建立软链接到系统PATH，以便全局访问</span><br><span class="line">sudo ln -s /opt/R/$&#123;R_VERSION&#125;/bin/R /usr/local/bin/R</span><br><span class="line">sudo ln -s /opt/R/$&#123;R_VERSION&#125;/bin/Rscript /usr/local/bin/Rscript</span><br></pre></td></tr></table></figure>
+
+<p>RStudio的安装</p>
+<p>到<a target="_blank" rel="noopener" href="https://www.rstudio.com/products/rstudio/download/#download">官网</a>下载对应的RStudio desktop安装包，双击安装即可。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/24/RNA-seq-06/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/24/RNA-seq-06/" class="post-title-link" itemprop="url">富集分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-24 22:06:32" itemprop="dateCreated datePublished" datetime="2022-02-24T22:06:32+08:00">2022-02-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-01 12:54:53" itemprop="dateModified" datetime="2022-03-01T12:54:53+08:00">2022-03-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/RNA-seq/" itemprop="url" rel="index"><span itemprop="name">RNA_seq</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="安装R包ClusterProfiler"><a href="#安装R包ClusterProfiler" class="headerlink" title="安装R包ClusterProfiler"></a>安装R包ClusterProfiler</h1><figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">require(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">install_github(<span class="string">&quot;GuangchuangYu/clusterProfiler&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>很多时候R包安装失败都是文件夹的读写权限未打开，其次可能是因为依赖文件的缺失。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#对文件夹其下所有子文件（夹）开放读、写、执行权限</span><br><span class="line">sudo chmod 777 -R &lt;directory&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="基因富集分析"><a href="#基因富集分析" class="headerlink" title="基因富集分析"></a>基因富集分析</h1><h2 id="加载R包ClusterProfiler"><a href="#加载R包ClusterProfiler" class="headerlink" title="加载R包ClusterProfiler"></a>加载R包ClusterProfiler</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">library(clusterProfiler)</span><br></pre></td></tr></table></figure>
+
+<h2 id="提取差异基因（以resSig-105Vs120为例）"><a href="#提取差异基因（以resSig-105Vs120为例）" class="headerlink" title="提取差异基因（以resSig_105Vs120为例）"></a>提取差异基因（以resSig_105Vs120为例）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gene &lt;- read.table(&quot;resSig_105Vs120.csv&quot;)</span><br><span class="line">gene &lt;- rownames(gene)</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建非模式物种注释信息"><a href="#构建非模式物种注释信息" class="headerlink" title="构建非模式物种注释信息"></a>构建非模式物种注释信息</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">BiocManager::install(&quot;AnnotationHub&quot;)</span><br><span class="line">library(AnnotationHub)</span><br><span class="line">hub &lt;- AnnotationHub()</span><br><span class="line">query(hub,&quot;Prunus persica&quot;)</span><br><span class="line">peach &lt;- hub[[&#x27;AH86027&#x27;]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。然后使用bitr将gene ID转换为Entrez ID。</p>
+<h3 id="rvest包基本函数"><a href="#rvest包基本函数" class="headerlink" title="rvest包基本函数"></a>rvest包基本函数</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">read_html():读取html网页</span><br><span class="line">html_nodes():选择提取网页中指定元素、节点</span><br><span class="line">html_text():提取标签内的文本</span><br></pre></td></tr></table></figure>
+
+<h3 id="rvest包的使用"><a href="#rvest包的使用" class="headerlink" title="rvest包的使用"></a>rvest包的使用</h3><p>使用revest包批量爬取locus tag对应的gene id，其中html的element可通过selectorgadget插件获取。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="stringi处理爬取的字符串"><a href="#stringi处理爬取的字符串" class="headerlink" title="stringi处理爬取的字符串"></a>stringi处理爬取的字符串</h3><p>使用stringr提取<code>Gene ID: 18793306, updated on 1-Jun-2019</code>里仅数字部分的ID：18793306。<br>genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,”,”)-1) 。使用Excel的智能匹配模式提取gene ID可能更方便。</p>
+<h3 id="使用bitr将gene-ID转换为Entrez-ID"><a href="#使用bitr将gene-ID转换为Entrez-ID" class="headerlink" title="使用bitr将gene ID转换为Entrez ID"></a>使用bitr将gene ID转换为Entrez ID</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">entrezid &lt;- bitr(geneid,fromType=&quot;GENEID&quot;,toType=&quot;ENTREZID&quot;,orgDb=&quot;peach&quot;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="GO富集分析"><a href="#GO富集分析" class="headerlink" title="GO富集分析"></a>GO富集分析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=entrezid, universe=)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
+<p>1.<a target="_blank" rel="noopener" href="https://yulab-smu.top/biomedical-knowledge-mining-book/clusterprofiler-go.html">clusterprofiler</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/19/RNA-seq-05/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -237,7 +536,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 21:54:22" itemprop="dateModified" datetime="2022-02-24T21:54:22+08:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 15:40:24" itemprop="dateModified" datetime="2022-02-27T15:40:24+08:00">2022-02-27</time>
     </span>
 
   
@@ -794,274 +1093,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/01/25/WES06/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/24/WES05/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/24/WES05/" class="post-title-link" itemprop="url">Variants Calling</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-24 23:35:21" itemprop="dateCreated datePublished" datetime="2022-01-24T23:35:21+08:00">2022-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-12 17:55:54" itemprop="dateModified" datetime="2022-02-12T17:55:54+08:00">2022-02-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>经过前面的预处理工作得到处理好的bam文件，我们就可以开始下游的找变异分析了。</p>
-<p>主要分析包括三步：</p>
-<ul>
-<li><strong>Call variants</strong></li>
-<li>Filter variants</li>
-<li>Annotation</li>
-</ul>
-<p>今天我们先学习Call variants。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/24/WES05/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/20/WES04/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/20/WES04/" class="post-title-link" itemprop="url">碱基质量重矫正</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-20 13:25:27" itemprop="dateCreated datePublished" datetime="2022-01-20T13:25:27+08:00">2022-01-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-29 00:19:50" itemprop="dateModified" datetime="2022-01-29T00:19:50+08:00">2022-01-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>GATK是目前业内最权威、使用最广泛的变异检测工具。目前最新版为GATK4，相比GATK3，GATK4在一些工具的使用及参数的设置上都有所优化，取消了Indel的Realignment。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/20/WES04/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/01/17/WES03/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/ye.svg">
-      <meta itemprop="name" content="Yico Yuan">
-      <meta itemprop="description" content="Things To Be Passionate About In Life.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YuanYe's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/17/WES03/" class="post-title-link" itemprop="url">测序数据比对到参考基因组</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-17 20:52:47" itemprop="dateCreated datePublished" datetime="2022-01-17T20:52:47+08:00">2022-01-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-28 22:50:33" itemprop="dateModified" datetime="2022-01-28T22:50:33+08:00">2022-01-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/WES/" itemprop="url" rel="index"><span itemprop="name">WES</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/17/WES03/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

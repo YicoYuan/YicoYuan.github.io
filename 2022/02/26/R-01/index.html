@@ -22,30 +22,30 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="如何区分RNA-seq数据来源是否基于链特异性建库双端测序中，根据read1和read2与DNA和RNA的比对情况，有三种类型的建库方式：">
+<meta name="description" content="R 语言是为数学研究工作者设计的一种数学编程语言，主要用于统计分析、绘图、数据挖掘。R 语言是解释运行的语言（与 C 语言的编译运行不同），它的执行速度比 C 语言慢得多，不利于优化。但它在语法层面提供了更加丰富的数据结构操作并且能够十分方便地输出文字和图形信息，所以它广泛应用于数学尤其是统计学领域。 虽然通常认为用Python操作数据，再用R进行统计分析是一种效率更高的方式，但是最好每次只学习并">
 <meta property="og:type" content="article">
-<meta property="og:title" content="表达定量">
-<meta property="og:url" content="http://yicoyuan.xyz/2022/02/17/RNA-seq-04/index.html">
+<meta property="og:title" content="R简介">
+<meta property="og:url" content="http://yicoyuan.xyz/2022/02/26/R-01/index.html">
 <meta property="og:site_name" content="YuanYe&#39;s blog">
-<meta property="og:description" content="如何区分RNA-seq数据来源是否基于链特异性建库双端测序中，根据read1和read2与DNA和RNA的比对情况，有三种类型的建库方式：">
+<meta property="og:description" content="R 语言是为数学研究工作者设计的一种数学编程语言，主要用于统计分析、绘图、数据挖掘。R 语言是解释运行的语言（与 C 语言的编译运行不同），它的执行速度比 C 语言慢得多，不利于优化。但它在语法层面提供了更加丰富的数据结构操作并且能够十分方便地输出文字和图形信息，所以它广泛应用于数学尤其是统计学领域。 虽然通常认为用Python操作数据，再用R进行统计分析是一种效率更高的方式，但是最好每次只学习并">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yicoyuan.xyz/2022/02/17/RNA-seq-04/01.PNG">
-<meta property="og:image" content="http://yicoyuan.xyz/2022/02/17/RNA-seq-04/02.png">
-<meta property="article:published_time" content="2022-02-17T04:41:31.000Z">
-<meta property="article:modified_time" content="2022-02-24T13:55:16.397Z">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-01/01.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-01/02.jpg">
+<meta property="article:published_time" content="2022-02-26T06:14:50.000Z">
+<meta property="article:modified_time" content="2022-02-27T07:39:34.779Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yicoyuan.xyz/2022/02/17/RNA-seq-04/01.PNG">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/02/26/R-01/01.png">
 
 
-<link rel="canonical" href="http://yicoyuan.xyz/2022/02/17/RNA-seq-04/">
+<link rel="canonical" href="http://yicoyuan.xyz/2022/02/26/R-01/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/02/17/RNA-seq-04/","path":"2022/02/17/RNA-seq-04/","title":"表达定量"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/02/26/R-01/","path":"2022/02/26/R-01/","title":"R简介"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>表达定量 | YuanYe's blog</title>
+<title>R简介 | YuanYe's blog</title>
   
 
 
@@ -135,7 +135,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -148,7 +148,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%8C%BA%E5%88%86RNA-seq%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90%E6%98%AF%E5%90%A6%E5%9F%BA%E4%BA%8E%E9%93%BE%E7%89%B9%E5%BC%82%E6%80%A7%E5%BB%BA%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">如何区分RNA-seq数据来源是否基于链特异性建库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85featureCounts"><span class="nav-number">2.</span> <span class="nav-text">安装featureCounts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8featurecounts"><span class="nav-number">3.</span> <span class="nav-text">使用featurecounts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8multiqc%E8%B4%A8%E6%8E%A7"><span class="nav-number">4.</span> <span class="nav-text">使用multiqc质控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E5%8F%96%E5%9F%BA%E5%9B%A0%E5%8E%9F%E5%A7%8B%E8%A1%A8%E8%BE%BE%E5%80%BC"><span class="nav-number">5.</span> <span class="nav-text">提取基因原始表达值</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -213,7 +212,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/17/RNA-seq-04/">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/02/26/R-01/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/ye.svg">
@@ -226,7 +225,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          表达定量
+          R简介
         </h1>
 
         <div class="post-meta-container">
@@ -237,14 +236,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-02-17 12:41:31" itemprop="dateCreated datePublished" datetime="2022-02-17T12:41:31+08:00">2022-02-17</time>
+      <time title="创建时间：2022-02-26 14:14:50" itemprop="dateCreated datePublished" datetime="2022-02-26T14:14:50+08:00">2022-02-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 21:55:16" itemprop="dateModified" datetime="2022-02-24T21:55:16+08:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 15:39:34" itemprop="dateModified" datetime="2022-02-27T15:39:34+08:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -252,7 +251,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/RNA-seq/" itemprop="url" rel="index"><span itemprop="name">RNA-seq</span></a>
+          <a href="/categories/R/" itemprop="url" rel="index"><span itemprop="name">R</span></a>
         </span>
     </span>
 
@@ -273,28 +272,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h3 id="如何区分RNA-seq数据来源是否基于链特异性建库"><a href="#如何区分RNA-seq数据来源是否基于链特异性建库" class="headerlink" title="如何区分RNA-seq数据来源是否基于链特异性建库"></a>如何区分RNA-seq数据来源是否基于链特异性建库</h3><p>双端测序中，根据read1和read2与DNA和RNA的比对情况，有三种类型的建库方式：</p>
-<p><img src="/2022/02/17/RNA-seq-04/01.PNG"></p>
-<span id="more"></span>
-
+        <p>R 语言是为数学研究工作者设计的一种数学编程语言，主要用于统计分析、绘图、数据挖掘。R 语言是解释运行的语言（与 C 语言的编译运行不同），它的执行速度比 C 语言慢得多，不利于优化。但它在语法层面提供了更加丰富的数据结构操作并且能够十分方便地输出文字和图形信息，所以它广泛应用于数学尤其是统计学领域。</p>
+<p>虽然通常认为用Python操作数据，再用R进行统计分析是一种效率更高的方式，但是最好每次只学习并精通一种工具，因为这可能比泛泛同时学习多个工具掌握得更快。</p>
+<p>R语言的特点：</p>
 <ul>
-<li>Condition A：如果read1与RNA序列一致，则称为stranded library。</li>
-<li>Condition B：如果read2与RNA序列一致，则称为reversed stranded library。</li>
-<li>Condition C：但如果read1和read2都存在与RNA序列一致的情况，则称为unstranded library。</li>
+<li>R 语言环境软件属于 GNU 开源软件，兼容性好、使用免费</li>
+<li>语法十分有利于复杂的数学运算</li>
+<li>数据类型丰富，包括向量、矩阵、因子、数据集等常用数据结构</li>
+<li>代码风格好，可读性强</li>
 </ul>
-<p>STAR比对中，如果设置了–quantMode为GeneCounts，则会输出一个ReadsPerGene.out.tab的文件，里面记录了比对到基因上的reads数。例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ENSG00000198804.2       555285  290702  281079</span><br><span class="line">ENSG00000198938.2       471151  238612  232541</span><br><span class="line">ENSG00000198886.2       466966  236203  230767</span><br><span class="line">ENSG00000210082.2       404889  203289  201602</span><br><span class="line">ENSG00000198712.1       359278  175022  184256</span><br><span class="line">ENSG00000198727.2       297601  150393  147574</span><br><span class="line">ENSG00000198763.3       288383  149779  138612</span><br><span class="line">ENSG00000156508.17      189858  96202   93663</span><br></pre></td></tr></table></figure>
+<p>Tidyverse是R语言神级人物Hadley Wickham开发的R包集，包括ggplot2、dplyr、tidyr、readr、purrr、tibble、stringr、forcats等一系列核心包，提供了从数据读入、数据清洗到数据统计分析和可视化，以及编程的一整套函数工具。</p>
+<p><img src="/2022/02/26/R-01/01.png"></p>
+<p><img src="/2022/02/26/R-01/02.jpg"></p>
+<p>Hadley Wickham也是RStudio首席科学家。RStudio是目前R使用最普遍的IDE。</p>
+<p>虽然也有很多人通过《R语言实战》这本书来入门R。但是相对于先学习变量、数据结构这样的base R first的学习方式，tidyverse提供一种更为高效的学习方式，让初学者在最短时间内学会数据的处理与可视化。</p>
+<p>R的安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#准备</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install gdebi-core</span><br><span class="line"></span><br><span class="line">#指定R版本</span><br><span class="line">#clusterprofiler不支持3.x版本的R</span><br><span class="line">export R_VERSION=4.0.5</span><br><span class="line"></span><br><span class="line">#下载并安装R</span><br><span class="line">curl -O https://cdn.rstudio.com/r/ubuntu-2004/pkgs/r-$&#123;R_VERSION&#125;_1_amd64.deb</span><br><span class="line">sudo gdebi r-$&#123;R_VERSION&#125;_1_amd64.deb</span><br><span class="line"></span><br><span class="line">#确定安装</span><br><span class="line">/opt/R/$&#123;R_VERSION&#125;/bin/R --version</span><br><span class="line"></span><br><span class="line">#建立软链接到系统PATH，以便全局访问</span><br><span class="line">sudo ln -s /opt/R/$&#123;R_VERSION&#125;/bin/R /usr/local/bin/R</span><br><span class="line">sudo ln -s /opt/R/$&#123;R_VERSION&#125;/bin/Rscript /usr/local/bin/Rscript</span><br></pre></td></tr></table></figure>
 
-<p>第二列：counts for unstranded RNA-seq（Condition C）</p>
-<p>第三列：counts for stranded RNA-seq（Condition A）</p>
-<p>第四列：counts for reverse stranded RNA-seq（Condition B）</p>
-<p>如果是非链特异性建库，则第三列和第四列counts差不多。如果第4列为0，则是链特异性建库。如果第3列为0，则是reverse stranded。</p>
-<h3 id="安装featureCounts"><a href="#安装featureCounts" class="headerlink" title="安装featureCounts"></a>安装featureCounts</h3><p>下载subreads最新<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/subread/">安装包</a>，解压后按readme文件操作，然后将bin文件增加至环境变量，即在用户根目录下的.bashrc文件中新增<code>export PATH=&quot;/home/yico/subread/bin:$PATH&quot;</code>。也可以使用conda直接安装。</p>
-<h3 id="使用featurecounts"><a href="#使用featurecounts" class="headerlink" title="使用featurecounts"></a>使用featurecounts</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">featureCounts -T 20 -p --countReadPairs -s 0 \</span><br><span class="line">	-a ~/RNA_seq/01ref/Ppersica.gtf \</span><br><span class="line">	-o ~/RNA_seq/05quantification/reads_counts.txt \</span><br><span class="line">  ~/RNA_seq/04align/*sorted*.bam </span><br></pre></td></tr></table></figure>
-
-<h3 id="使用multiqc质控"><a href="#使用multiqc质控" class="headerlink" title="使用multiqc质控"></a>使用multiqc质控</h3><p><img src="/2022/02/17/RNA-seq-04/02.png"></p>
-<h3 id="提取基因原始表达值"><a href="#提取基因原始表达值" class="headerlink" title="提取基因原始表达值"></a>提取基因原始表达值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -v &#x27;^#&#x27; ~/RNA_seq/05quantification/reads_counts.txt | cut -f 2-6 --complement &gt; ~/RNA_seq/06diff/counts.txt</span><br></pre></td></tr></table></figure>
-
+<p>RStudio的安装</p>
+<p>到<a target="_blank" rel="noopener" href="https://www.rstudio.com/products/rstudio/download/#download">官网</a>下载对应的RStudio desktop安装包，双击安装即可。</p>
 
     </div>
 
@@ -308,13 +304,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/02/14/RNA-seq-03/" rel="prev" title="序列比对">
-                  <i class="fa fa-chevron-left"></i> 序列比对
+                <a href="/2022/02/24/RNA-seq-06/" rel="prev" title="富集分析">
+                  <i class="fa fa-chevron-left"></i> 富集分析
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/02/19/RNA-seq-05/" rel="next" title="差异分析">
-                  差异分析 <i class="fa fa-chevron-right"></i>
+                <a href="/2022/02/26/R-02/" rel="next" title="数据可视化">
+                  数据可视化 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>

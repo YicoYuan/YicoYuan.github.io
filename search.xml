@@ -165,6 +165,42 @@
       </categories>
   </entry>
   <entry>
+    <title>富集分析</title>
+    <url>/2022/02/24/RNA-seq-06/</url>
+    <content><![CDATA[<h1 id="安装R包ClusterProfiler"><a href="#安装R包ClusterProfiler" class="headerlink" title="安装R包ClusterProfiler"></a>安装R包ClusterProfiler</h1><figure class="highlight r"><table><tr><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">require(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">install_github(<span class="string">&quot;GuangchuangYu/clusterProfiler&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>很多时候R包安装失败都是文件夹的读写权限未打开，其次可能是因为依赖文件的缺失。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#对文件夹其下所有子文件（夹）开放读、写、执行权限</span><br><span class="line">sudo chmod 777 -R &lt;directory&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="基因富集分析"><a href="#基因富集分析" class="headerlink" title="基因富集分析"></a>基因富集分析</h1><h2 id="加载R包ClusterProfiler"><a href="#加载R包ClusterProfiler" class="headerlink" title="加载R包ClusterProfiler"></a>加载R包ClusterProfiler</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(clusterProfiler)</span><br></pre></td></tr></table></figure>
+
+<h2 id="提取差异基因（以resSig-105Vs120为例）"><a href="#提取差异基因（以resSig-105Vs120为例）" class="headerlink" title="提取差异基因（以resSig_105Vs120为例）"></a>提取差异基因（以resSig_105Vs120为例）</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gene &lt;- read.table(&quot;resSig_105Vs120.csv&quot;)</span><br><span class="line">gene &lt;- rownames(gene)</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建非模式物种注释信息"><a href="#构建非模式物种注释信息" class="headerlink" title="构建非模式物种注释信息"></a>构建非模式物种注释信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">BiocManager::install(&quot;AnnotationHub&quot;)</span><br><span class="line">library(AnnotationHub)</span><br><span class="line">hub &lt;- AnnotationHub()</span><br><span class="line">query(hub,&quot;Prunus persica&quot;)</span><br><span class="line">peach &lt;- hub[[&#x27;AH86027&#x27;]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。然后使用bitr将gene ID转换为Entrez ID。</p>
+<h3 id="rvest包基本函数"><a href="#rvest包基本函数" class="headerlink" title="rvest包基本函数"></a>rvest包基本函数</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">read_html():读取html网页</span><br><span class="line">html_nodes():选择提取网页中指定元素、节点</span><br><span class="line">html_text():提取标签内的文本</span><br></pre></td></tr></table></figure>
+
+<h3 id="rvest包的使用"><a href="#rvest包的使用" class="headerlink" title="rvest包的使用"></a>rvest包的使用</h3><p>使用revest包加上基本的for循环来批量爬取locus tag对应的NCBI gene id，即entrez ID，其中html的element可通过selectorgadget插件获取。虽然比较慢，但是目前我也没有找到更好的转换locus tag为通用id的方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="stringi处理爬取的字符串"><a href="#stringi处理爬取的字符串" class="headerlink" title="stringi处理爬取的字符串"></a>stringi处理爬取的字符串</h3><p>使用stringr提取<code>Gene ID: 18793306, updated on 1-Jun-2019</code>里仅数字部分的ID：18793306。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(tidyverse)</span><br><span class="line">genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,&quot;,&quot;)-1) </span><br></pre></td></tr></table></figure>
+
+<p>也可以使用Excel的智能匹配模式提取gene ID。</p>
+<h2 id="GO富集分析"><a href="#GO富集分析" class="headerlink" title="GO富集分析"></a>GO富集分析</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=entrezid, universe=,OrgDb=peach,ont=&quot;CC&quot;,pAdjustMethod=&quot;BH&quot;, pvalueCutoff=0.01,qvalueCutoff=0.05,readable=TRUE))</span><br><span class="line">head(ego)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<h3 id="GO富集结果可视化"><a href="#GO富集结果可视化" class="headerlink" title="GO富集结果可视化"></a>GO富集结果可视化</h3><h2 id="KEGG富集分析"><a href="#KEGG富集分析" class="headerlink" title="KEGG富集分析"></a>KEGG富集分析</h2><h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
+<p>1.<a href="https://yulab-smu.top/biomedical-knowledge-mining-book/clusterprofiler-go.html">clusterprofiler</a></p>
+]]></content>
+      <categories>
+        <category>RNA_seq</category>
+      </categories>
+  </entry>
+  <entry>
     <title>差异分析</title>
     <url>/2022/02/19/RNA-seq-05/</url>
     <content><![CDATA[<h3 id="构建表达矩阵"><a href="#构建表达矩阵" class="headerlink" title="构建表达矩阵"></a>构建表达矩阵</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">更改行名，字段按顺序排列，同时去除表达总量小于10的基因</span></span><br><span class="line">awk &#x27;BEGIN&#123;printf &quot;geneid\t105_1\t105_2\t105_3\t120_1\t120_2\t120_3\t135_1\t135_2\t135_3\n&quot;&#125;&#123;if($2+$3+$4+$5+$6+$7+$8+$9+$10&gt;=10)print $1,$6,$8,$9,$4,$5,$7,$2,$3,$NF&#125;&#x27; counts.txt &gt; deseq2_input.txt</span><br></pre></td></tr></table></figure>
@@ -201,42 +237,6 @@
 <p>效果如下：</p>
 <p><img src="/2022/02/19/RNA-seq-05/07.png"></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>富集分析</title>
-    <url>/2022/02/24/RNA-seq-06/</url>
-    <content><![CDATA[<h1 id="安装R包ClusterProfiler"><a href="#安装R包ClusterProfiler" class="headerlink" title="安装R包ClusterProfiler"></a>安装R包ClusterProfiler</h1><figure class="highlight r"><table><tr><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">require(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">install_github(<span class="string">&quot;GuangchuangYu/clusterProfiler&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<p>很多时候R包安装失败都是文件夹的读写权限未打开，其次可能是因为依赖文件的缺失。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#对文件夹其下所有子文件（夹）开放读、写、执行权限</span><br><span class="line">sudo chmod 777 -R &lt;directory&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="基因富集分析"><a href="#基因富集分析" class="headerlink" title="基因富集分析"></a>基因富集分析</h1><h2 id="加载R包ClusterProfiler"><a href="#加载R包ClusterProfiler" class="headerlink" title="加载R包ClusterProfiler"></a>加载R包ClusterProfiler</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(clusterProfiler)</span><br></pre></td></tr></table></figure>
-
-<h2 id="提取差异基因（以resSig-105Vs120为例）"><a href="#提取差异基因（以resSig-105Vs120为例）" class="headerlink" title="提取差异基因（以resSig_105Vs120为例）"></a>提取差异基因（以resSig_105Vs120为例）</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gene &lt;- read.table(&quot;resSig_105Vs120.csv&quot;)</span><br><span class="line">gene &lt;- rownames(gene)</span><br></pre></td></tr></table></figure>
-
-<h2 id="构建非模式物种注释信息"><a href="#构建非模式物种注释信息" class="headerlink" title="构建非模式物种注释信息"></a>构建非模式物种注释信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">BiocManager::install(&quot;AnnotationHub&quot;)</span><br><span class="line">library(AnnotationHub)</span><br><span class="line">hub &lt;- AnnotationHub()</span><br><span class="line">query(hub,&quot;Prunus persica&quot;)</span><br><span class="line">peach &lt;- hub[[&#x27;AH86027&#x27;]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。然后使用bitr将gene ID转换为Entrez ID。</p>
-<h3 id="rvest包基本函数"><a href="#rvest包基本函数" class="headerlink" title="rvest包基本函数"></a>rvest包基本函数</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">read_html():读取html网页</span><br><span class="line">html_nodes():选择提取网页中指定元素、节点</span><br><span class="line">html_text():提取标签内的文本</span><br></pre></td></tr></table></figure>
-
-<h3 id="rvest包的使用"><a href="#rvest包的使用" class="headerlink" title="rvest包的使用"></a>rvest包的使用</h3><p>使用revest包批量爬取locus tag对应的gene id，其中html的element可通过selectorgadget插件获取。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="stringi处理爬取的字符串"><a href="#stringi处理爬取的字符串" class="headerlink" title="stringi处理爬取的字符串"></a>stringi处理爬取的字符串</h3><p>使用stringr提取<code>Gene ID: 18793306, updated on 1-Jun-2019</code>里仅数字部分的ID：18793306。<br>genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,”,”)-1) 。使用Excel的智能匹配模式提取gene ID可能更方便。</p>
-<h3 id="使用bitr将gene-ID转换为Entrez-ID"><a href="#使用bitr将gene-ID转换为Entrez-ID" class="headerlink" title="使用bitr将gene ID转换为Entrez ID"></a>使用bitr将gene ID转换为Entrez ID</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">entrezid &lt;- bitr(geneid,fromType=&quot;GENEID&quot;,toType=&quot;ENTREZID&quot;,orgDb=&quot;peach&quot;)</span><br></pre></td></tr></table></figure>
-
-<h2 id="GO富集分析"><a href="#GO富集分析" class="headerlink" title="GO富集分析"></a>GO富集分析</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=entrezid, universe=)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
-<p>1.<a href="https://yulab-smu.top/biomedical-knowledge-mining-book/clusterprofiler-go.html">clusterprofiler</a></p>
-]]></content>
-      <categories>
-        <category>RNA_seq</category>
-      </categories>
   </entry>
   <entry>
     <title>软件准备</title>

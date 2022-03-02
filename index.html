@@ -237,7 +237,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-27 10:33:44" itemprop="dateModified" datetime="2022-02-27T10:33:44+08:00">2022-02-27</time>
+      <time title="修改时间：2022-03-02 23:58:16" itemprop="dateModified" datetime="2022-03-02T23:58:16+08:00">2022-03-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -265,16 +265,171 @@
 <p>每次重新进入R都需要加载一次R包。</p>
 <p>如果我们想说明函数（或数据集）的来源，可以使用package::function()的格式，例如ggplot2::ggplot，同时也可以避免与基础R包里函数重名而发生冲突。</p>
 <h1 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h1><h2 id="数据集mpg"><a href="#数据集mpg" class="headerlink" title="数据集mpg"></a>数据集mpg</h2><p>mpg是ggplot2自带的tibble格式数据框。tibble是在R原有data.frame格式数据框基础上做出的改进。mpg数据集是来自于美国环保局收集的38种车型的相关数据。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-
+<p><img src="/2022/02/26/R-02/01.png"></p>
 <p>在上述变量中，displ表示汽车引擎大小，hwy表示汽车高速油耗。</p>
 <h2 id="用ggplot画一幅图"><a href="#用ggplot画一幅图" class="headerlink" title="用ggplot画一幅图"></a>用ggplot画一幅图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
 
-
-
+<p><img src="/2022/02/26/R-02/02.png"></p>
 <p>这幅图显示引擎大小和油耗成负相关。</p>
 <p>ggplot()函数创建了一个坐标系，使得你可以在其上叠加图层。ggplot里的参数data指定了绘图所使用的数据集，mapping=aes()指定了x、y变量。</p>
+<h1 id="aes函数"><a href="#aes函数" class="headerlink" title="aes函数"></a>aes函数</h1><p>Aesthetic mappings describe how variables in the data are mapped to visual properties (aesthetics) of geoms.</p>
+<p>mpg中的class变量说明了车辆的类型。除了x、y，在aes函数中还可以将第三个变量映射为一种可视化属性，可以使得二维变量图三维化，maping=aes()通常是一起使用的。可视化属性包括大小、形状、颜色等。</p>
+<p>例如，将颜色指定为车的类型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) +</span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
 
+<p><img src="/2022/02/26/R-02/03.png"></p>
+<p>ggplot2将为class变量里的每一个水平都赋予一种颜色，这个内部过程称为scaling。同时，ggplot2还会自动为每个水平添加一个图例。</p>
+<p>当然，<code>size=class</code>、<code>shape=class</code>或<code>alpha=class</code>都是可以的：</p>
+<p><img src="/2022/02/26/R-02/04.png"></p>
+<p><img src="/2022/02/26/R-02/05.png"></p>
+<p>还可以将映射给x、y的变量也映射给可视化属性。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = displ, size = hwy)) +</span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/10.png"></p>
+<p>除了通过mapping=aes()的方式，还可以直接指定图形可视化属性。如果我们希望所有的点都呈现为蓝色，则可以：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy, shape = class)) +</span><br><span class="line">  geom_point(color = &quot;blue&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/06.png"></p>
+<p>这里的color并不能表达变量的不同水平，它只是将点图内所有的点设置成了蓝色。在mapping=aes()之外指定的可视化属性，可以手动指定某一具体的值，但不可指定为某一变量。</p>
+<p>但如果在mapping=aes()里不小心将color映射为某一常量，ggplot2则会将所有点的color视为同一水平‘blue’，并为其自动分配一种颜色。如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = &#x27;blue&#x27;)) +</span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/07.png"></p>
+<h1 id="分面"><a href="#分面" class="headerlink" title="分面"></a>分面</h1><p>除了将可视化属性映射为第三个变量外，还有一种增加变量的方法就是将一幅图按第三个变量的不同水平划分为多幅图。</p>
+<p>要实现这样的效果，需要使用facet_wrap()函数。facet_wrap()的第一个参数为公式，表示方法为<code>~</code>后跟一个变量，这个变量只能为离散型变量。通过nrow或ncol指定行列的图片数量。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +</span><br><span class="line">  geom_point()+</span><br><span class="line">  facet_wrap(~class,nrow = 2)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/08.png"></p>
+<h1 id="几何对象"><a href="#几何对象" class="headerlink" title="几何对象"></a>几何对象</h1><p>以下两幅图有何异同？</p>
+<p><img src="/2022/02/26/R-02/02.png"></p>
+<p><img src="/2022/02/26/R-02/09.png"></p>
+<p>其相同之处就是data以及x、y的映射相同，不同之处就是一个是点图，一个是线图。在ggplot2的作图语法里，使用不同的geoms来描述不同类型的图，这个geom便称为几何对象。</p>
+<p>上面两幅图的语法分别为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point()</span><br><span class="line">  </span><br><span class="line"> ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +</span><br><span class="line">   geom_smooth()</span><br></pre></td></tr></table></figure>
+
+<p>geom几何对象汇总</p>
+<table>
+<thead>
+<tr>
+<th>几何对象</th>
+<th>功能</th>
+<th>几何对象</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>abline</td>
+<td>有斜率的直线</td>
+<td>line</td>
+<td>线条</td>
+</tr>
+<tr>
+<td>area</td>
+<td>面积图</td>
+<td>linerange</td>
+<td>区间线条</td>
+</tr>
+<tr>
+<td>bar</td>
+<td>条形图</td>
+<td>point</td>
+<td>散点</td>
+</tr>
+<tr>
+<td>bin2d</td>
+<td>二维热图</td>
+<td>pointrange</td>
+<td>区间点竖线</td>
+</tr>
+<tr>
+<td>boxplot</td>
+<td>盒形图</td>
+<td>polygon</td>
+<td>多边形</td>
+</tr>
+<tr>
+<td>contour</td>
+<td>等高线图</td>
+<td>quantile</td>
+<td>分位数回归线</td>
+</tr>
+<tr>
+<td>crossbar</td>
+<td>盒子图</td>
+<td>raster</td>
+<td>光栅图</td>
+</tr>
+<tr>
+<td>density</td>
+<td>密度曲线</td>
+<td>rect</td>
+<td>热图</td>
+</tr>
+<tr>
+<td>density2d</td>
+<td>二维等高密度曲线</td>
+<td>ribbon</td>
+<td>色带图</td>
+</tr>
+<tr>
+<td>dotplot</td>
+<td>点直方图</td>
+<td>rug</td>
+<td>边际地毯图</td>
+</tr>
+<tr>
+<td>errorbar</td>
+<td>误差条</td>
+<td>segment</td>
+<td>添加线段或箭头</td>
+</tr>
+<tr>
+<td>errorbarh</td>
+<td>水平误差条</td>
+<td>smooth</td>
+<td>平滑曲线</td>
+</tr>
+<tr>
+<td>freqpoly</td>
+<td>频率多边形</td>
+<td>text</td>
+<td>添加文本</td>
+</tr>
+<tr>
+<td>hex</td>
+<td>六边形热图</td>
+<td>violin</td>
+<td>小提琴图</td>
+</tr>
+<tr>
+<td>histogram</td>
+<td>直方图</td>
+<td>path</td>
+<td>路线图</td>
+</tr>
+<tr>
+<td>hline</td>
+<td>水平线</td>
+<td>jitter</td>
+<td>扰动点图</td>
+</tr>
+<tr>
+<td>vline</td>
+<td>竖直线</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>更为详细具体的说明可以查看官方出品的<a target="_blank" rel="noopener" href="https://www.rstudio.com/resources/cheatsheets/">ggplot2 cheat sheet</a>。此外ggplot2还提供大量基于ggplot的<a target="_blank" rel="noopener" href="https://exts.ggplot2.tidyverse.org/gallery/#">扩展作图包</a>。</p>
+<p>通过增加几何对象，可以将不同的类型的图绘制到一幅图中。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point() + </span><br><span class="line">  geom_smooth()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/11.png"></p>
+<p>通过单独在几何对象指定映射可以独自更改其可视化属性。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point(mapping = aes(color = class)) + </span><br><span class="line">  geom_smooth()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/12.png"></p>
+<h1 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h1>
       
     </div>
 

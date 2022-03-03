@@ -22,12 +22,12 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="准备安装并加载R包tidyverse 12install.packages(&quot;tidyverse&quot;)library(&quot;tidyverse&quot;)  每次重新进入R都需要加载一次R包。 如果我们想说明函数（或数据集）的来源，可以使用package::function()的格式，例如ggplot2::ggplot，同时也可以避免与基础R包里函数重名而发生冲突。 第一">
+<meta name="description" content="准备安装并加载R包tidyverse 12install.packages(&quot;tidyverse&quot;)library(&quot;tidyverse&quot;)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据可视化">
 <meta property="og:url" content="http://yicoyuan.xyz/2022/02/26/R-02/index.html">
 <meta property="og:site_name" content="YuanYe&#39;s blog">
-<meta property="og:description" content="准备安装并加载R包tidyverse 12install.packages(&quot;tidyverse&quot;)library(&quot;tidyverse&quot;)  每次重新进入R都需要加载一次R包。 如果我们想说明函数（或数据集）的来源，可以使用package::function()的格式，例如ggplot2::ggplot，同时也可以避免与基础R包里函数重名而发生冲突。 第一">
+<meta property="og:description" content="准备安装并加载R包tidyverse 12install.packages(&quot;tidyverse&quot;)library(&quot;tidyverse&quot;)">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/01.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/02.png">
@@ -42,8 +42,13 @@
 <meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/09.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/11.png">
 <meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/12.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/13.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/14.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/15.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/16.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/02/26/R-02/17.png">
 <meta property="article:published_time" content="2022-02-26T09:30:02.000Z">
-<meta property="article:modified_time" content="2022-03-02T15:58:16.006Z">
+<meta property="article:modified_time" content="2022-03-03T05:42:15.210Z">
 <meta property="article:author" content="Yico Yuan">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://yicoyuan.xyz/2022/02/26/R-02/01.png">
@@ -159,7 +164,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5"><span class="nav-number">2.</span> <span class="nav-text">第一步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86mpg"><span class="nav-number">2.1.</span> <span class="nav-text">数据集mpg</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8ggplot%E7%94%BB%E4%B8%80%E5%B9%85%E5%9B%BE"><span class="nav-number">2.2.</span> <span class="nav-text">用ggplot画一幅图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#aes%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">aes函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E9%9D%A2"><span class="nav-number">4.</span> <span class="nav-text">分面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.</span> <span class="nav-text">几何对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2"><span class="nav-number">6.</span> <span class="nav-text">数据转换</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9D%E6%AC%A1%E6%8E%A5%E8%A7%A6"><span class="nav-number">2.</span> <span class="nav-text">初次接触</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86mpg"><span class="nav-number">2.1.</span> <span class="nav-text">数据集mpg</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8ggplot%E7%94%BB%E4%B8%80%E5%B9%85%E5%9B%BE"><span class="nav-number">2.2.</span> <span class="nav-text">用ggplot画一幅图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#aes%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">aes函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E9%9D%A2"><span class="nav-number">4.</span> <span class="nav-text">分面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.</span> <span class="nav-text">几何对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E5%8F%98%E6%8D%A2"><span class="nav-number">6.</span> <span class="nav-text">统计变换</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +260,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-03-02 23:58:16" itemprop="dateModified" datetime="2022-03-02T23:58:16+08:00">2022-03-02</time>
+      <time title="修改时间：2022-03-03 13:42:15" itemprop="dateModified" datetime="2022-03-03T13:42:15+08:00">2022-03-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -287,9 +292,11 @@
         <h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>安装并加载R包tidyverse</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(&quot;tidyverse&quot;)</span><br></pre></td></tr></table></figure>
 
+<span id="more"></span>
+
 <p>每次重新进入R都需要加载一次R包。</p>
 <p>如果我们想说明函数（或数据集）的来源，可以使用package::function()的格式，例如ggplot2::ggplot，同时也可以避免与基础R包里函数重名而发生冲突。</p>
-<h1 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h1><h2 id="数据集mpg"><a href="#数据集mpg" class="headerlink" title="数据集mpg"></a>数据集mpg</h2><p>mpg是ggplot2自带的tibble格式数据框。tibble是在R原有data.frame格式数据框基础上做出的改进。mpg数据集是来自于美国环保局收集的38种车型的相关数据。</p>
+<h1 id="初次接触"><a href="#初次接触" class="headerlink" title="初次接触"></a>初次接触</h1><h2 id="数据集mpg"><a href="#数据集mpg" class="headerlink" title="数据集mpg"></a>数据集mpg</h2><p>mpg是ggplot2自带的tibble格式数据框。tibble是在R原有data.frame格式数据框基础上做出的改进。mpg数据集是来自于美国环保局收集的38种车型的相关数据。</p>
 <p><img src="/2022/02/26/R-02/01.png"></p>
 <p>在上述变量中，displ表示汽车引擎大小，hwy表示汽车高速油耗。</p>
 <h2 id="用ggplot画一幅图"><a href="#用ggplot画一幅图" class="headerlink" title="用ggplot画一幅图"></a>用ggplot画一幅图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
@@ -298,8 +305,8 @@
 <p>这幅图显示引擎大小和油耗成负相关。</p>
 <p>ggplot()函数创建了一个坐标系，使得你可以在其上叠加图层。ggplot里的参数data指定了绘图所使用的数据集，mapping=aes()指定了x、y变量。</p>
 <h1 id="aes函数"><a href="#aes函数" class="headerlink" title="aes函数"></a>aes函数</h1><p>Aesthetic mappings describe how variables in the data are mapped to visual properties (aesthetics) of geoms.</p>
-<p>mpg中的class变量说明了车辆的类型。除了x、y，在aes函数中还可以将第三个变量映射为一种可视化属性，可以使得二维变量图三维化，maping=aes()通常是一起使用的。可视化属性包括大小、形状、颜色等。</p>
-<p>例如，将颜色指定为车的类型：</p>
+<p>除了x、y，在aes函数中还可以将第三个变量映射为一种可视化属性，可以使得二维变量图三维化，maping=aes()通常是一起使用的。可视化属性包括大小、形状、颜色等。</p>
+<p>例如，将颜色指定为车的类型，mpg中的class变量说明了车辆的类型。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) +</span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/02/26/R-02/03.png"></p>
@@ -454,7 +461,30 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point(mapping = aes(color = class)) + </span><br><span class="line">  geom_smooth()</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/02/26/R-02/12.png"></p>
-<h1 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h1>
+<h1 id="统计变换"><a href="#统计变换" class="headerlink" title="统计变换"></a>统计变换</h1><p>让我们先来看一看条形图。条形图看上去很简单，但是它展示了一些我们容易忽略的点。这次我们绘图所用的数据集来源于ggplot2自带的数据<code>diamonds</code>，它包含了54000多个钻石的信息，包括<code>price</code>、<code>carat</code>、<code>color</code>、<code>clarity</code>和<code>cut</code>。</p>
+<p><img src="/2022/02/26/R-02/13.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = diamonds) + </span><br><span class="line">  geom_bar(mapping = aes(x = cut))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/14.png"></p>
+<p>x轴显示了变量cut的不同水平。而y轴显示了数量，但是我们在上面的公式中并未给y指定一个变量。所以这个count自来哪儿？其实大部分图形如散点图是直接绘制指定的x、y，但还有一部分图形如条形图需要通过根据计算出的新数据来绘图：</p>
+<ul>
+<li>条形图、直方图、频数多边形图会先对数据进行分类，然后再绘制出每个类别的数量。</li>
+<li>箱线图会先对数据分布进行统计并摘要，并以箱线的形式将摘要展示出来。</li>
+</ul>
+<p>绘图所用到的新数据是通过称之为stat（统计变换）的算法计算出来的。</p>
+<p><img src="/2022/02/26/R-02/15.png"></p>
+<p>实际上每个geoms都有默认的stat，因此一般情况下可以忽略不计。但是有三种情况可能得指定stat：</p>
+<p>①</p>
+<p>当你想绘制条形图，但给到的数据已经为你把每个类别的数量统计好了，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">demo &lt;- tribble(</span><br><span class="line">  ~cut,         ~freq,</span><br><span class="line">  &quot;Fair&quot;,       1610,</span><br><span class="line">  &quot;Good&quot;,       4906,</span><br><span class="line">  &quot;Very Good&quot;,  12082,</span><br><span class="line">  &quot;Premium&quot;,    13791,</span><br><span class="line">  &quot;Ideal&quot;,      21551</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/16.png"></p>
+<p>那么，这时将geom_bar从默认的count修改为identity，即可将条形图的高度y映射为变量freq。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ggplot(data = demo) +</span><br><span class="line">  geom_bar(mapping = aes(cut, freq), stat = &#x27;identity&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/26/R-02/17.png"></p>
+<p>②</p>
+
     </div>
 
     

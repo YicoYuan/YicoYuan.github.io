@@ -4,6 +4,8 @@
     <title>R简介</title>
     <url>/2022/02/26/R-01/</url>
     <content><![CDATA[<p>R 语言是为数学研究工作者设计的一种数学编程语言，主要用于统计分析、绘图、数据挖掘。R 语言是解释运行的语言（与 C 语言的编译运行不同），它的执行速度比 C 语言慢得多，不利于优化。但它在语法层面提供了更加丰富的数据结构操作并且能够十分方便地输出文字和图形信息，所以它广泛应用于数学尤其是统计学领域。</p>
+<span id="more"></span>
+
 <p>虽然通常认为用Python操作数据，再用R进行统计分析是一种效率更高的方式，但是最好每次只学习并精通一种工具，因为这可能比泛泛同时学习多个工具掌握得更快。</p>
 <p>R语言的特点：</p>
 <ul>
@@ -33,9 +35,11 @@
     <content><![CDATA[<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>安装并加载R包tidyverse</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(&quot;tidyverse&quot;)</span><br></pre></td></tr></table></figure>
 
+<span id="more"></span>
+
 <p>每次重新进入R都需要加载一次R包。</p>
 <p>如果我们想说明函数（或数据集）的来源，可以使用package::function()的格式，例如ggplot2::ggplot，同时也可以避免与基础R包里函数重名而发生冲突。</p>
-<h1 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h1><h2 id="数据集mpg"><a href="#数据集mpg" class="headerlink" title="数据集mpg"></a>数据集mpg</h2><p>mpg是ggplot2自带的tibble格式数据框。tibble是在R原有data.frame格式数据框基础上做出的改进。mpg数据集是来自于美国环保局收集的38种车型的相关数据。</p>
+<h1 id="初次接触"><a href="#初次接触" class="headerlink" title="初次接触"></a>初次接触</h1><h2 id="数据集mpg"><a href="#数据集mpg" class="headerlink" title="数据集mpg"></a>数据集mpg</h2><p>mpg是ggplot2自带的tibble格式数据框。tibble是在R原有data.frame格式数据框基础上做出的改进。mpg数据集是来自于美国环保局收集的38种车型的相关数据。</p>
 <p><img src="/2022/02/26/R-02/01.png"></p>
 <p>在上述变量中，displ表示汽车引擎大小，hwy表示汽车高速油耗。</p>
 <h2 id="用ggplot画一幅图"><a href="#用ggplot画一幅图" class="headerlink" title="用ggplot画一幅图"></a>用ggplot画一幅图</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
@@ -44,8 +48,8 @@
 <p>这幅图显示引擎大小和油耗成负相关。</p>
 <p>ggplot()函数创建了一个坐标系，使得你可以在其上叠加图层。ggplot里的参数data指定了绘图所使用的数据集，mapping=aes()指定了x、y变量。</p>
 <h1 id="aes函数"><a href="#aes函数" class="headerlink" title="aes函数"></a>aes函数</h1><p>Aesthetic mappings describe how variables in the data are mapped to visual properties (aesthetics) of geoms.</p>
-<p>mpg中的class变量说明了车辆的类型。除了x、y，在aes函数中还可以将第三个变量映射为一种可视化属性，可以使得二维变量图三维化，maping=aes()通常是一起使用的。可视化属性包括大小、形状、颜色等。</p>
-<p>例如，将颜色指定为车的类型：</p>
+<p>除了x、y，在aes函数中还可以将第三个变量映射为一种可视化属性，可以使得二维变量图三维化，maping=aes()通常是一起使用的。可视化属性包括大小、形状、颜色等。</p>
+<p>例如，将颜色指定为车的类型，mpg中的class变量说明了车辆的类型。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) +</span><br><span class="line">  geom_point()</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/02/26/R-02/03.png"></p>
@@ -200,36 +204,32 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + </span><br><span class="line">  geom_point(mapping = aes(color = class)) + </span><br><span class="line">  geom_smooth()</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/02/26/R-02/12.png"></p>
-<h1 id="数据转换"><a href="#数据转换" class="headerlink" title="数据转换"></a>数据转换</h1>]]></content>
-      <categories>
-        <category>R</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>转录组测序数据及参考基因组准备</title>
-    <url>/2022/02/13/RNA-seq-02/</url>
-    <content><![CDATA[<h3 id="项目文件夹"><a href="#项目文件夹" class="headerlink" title="项目文件夹"></a>项目文件夹</h3><p>首先，建立一个项目所需的文件夹：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification,06diff&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="统计变换"><a href="#统计变换" class="headerlink" title="统计变换"></a>统计变换</h1><p>让我们先来看一看条形图。条形图看上去很简单，但是它展示了一些我们容易忽略的点。这次我们绘图所用的数据集来源于ggplot2自带的数据<code>diamonds</code>，它包含了54000多个钻石的信息，包括<code>price</code>、<code>carat</code>、<code>color</code>、<code>clarity</code>和<code>cut</code>。</p>
+<p><img src="/2022/02/26/R-02/13.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ggplot(data = diamonds) + </span><br><span class="line">  geom_bar(mapping = aes(x = cut))</span><br></pre></td></tr></table></figure>
 
-<p>目录结构如下：</p>
-<p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
-<span id="more"></span>
+<p><img src="/2022/02/26/R-02/14.png"></p>
+<p>x轴显示了变量cut的不同水平。而y轴显示了数量，但是我们在上面的公式中并未给y指定一个变量。所以这个count自来哪儿？其实大部分图形如散点图是直接绘制指定的x、y，但还有一部分图形如条形图需要通过根据计算出的新数据来绘图：</p>
+<ul>
+<li>条形图、直方图、频数多边形图会先对数据进行分类，然后再绘制出每个类别的数量。</li>
+<li>箱线图会先对数据分布进行统计并摘要，并以箱线的形式将摘要展示出来。</li>
+</ul>
+<p>绘图所用到的新数据是通过称之为stat（统计变换）的算法计算出来的。</p>
+<p><img src="/2022/02/26/R-02/15.png"></p>
+<p>实际上每个geoms都有默认的stat，因此一般情况下可以忽略不计。但是有三种情况可能得指定stat：</p>
+<p>①</p>
+<p>当你想绘制条形图，但给到的数据已经为你把每个类别的数量统计好了，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">demo &lt;- tribble(</span><br><span class="line">  ~cut,         ~freq,</span><br><span class="line">  &quot;Fair&quot;,       1610,</span><br><span class="line">  &quot;Good&quot;,       4906,</span><br><span class="line">  &quot;Very Good&quot;,  12082,</span><br><span class="line">  &quot;Premium&quot;,    13791,</span><br><span class="line">  &quot;Ideal&quot;,      21551</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 
-<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
-<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
-<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a href="https://www.sciencedirect.com/science/article/abs/pii/S0378111918308138">文献</a>。NCBI搜索<a href="https://www.ncbi.nlm.nih.gov/sra?linkname=bioproject_sra_all&from_uid=477414">PRJNA477414</a>，然后选择send to run selector，下载Accession List，其内容为SRR号：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SRR7410682</span><br><span class="line">SRR7410683</span><br><span class="line">SRR7410684</span><br><span class="line">SRR7410685</span><br><span class="line">SRR7410686</span><br><span class="line">SRR7410687</span><br><span class="line">SRR7410688</span><br><span class="line">SRR7410689</span><br><span class="line">SRR7410690</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/02/26/R-02/16.png"></p>
+<p>那么，这时将geom_bar从默认的count修改为identity，即可将条形图的高度y映射为变量freq。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ggplot(data = demo) +</span><br><span class="line">  geom_bar(mapping = aes(cut, freq), stat = &#x27;identity&#x27;)</span><br></pre></td></tr></table></figure>
 
-<p>按官网说明安装sra toolkit工具。先使用prefetch将sra下载到本地，然后fastq-dump将sra转换为fastq格式：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file SRR_Acc_List.txt</span><br><span class="line"></span><br><span class="line">while read id</span><br><span class="line">do</span><br><span class="line">nohup fastq-dump -O ~/RNA_seq/02raw --gzip --split-3 --readids $id &amp;</span><br><span class="line">done &lt; SRR_Acc_List.txt</span><br></pre></td></tr></table></figure>
-
-<p>测序数据如下：</p>
-<p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
-<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">原始数据qc报告</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -o ~/RNA_seq/02raw/qc ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">合并qc报告到一个文件</span></span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"><span class="meta">#</span><span class="bash">可以看到duplicates很高，但是不用去除，因为难以区分duplicates是PCR引起的还是基因的高表达。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">质量过滤：去掉adapter和低质量reads</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
+<p><img src="/2022/02/26/R-02/17.png"></p>
+<p>②</p>
 ]]></content>
       <categories>
-        <category>RNA-seq</category>
+        <category>R</category>
       </categories>
   </entry>
   <entry>
@@ -268,6 +268,33 @@
 <li><a href="https://www.sciencedirect.com/science/article/pii/S0965174821001387">A whole transcriptomic approach provides novel insights into the molecular basis of organophosphate and pyrethroid resistance in <em>Anopheles arabiensis</em> from Ethiopia</a></li>
 <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0168945219300342">AtSPX1-mediated transcriptional regulation duringleaf senescence in Arabidopsis thaliana</a></li>
 </ol>
+]]></content>
+      <categories>
+        <category>RNA-seq</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>转录组测序数据及参考基因组准备</title>
+    <url>/2022/02/13/RNA-seq-02/</url>
+    <content><![CDATA[<h3 id="项目文件夹"><a href="#项目文件夹" class="headerlink" title="项目文件夹"></a>项目文件夹</h3><p>首先，建立一个项目所需的文件夹：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir ~/RNA_seq</span><br><span class="line">cd ~/RNA_seq</span><br><span class="line">mkdir &#123;01ref,02raw,03clean,04align,05quantification,06diff&#125;</span><br></pre></td></tr></table></figure>
+
+<p>目录结构如下：</p>
+<p><img src="/2022/02/13/RNA-seq-02/01.png"></p>
+<span id="more"></span>
+
+<h3 id="参考基因组"><a href="#参考基因组" class="headerlink" title="参考基因组"></a>参考基因组</h3><p>我们使用JGI的<a href="https://phytozome-next.jgi.doe.gov/">phytozome</a>植物基因组数据库下载peach(<em>prunus persica</em>)的参考基因组和注释文件。勾选所需的参考基因组和注释文件后，点击download，官方提供了浏览器下载和命令行下载两种方式。</p>
+<p><img src="/2022/02/13/RNA-seq-02/02.png"></p>
+<h3 id="测序数据"><a href="#测序数据" class="headerlink" title="测序数据"></a>测序数据</h3><p>测序数据来源于这篇<a href="https://www.sciencedirect.com/science/article/abs/pii/S0378111918308138">文献</a>。NCBI搜索<a href="https://www.ncbi.nlm.nih.gov/sra?linkname=bioproject_sra_all&from_uid=477414">PRJNA477414</a>，然后选择send to run selector，下载Accession List，其内容为SRR号：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SRR7410682</span><br><span class="line">SRR7410683</span><br><span class="line">SRR7410684</span><br><span class="line">SRR7410685</span><br><span class="line">SRR7410686</span><br><span class="line">SRR7410687</span><br><span class="line">SRR7410688</span><br><span class="line">SRR7410689</span><br><span class="line">SRR7410690</span><br></pre></td></tr></table></figure>
+
+<p>按官网说明安装sra toolkit工具。先使用prefetch将sra下载到本地，然后fastq-dump将sra转换为fastq格式：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file SRR_Acc_List.txt</span><br><span class="line"></span><br><span class="line">while read id</span><br><span class="line">do</span><br><span class="line">nohup fastq-dump -O ~/RNA_seq/02raw --gzip --split-3 --readids $id &amp;</span><br><span class="line">done &lt; SRR_Acc_List.txt</span><br></pre></td></tr></table></figure>
+
+<p>测序数据如下：</p>
+<p><img src="/2022/02/13/RNA-seq-02/03.png"></p>
+<h3 id="测序数据质控"><a href="#测序数据质控" class="headerlink" title="测序数据质控"></a>测序数据质控</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">原始数据qc报告</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do </span><br><span class="line">fastqc -t 20 -o ~/RNA_seq/02raw/qc ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz</span><br><span class="line">done</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">合并qc报告到一个文件</span></span><br><span class="line">multiqc ~/RNA_seq/02raw/qc -o ~/RNA_seq/02raw/multiqc</span><br><span class="line"><span class="meta">#</span><span class="bash">可以看到duplicates很高，但是不用去除，因为难以区分duplicates是PCR引起的还是基因的高表达。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">质量过滤：去掉adapter和低质量reads</span></span><br><span class="line">for i in SRR74106&#123;82..90&#125;</span><br><span class="line">do</span><br><span class="line">fastp -w 20 -f 10 -F 10 \</span><br><span class="line">	    -i ~/RNA_seq/02raw/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -o ~/RNA_seq/03clean/$&#123;i&#125;_1.fastq.gz \</span><br><span class="line">	    -I ~/RNA_seq/02raw/$&#123;i&#125;_2.fastq.gz \</span><br><span class="line">	    -O ~/RNA_seq/03clean/$&#123;i&#125;_2.fastq.gz </span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>RNA-seq</category>
@@ -367,26 +394,32 @@
 
 
 
+<span id="more"></span>
+
 <h1 id="基因富集分析"><a href="#基因富集分析" class="headerlink" title="基因富集分析"></a>基因富集分析</h1><h2 id="加载R包ClusterProfiler"><a href="#加载R包ClusterProfiler" class="headerlink" title="加载R包ClusterProfiler"></a>加载R包ClusterProfiler</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(clusterProfiler)</span><br></pre></td></tr></table></figure>
 
 <h2 id="提取差异基因（以resSig-105Vs120为例）"><a href="#提取差异基因（以resSig-105Vs120为例）" class="headerlink" title="提取差异基因（以resSig_105Vs120为例）"></a>提取差异基因（以resSig_105Vs120为例）</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gene &lt;- read.table(&quot;resSig_105Vs120.csv&quot;)</span><br><span class="line">gene &lt;- rownames(gene)</span><br></pre></td></tr></table></figure>
 
 <h2 id="构建非模式物种注释信息"><a href="#构建非模式物种注释信息" class="headerlink" title="构建非模式物种注释信息"></a>构建非模式物种注释信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">BiocManager::install(&quot;AnnotationHub&quot;)</span><br><span class="line">library(AnnotationHub)</span><br><span class="line">hub &lt;- AnnotationHub()</span><br><span class="line">query(hub,&quot;Prunus persica&quot;)</span><br><span class="line">peach &lt;- hub[[&#x27;AH86027&#x27;]]</span><br></pre></td></tr></table></figure>
 
-<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。然后使用bitr将gene ID转换为Entrez ID。</p>
+<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。</p>
 <h3 id="rvest包基本函数"><a href="#rvest包基本函数" class="headerlink" title="rvest包基本函数"></a>rvest包基本函数</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">read_html():读取html网页</span><br><span class="line">html_nodes():选择提取网页中指定元素、节点</span><br><span class="line">html_text():提取标签内的文本</span><br></pre></td></tr></table></figure>
 
 <h3 id="rvest包的使用"><a href="#rvest包的使用" class="headerlink" title="rvest包的使用"></a>rvest包的使用</h3><p>使用revest包加上基本的for循环来批量爬取locus tag对应的NCBI gene id，即entrez ID，其中html的element可通过selectorgadget插件获取。虽然比较慢，但是目前我也没有找到更好的转换locus tag为通用id的方法。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">  system.time(1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="stringi处理爬取的字符串"><a href="#stringi处理爬取的字符串" class="headerlink" title="stringi处理爬取的字符串"></a>stringi处理爬取的字符串</h3><p>使用stringr提取<code>Gene ID: 18793306, updated on 1-Jun-2019</code>里仅数字部分的ID：18793306。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(tidyverse)</span><br><span class="line">genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,&quot;,&quot;)-1) </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(tidyverse)</span><br><span class="line">genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,&quot;,&quot;)-1) </span><br><span class="line">genelist &lt;- genelist[1:i]</span><br><span class="line">genelist &lt;- na.omit(genelist)</span><br></pre></td></tr></table></figure>
 
 <p>也可以使用Excel的智能匹配模式提取gene ID。</p>
-<h2 id="GO富集分析"><a href="#GO富集分析" class="headerlink" title="GO富集分析"></a>GO富集分析</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=entrezid, universe=,OrgDb=peach,ont=&quot;CC&quot;,pAdjustMethod=&quot;BH&quot;, pvalueCutoff=0.01,qvalueCutoff=0.05,readable=TRUE))</span><br><span class="line">head(ego)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="GO富集分析及可视化"><a href="#GO富集分析及可视化" class="headerlink" title="GO富集分析及可视化"></a>GO富集分析及可视化</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=genelist, OrgDb=peach,ont=&quot;ALL&quot;,pAdjustMethod=&quot;BH&quot;,pvalueCutoff = 0.99,readable=TRUE)</span><br><span class="line"></span><br><span class="line">barplot(ego)</span><br></pre></td></tr></table></figure>
 
-<p>参数说明：</p>
-<h3 id="GO富集结果可视化"><a href="#GO富集结果可视化" class="headerlink" title="GO富集结果可视化"></a>GO富集结果可视化</h3><h2 id="KEGG富集分析"><a href="#KEGG富集分析" class="headerlink" title="KEGG富集分析"></a>KEGG富集分析</h2><h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
+<p><img src="/2022/02/24/RNA-seq-06/resSig_105Vs120_go.png"></p>
+<h2 id="KEGG富集分析"><a href="#KEGG富集分析" class="headerlink" title="KEGG富集分析"></a>KEGG富集分析</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kk &lt;- enrichKEGG(gene = genelist,organism = &#x27;pper&#x27;,pvalueCutoff = 0.05)</span><br><span class="line">head(kk)</span><br><span class="line">browseKEGG(kk,&#x27;pper00196&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/24/RNA-seq-06/pper00196.png"></p>
+<p><img src="/2022/02/24/RNA-seq-06/resSig_105Vs120_kegg.png"></p>
+<h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
 <p>1.<a href="https://yulab-smu.top/biomedical-knowledge-mining-book/clusterprofiler-go.html">clusterprofiler</a></p>
 ]]></content>
       <categories>
@@ -495,6 +528,61 @@
       </categories>
   </entry>
   <entry>
+    <title>测序数据下载及质控</title>
+    <url>/2022/01/15/WES02/</url>
+    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
+
+<p>然后进入WES文件夹创建以下子文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
+
+<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
+<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
+
+<p>或者使用for循环：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ebi.ac.uk/ena/browser/view/PRJEB30330?show=reads">PRJEB30330</a>下载fastq的压缩文件。</p>
+<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
+<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
+
+<p>可以写一个shell脚本自动安装</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
+<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
+<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
+<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>法二、xargs</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
+
+<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
+
+<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
+<p>写个脚本进行批量质控</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>WES</category>
+      </categories>
+  </entry>
+  <entry>
     <title>测序数据比对到参考基因组</title>
     <url>/2022/01/17/WES03/</url>
     <content><![CDATA[<p>Pipeline: Mapping→sorting→unique reads(mark duplicates)→indexing</p>
@@ -579,61 +667,6 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">samtools index markdup.bam  #上面已经生成，这里就简单提一下</span><br></pre></td></tr></table></figure>
 
 <p>这三类索引文件都是GATK下游分析所需要的。其中，前两个文件resource bundle里也有。</p>
-]]></content>
-      <categories>
-        <category>WES</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>测序数据下载及质控</title>
-    <url>/2022/01/15/WES02/</url>
-    <content><![CDATA[<h1 id="创建项目文件夹"><a href="#创建项目文件夹" class="headerlink" title="创建项目文件夹"></a>创建项目文件夹</h1><p>在主目录下新建一个”WES”文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir WES</span><br></pre></td></tr></table></figure>
-
-<p>然后进入WES文件夹创建以下子文件夹：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd WES</span><br><span class="line">mkdir &#123;raw,clean,qc,align,mutation&#125;</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h1 id="数据下载"><a href="#数据下载" class="headerlink" title="数据下载"></a>数据下载</h1><h2 id="prefetch下载sra"><a href="#prefetch下载sra" class="headerlink" title="prefetch下载sra"></a>prefetch下载sra</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">prefetch --option-file raw/SraAccList.txt</span><br></pre></td></tr></table></figure>
-
-<p>默认下载位置为~/ncbi，包括sra和转换所需的参考文件。</p>
-<p>SraAccList.txt里为sra的Accession ID，用回车分割：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERR3013393</span><br><span class="line">ERR3013392</span><br><span class="line">ERR3013391</span><br><span class="line">ERR3013389</span><br><span class="line">ERR3013388</span><br><span class="line">ERR3013387</span><br><span class="line">ERR3013386</span><br></pre></td></tr></table></figure>
-
-<p>或者使用for循环：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for i in &#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	prefetch ERR30133$i -O ~/WES/raw</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<p>sra文件大小相较fastq减少了将近80%。如果觉得麻烦，也可以直接到EMBL-EBI旗下的ENA数据库所搜该项目的project号<a href="https://www.ebi.ac.uk/ena/browser/view/PRJEB30330?show=reads">PRJEB30330</a>下载fastq的压缩文件。</p>
-<h2 id="将sra转换为fastq"><a href="#将sra转换为fastq" class="headerlink" title="将sra转换为fastq"></a>将sra转换为fastq</h2><p>最新版sra-tools集成了fasterq-dump，相较fastq-dump，支持多线程，速度快10倍，但NCBI页面上只有fastq-dump的介绍而无fasterq-dump，可能是因为还不够方便稳定吧。</p>
-<h3 id="安装最新sra-toolkit"><a href="#安装最新sra-toolkit" class="headerlink" title="安装最新sra toolkit"></a>安装最新sra toolkit</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">For ubuntu</span></span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz #下载</span><br><span class="line">tar -vxzf sratoolkit.tar.gz #解压</span><br><span class="line">export PATH=$PATH:$PWD/sratoolkit.2.11.3-ubuntu64/bin #添加环境变量</span><br></pre></td></tr></table></figure>
-
-<p>可以写一个shell脚本自动安装</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#！/bin/sh</span></span><br><span class="line">v=2.11.3 <span class="comment">#最新版版本号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install perl and dependencies</span></span><br><span class="line">apt-get --quiet install --yes libxml-libxml-perl</span><br><span class="line"></span><br><span class="line"><span class="comment">#remove old install if any</span></span><br><span class="line">rm -rf .ncbi /usr/<span class="built_in">local</span>/ncbi /etc/ncbi /etc/profile.d/sra-tools*</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;installing sra toolkit to home/‘你的用户名’/sratoolkit.<span class="variable">$v</span>-unumtu64&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz | tar -vxzf </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$PWD</span>/sratoolkit.<span class="variable">$v</span>-ubuntu64/bin</span><br></pre></td></tr></table></figure>
-
-<h3 id="fasterq的用法"><a href="#fasterq的用法" class="headerlink" title="fasterq的用法"></a>fasterq的用法</h3><p>示例：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386</p>
-<p>不推荐：fasterq-dump -p -e 8 -O ~/WES/raw ~/ncbi/public/sra/ERR3013386/ERR3013386.sra</p>
-<p><code>-p</code>为显示处理过程，<code>-e</code>指定线程数，<code>-O</code>指定输出文件夹。处理过程中会在ERR3013386文件夹中生成缓存文件，还会在当前目录生成tmp文件夹。fasterq-dump默认split 3参数，如果是双端测序则会输出1.fastq和2.fastq两个文件，单端则只输出*.fastq。详细用法见<a href="https://github-wiki-see.page/m/ncbi/sra-tools/wiki/HowTo%3A-fasterq-dump">usage</a>。</p>
-<h3 id="使用fasterq-dump进行批处理"><a href="#使用fasterq-dump进行批处理" class="headerlink" title="使用fasterq-dump进行批处理"></a>使用fasterq-dump进行批处理</h3><p>法一、FOR循环</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for ((i=86;i&lt;=93;i++))</span><br><span class="line">	do </span><br><span class="line">	fasterq-dump -e 10 -p ~/ncbi/public/sra/ERR30133$i --outdir ~/WES/raw</span><br><span class="line">done #目前仍有bug，虽然数据下载到了本地，还是只能联网进行格式转换,可能因为序列不是SRR，软件不能识别</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>法二、xargs</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/WES/raw/SraAccList.txt | xargs fasterq-dump -e 10 -p --outdir ~/WES/raw #但是这种只能在线下载sra序列进行转换</span><br></pre></td></tr></table></figure>
-
-<h1 id="使用fastp进行质控"><a href="#使用fastp进行质控" class="headerlink" title="使用fastp进行质控"></a>使用fastp进行质控</h1><p>fastp集fastqc+cutadapt的功能于一体，可以一次性实现过滤低质量、修剪接头等操作，并输出质控报告，由深圳海普洛斯公司陈实富团队采用C++开发，运行效率较trimmomatic和cutadapt快2-5倍，软件开源。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">usage</span></span><br><span class="line">fastp -i R1.fq.gz -o R1.clean.fq.gz -I R2.fq.gz -O R2.fq.gz</span><br></pre></td></tr></table></figure>
-
-<p>以上针对双端测序，单端测序只需输入/输出<code>-i/-o</code>即可，且无需压缩。其他参数：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-h, --html 设置输出html格式的质控结果文件名，不设置则默认html文件名为fastp.html</span><br><span class="line">-q, --qualified_quality_phred 设置碱基质量值不小于多少时，该碱基为合格碱基，默认碱基质量值是15，即默认碱基质量&gt;=15是合格碱基，&lt;15为不合格碱基</span><br><span class="line">-w 线程数，默认是3</span><br><span class="line">-f 指定单端头部碱基头部数量</span><br><span class="line">-t 指定单端尾部碱基去除数量</span><br><span class="line">-a 指定接头序列。fastp通过算法一般可以自动识别接头序列，尤其是PE数据，通过R1和R2的overlap可以准确识别</span><br></pre></td></tr></table></figure>
-
-<p>但是multiqc目前不支持fastp，因此输出的质控报告只能一个一个查看，不能合并。</p>
-<p>写个脚本进行批量质控</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for  i in ERR30133&#123;86,87,88,89,91,92,93&#125;</span><br><span class="line">do</span><br><span class="line">	fastp -i ~/WES/raw/$&#123;i&#125;.fastq.gz \</span><br><span class="line">		  -o ~/WES/clean/$&#123;i&#125;.clean.fastq.gz \</span><br><span class="line">		  -q 20 -w 10 -f 10 -t 30\</span><br><span class="line">		  -h ~/WES/clean/html/$&#123;i&#125;.html</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-
-
-
-
 ]]></content>
       <categories>
         <category>WES</category>

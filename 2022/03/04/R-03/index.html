@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yicoyuan.xyz","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="获得的数据一般很难完全满足我们直接进行可视化的要求，通常需要对观测值做一些筛选、排序或者重命名等一些工作。因此，我们将学习如何使用dplyr包来转换数据。本次使用到的数据集为2013年从纽约市出发的航班信息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据转换">
+<meta property="og:url" content="http://yicoyuan.xyz/2022/03/04/R-03/index.html">
+<meta property="og:site_name" content="YuanYe&#39;s blog">
+<meta property="og:description" content="获得的数据一般很难完全满足我们直接进行可视化的要求，通常需要对观测值做一些筛选、排序或者重命名等一些工作。因此，我们将学习如何使用dplyr包来转换数据。本次使用到的数据集为2013年从纽约市出发的航班信息。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/01.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/02.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/03.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/04.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/05.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/06.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/07.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/08.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/09.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/10.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/11.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/12.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/13.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/14.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/15.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/16.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/17.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/18.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/19.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/20.png">
+<meta property="og:image" content="http://yicoyuan.xyz/2022/03/04/R-03/21.png">
+<meta property="article:published_time" content="2022-03-04T04:50:13.000Z">
+<meta property="article:modified_time" content="2022-03-06T10:21:25.541Z">
+<meta property="article:author" content="Yico Yuan">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yicoyuan.xyz/2022/03/04/R-03/01.png">
+
+
+<link rel="canonical" href="http://yicoyuan.xyz/2022/03/04/R-03/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yicoyuan.xyz/2022/03/04/R-03/","path":"2022/03/04/R-03/","title":"数据转换"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>数据转换 | YuanYe's blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YuanYe's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nycflights13"><span class="nav-number">2.</span> <span class="nav-text">nycflights13</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dplyr"><span class="nav-number">3.</span> <span class="nav-text">dplyr</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8filter-%E8%BF%87%E6%BB%A4%E8%A1%8C"><span class="nav-number">4.</span> <span class="nav-text">使用filter()过滤行</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">4.1.</span> <span class="nav-text">比较运算符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">4.2.</span> <span class="nav-text">逻辑运算符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1%E5%80%BC"><span class="nav-number">4.3.</span> <span class="nav-text">缺失值</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8arrange-%E5%AF%B9%E8%A1%8C%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F"><span class="nav-number">5.</span> <span class="nav-text">使用arrange()对行进行排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8select-%E5%87%BD%E6%95%B0%E9%80%89%E6%8B%A9%E5%88%97"><span class="nav-number">6.</span> <span class="nav-text">使用select()函数选择列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8mutate-%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%88%97"><span class="nav-number">7.</span> <span class="nav-text">使用mutate()添加新列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E6%96%B0%E5%8F%98%E9%87%8F%E7%9A%84%E5%87%BD%E6%95%B0%E5%85%AC%E5%BC%8F"><span class="nav-number">7.1.</span> <span class="nav-text">常用的创建新变量的函数公式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8summarize-%E8%BF%9B%E8%A1%8C%E5%88%86%E7%BB%84%E6%91%98%E8%A6%81"><span class="nav-number">8.</span> <span class="nav-text">使用summarize()进行分组摘要</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E9%81%93-gt"><span class="nav-number">8.1.</span> <span class="nav-text">管道%&gt;%</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#summarize-%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%E6%91%98%E8%A6%81%E5%87%BD%E6%95%B0"><span class="nav-number">8.2.</span> <span class="nav-text">summarize()中常用的摘要函数</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yico Yuan"
+      src="/images/ye.svg">
+  <p class="site-author-name" itemprop="name">Yico Yuan</p>
+  <div class="site-description" itemprop="description">Things To Be Passionate About In Life.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="mailto:yuanyesulli@outlook.com" title="E-Mail → mailto:yuanyesulli@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yicoyuan.xyz/2022/03/04/R-03/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/ye.svg">
+      <meta itemprop="name" content="Yico Yuan">
+      <meta itemprop="description" content="Things To Be Passionate About In Life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YuanYe's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据转换
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-03-04 12:50:13" itemprop="dateCreated datePublished" datetime="2022-03-04T12:50:13+08:00">2022-03-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-06 18:21:25" itemprop="dateModified" datetime="2022-03-06T18:21:25+08:00">2022-03-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/R/" itemprop="url" rel="index"><span itemprop="name">R</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>获得的数据一般很难完全满足我们直接进行可视化的要求，通常需要对观测值做一些筛选、排序或者重命名等一些工作。因此，我们将学习如何使用dplyr包来转换数据。本次使用到的数据集为2013年从纽约市出发的航班信息。</p>
+<span id="more"></span>
+
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>加载数据集和R包。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;nycflights13&quot;</span>)</span><br><span class="line">library(<span class="string">&quot;nycflights13&quot;</span>)</span><br><span class="line">library(<span class="string">&quot;tidyverse&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="nycflights13"><a href="#nycflights13" class="headerlink" title="nycflights13"></a>nycflights13</h1><p>我们使用nycflights13::flights数据来练习dplyr中的基本数据操作。这个数据框包含了2013从纽约市出发的336776次航班的信息。</p>
+<p><img src="/2022/03/04/R-03/01.png"></p>
+<p>使用<code>?flights</code>查看更详细的说明。</p>
+<h1 id="dplyr"><a href="#dplyr" class="headerlink" title="dplyr"></a>dplyr</h1><p>我们将学习以下dplyr中的5个核心函数，它们可以解决数据处理中绝大多数的问题。</p>
+<ul>
+<li>filter()：按值筛选观测（选择行）。</li>
+<li>arrange()：对行进行排序。</li>
+<li>select()：按名称选择变量（选择列）。</li>
+<li>mutate()：使用现有变量来创建新变量。</li>
+<li>summarize()：将多个值总结为一个摘要。</li>
+</ul>
+<p>它们的使用模式是一样的：</p>
+<ul>
+<li>第一个参数是一个数据框。</li>
+<li>随后的参数使用变量名称（不加引号）来描述对数据框的操作。</li>
+<li>输出结果是一个新的数据框。</li>
+</ul>
+<p>它们都可以和group_by()函数联用。而group_by()函数可以根据某个变量的不同水平进行分组，然后使用上述函数分组进行操作。</p>
+<h1 id="使用filter-过滤行"><a href="#使用filter-过滤行" class="headerlink" title="使用filter()过滤行"></a>使用filter()过滤行</h1><p>filter()函数可以基于观测值筛选出观测值子集。第一个参数的数据名称，随后的参数通过变量相关的表达式来筛选变量的观测值。</p>
+<p>例如，我们想筛选出1月1日的所有航班：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filter(flights, month == <span class="number">1</span>, day == <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/02.png"></p>
+<h2 id="比较运算符"><a href="#比较运算符" class="headerlink" title="比较运算符"></a>比较运算符</h2><p>为了进行有效地筛选，我们必须知道如何使用比较运算符来选择观测。比较运算符有：&gt;（大于）、&gt;=(大于等于)、&lt;(小于)、&lt;=(小于等于)、!=(不等于)、==(等于)。</p>
+<p>值得关注的一个问题是<code>浮点数</code>的比较：</p>
+<p><img src="/2022/03/04/R-03/03.png"></p>
+<p>在我们判断1/49*49是否等于1时，R返回的结果是FALSE。在比较浮点数是否相等时不能使用<code>==</code>，而应该使用<code>near()</code>：</p>
+<p><img src="/2022/03/04/R-03/04.png"></p>
+<h2 id="逻辑运算符"><a href="#逻辑运算符" class="headerlink" title="逻辑运算符"></a>逻辑运算符</h2><p>布尔运算符包括：&amp;（与）、|（或）、！（非）。下图展示了布尔运算符所有的组合：</p>
+<p><img src="/2022/03/04/R-03/05.png"></p>
+<p>例如，我们想找出11月份和12月份的所有航班：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filter(flights, month == <span class="number">11</span> | month == <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码也可表述为：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filter(flights, month %in% <span class="built_in">c</span>(<span class="number">11</span>,<span class="number">12</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="缺失值"><a href="#缺失值" class="headerlink" title="缺失值"></a>缺失值</h2><p>R中用<code>NA</code>表示缺失值(not available)，它表示一个不确定的值，所以当你想判断<code>NA == NA</code>时，结果也会返回NA。</p>
+<p>可以使用na.omit()函数剔除所有NA。</p>
+<h1 id="使用arrange-对行进行排序"><a href="#使用arrange-对行进行排序" class="headerlink" title="使用arrange()对行进行排序"></a>使用arrange()对行进行排序</h1><p>arrange()函数对行按升序进行排列，它的参数包括数据和作为排列顺序的列名。如果不止一个列名作为参数，则后者在前者的基础上继续排序。例如：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arrange(flights, year, month, day)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/06.png"></p>
+<p>使用desc()可以按降序(descending)排列：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arrange(flights,desc(month))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/07.png"></p>
+<p>缺省值总是排在最后。</p>
+<h1 id="使用select-函数选择列"><a href="#使用select-函数选择列" class="headerlink" title="使用select()函数选择列"></a>使用select()函数选择列</h1><ul>
+<li>按名称选择列</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#列的排列顺序与参数中的顺序一致</span></span><br><span class="line">select(flights, year, month, day)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/08.png"></p>
+<ul>
+<li>选择year和day之间的所有列</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select(flights, year:day)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/09.png"></p>
+<ul>
+<li>选择除year和day之外的列</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select(flights, ！<span class="built_in">c</span>(year, day))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/10.png"></p>
+<p>此外，在可以在select()函数里使用一些函数来辅助选择：</p>
+<ul>
+<li>starts_with(“abc”)：匹配以“abc”开头的名称</li>
+<li>ends_with(“abc”)：匹配以“abc”结尾的名称</li>
+<li>contains(“abc”)：匹配包含“abc”的名称</li>
+<li>matches()：匹配正则表达式</li>
+<li>mum_range(“x”, 1:3)：匹配x1、x2、x3</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#选择列名以d开头且不包含a的列</span></span><br><span class="line">select(flights, starts_with(<span class="string">&quot;d&quot;</span>)&amp;!contains(<span class="string">&quot;a&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/11.png"></p>
+<p>还有一种用法是将select()函数和everything()辅助函数一起使用。当想要将几个变量移在前面时非常有效：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select(flights, day, month, year, everything())</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/12.png"></p>
+<h1 id="使用mutate-添加新列"><a href="#使用mutate-添加新列" class="headerlink" title="使用mutate()添加新列"></a>使用mutate()添加新列</h1><p>除了选择现有的变量外，经常还需要根据现有变量计算出新变量，而这就是mutate()函数的功能。新增的变量会被放在最后一列。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flights_time &lt;- select(flights, distance, air_time) </span><br><span class="line">mutate(flights_time, speed=distance/air_time*<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/13.png"></p>
+<p>如果只想保留新变量，则应使用transmute()函数：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transmute(flights, distance, air_time, speed=distance/air_time*<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/14.png"></p>
+<h2 id="常用的创建新变量的函数公式"><a href="#常用的创建新变量的函数公式" class="headerlink" title="常用的创建新变量的函数公式"></a>常用的创建新变量的函数公式</h2><ul>
+<li>算术运算符：+、-、*、/、^</li>
+</ul>
+<p>它们都是向量，使用所谓的“循环法则”。如果一个参数比另一个短，那么前者会自动扩展到相同长度。当某个参数还是单个数值时，这种运算非常有效：air_time/60、hours*60+minute。</p>
+<ul>
+<li><p>模运算符：%/%、%%</p>
+</li>
+<li><p>对数函数：log()、log2()、log10()</p>
+</li>
+<li><p>偏移函数：lead()、lag()</p>
+</li>
+<li><p>累加和滚动求和：cumsum()、cumprod()、commin()、cunmax()、cummean()</p>
+</li>
+<li><p>逻辑比较：&lt;、&lt;=、&gt;、&gt;=、!=</p>
+</li>
+<li><p>排秩：min_rank()</p>
+</li>
+</ul>
+<h1 id="使用summarize-进行分组摘要"><a href="#使用summarize-进行分组摘要" class="headerlink" title="使用summarize()进行分组摘要"></a>使用summarize()进行分组摘要</h1><p>通常summarize()函数是与group_by()一起使用。group_by()可以将数据集进行分组。分组后再使用其他函数进行操作时，便会按组别进行操作。例如，按年月对上述进行分组统计平均每月延误时间：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">by_month &lt;- group_by(flights, year, month)</span><br><span class="line">summarize(by_month, delay = mean(dep_delay, na.rm = <span class="literal">TRUE</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/15.png"></p>
+<p>group_by()和summarize()的组合构成了使用dplyr包时最常用的操作之一：分组统计。</p>
+<h2 id="管道-gt"><a href="#管道-gt" class="headerlink" title="管道%&gt;%"></a>管道%&gt;%</h2><p>为了减少对中间无关紧要变量的命名，我们可以使用管道工具<code>%&gt;%</code>。例如，x %&gt;% f(y)会转换为f(x, y)，x %&gt;% f(y) %&gt;% g(z)会转换为g(f(x, y), z)，以此类推。它可以将上一步的结果作为下一步的数据来源。它显著提高了代码的可读性。</p>
+<p>例如上述代码可重写为：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">by_month &lt;- flights %&gt;%</span><br><span class="line">  group_by(year, month) %&gt;%</span><br><span class="line">  summarize(delay = mean(dep_delay, na.rm = <span class="literal">TRUE</span>))</span><br></pre></td></tr></table></figure>
+
+<p>运行完后将结果保存到by_month中。</p>
+<h2 id="summarize-中常用的摘要函数"><a href="#summarize-中常用的摘要函数" class="headerlink" title="summarize()中常用的摘要函数"></a>summarize()中常用的摘要函数</h2><p>在下面几个案例中，我们先要通过筛选掉出发或抵达延误为NA的行，以排除掉取消的航班：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">not_cancelled &lt;- flights %&gt;%</span><br><span class="line">  filter(!<span class="built_in">is.na</span>(dep_delay), !<span class="built_in">is.na</span>(arr_delay)</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>center：mean()、median()</li>
+</ul>
+<p>有时候需要将摘要函数与逻辑筛选组合起来使用，但目前还没深入了解过通过逻辑判断来取子集的方法：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#平均正抵达延误时间</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(avg_delay = mean(arr_delay[arr_delay &gt; <span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/16.png"></p>
+<ul>
+<li><p>spread：sd()、IQR()、mad()</p>
+</li>
+<li><p>range：min()、max()、quantile()</p>
+</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#每天最早和最晚出发的航班</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(first = <span class="built_in">min</span>(dep_time), last = <span class="built_in">max</span>(dep_time))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/17.png"></p>
+<ul>
+<li><p>position：first()、last()、nth()</p>
+</li>
+<li><p>count：n()、n_distinct()</p>
+</li>
+</ul>
+<p>n()不需要任何参数就能返回当前分组的大小。n_distinct()则是返回当前分组唯一值的数量。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#每个目的地的航空公司数量</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(dest) %&gt;%</span><br><span class="line">  summarize(carriers = n_distinct(carrier)) %&gt;%</span><br><span class="line">  arrange(desc(carriers))</span><br></pre></td></tr></table></figure>
+
+<p>因为计数功能太常用，所以dplyr中专门提供一个用于计数的函数count()：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#但是并不能剔除重复</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  count(dest, sort = <span class="literal">TRUE</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/18.png"></p>
+<p>还可以给count()函数wt参数提供一个变量，从而对其进行分组求和，如果没有提供就只是单纯的分组计数。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#计算每架飞机的飞行总里程</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  count(tailnum, wt = distance, sort = <span class="literal">TRUE</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/19.png"></p>
+<ul>
+<li><p>logical：any()、all()</p>
+</li>
+<li><p>函数结合逻辑判断：sum(x &gt; 10)、mean(x &gt; 10)</p>
+</li>
+</ul>
+<p>当逻辑判断与数值型函数一起使用时会产生比较神奇的效果，因为TRUE会转换为1，FALSE会转换为0，因此sum(x)可以找出x为TRUE的数量，mean(x)可以找出x为TRUE的比例。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#每天早上5点前出发的航班数量</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(n_delay = <span class="built_in">sum</span>(dep_time &lt; <span class="number">500</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/20.png"></p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#每日延误超过1小时的航班比例</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(hour_perc = mean(arr_delay &gt; <span class="number">60</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/21.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/26/R-02/" rel="prev" title="数据可视化">
+                  <i class="fa fa-chevron-left"></i> 数据可视化
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yico Yuan</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

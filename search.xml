@@ -266,6 +266,188 @@
       </categories>
   </entry>
   <entry>
+    <title>数据转换</title>
+    <url>/2022/03/04/R-03/</url>
+    <content><![CDATA[<p>获得的数据一般很难完全满足我们直接进行可视化的要求，通常需要对观测值做一些筛选、排序或者重命名等一些工作。因此，我们将学习如何使用dplyr包来转换数据。本次使用到的数据集为2013年从纽约市出发的航班信息。</p>
+<span id="more"></span>
+
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>加载数据集和R包。</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;nycflights13&quot;</span>)</span><br><span class="line">library(<span class="string">&quot;nycflights13&quot;</span>)</span><br><span class="line">library(<span class="string">&quot;tidyverse&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="nycflights13"><a href="#nycflights13" class="headerlink" title="nycflights13"></a>nycflights13</h1><p>我们使用nycflights13::flights数据来练习dplyr中的基本数据操作。这个数据框包含了2013从纽约市出发的336776次航班的信息。</p>
+<p><img src="/2022/03/04/R-03/01.png"></p>
+<p>使用<code>?flights</code>查看更详细的说明。</p>
+<h1 id="dplyr"><a href="#dplyr" class="headerlink" title="dplyr"></a>dplyr</h1><p>我们将学习以下dplyr中的5个核心函数，它们可以解决数据处理中绝大多数的问题。</p>
+<ul>
+<li>filter()：按值筛选观测（选择行）。</li>
+<li>arrange()：对行进行排序。</li>
+<li>select()：按名称选择变量（选择列）。</li>
+<li>mutate()：使用现有变量来创建新变量。</li>
+<li>summarize()：将多个值总结为一个摘要。</li>
+</ul>
+<p>它们的使用模式是一样的：</p>
+<ul>
+<li>第一个参数是一个数据框。</li>
+<li>随后的参数使用变量名称（不加引号）来描述对数据框的操作。</li>
+<li>输出结果是一个新的数据框。</li>
+</ul>
+<p>它们都可以和group_by()函数联用。而group_by()函数可以根据某个变量的不同水平进行分组，然后使用上述函数分组进行操作。</p>
+<h1 id="使用filter-过滤行"><a href="#使用filter-过滤行" class="headerlink" title="使用filter()过滤行"></a>使用filter()过滤行</h1><p>filter()函数可以基于观测值筛选出观测值子集。第一个参数的数据名称，随后的参数通过变量相关的表达式来筛选变量的观测值。</p>
+<p>例如，我们想筛选出1月1日的所有航班：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">filter(flights, month == <span class="number">1</span>, day == <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/02.png"></p>
+<h2 id="比较运算符"><a href="#比较运算符" class="headerlink" title="比较运算符"></a>比较运算符</h2><p>为了进行有效地筛选，我们必须知道如何使用比较运算符来选择观测。比较运算符有：&gt;（大于）、&gt;=(大于等于)、&lt;(小于)、&lt;=(小于等于)、!=(不等于)、==(等于)。</p>
+<p>值得关注的一个问题是<code>浮点数</code>的比较：</p>
+<p><img src="/2022/03/04/R-03/03.png"></p>
+<p>在我们判断1/49*49是否等于1时，R返回的结果是FALSE。在比较浮点数是否相等时不能使用<code>==</code>，而应该使用<code>near()</code>：</p>
+<p><img src="/2022/03/04/R-03/04.png"></p>
+<h2 id="逻辑运算符"><a href="#逻辑运算符" class="headerlink" title="逻辑运算符"></a>逻辑运算符</h2><p>布尔运算符包括：&amp;（与）、|（或）、！（非）。下图展示了布尔运算符所有的组合：</p>
+<p><img src="/2022/03/04/R-03/05.png"></p>
+<p>例如，我们想找出11月份和12月份的所有航班：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">filter(flights, month == <span class="number">11</span> | month == <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+
+<p>上述代码也可表述为：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">filter(flights, month %in% <span class="built_in">c</span>(<span class="number">11</span>,<span class="number">12</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="缺失值"><a href="#缺失值" class="headerlink" title="缺失值"></a>缺失值</h2><p>R中用<code>NA</code>表示缺失值(not available)，它表示一个不确定的值，所以当你想判断<code>NA == NA</code>时，结果也会返回NA。</p>
+<p>可以使用na.omit()函数剔除所有NA。</p>
+<h1 id="使用arrange-对行进行排序"><a href="#使用arrange-对行进行排序" class="headerlink" title="使用arrange()对行进行排序"></a>使用arrange()对行进行排序</h1><p>arrange()函数对行按升序进行排列，它的参数包括数据和作为排列顺序的列名。如果不止一个列名作为参数，则后者在前者的基础上继续排序。例如：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">arrange(flights, year, month, day)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/06.png"></p>
+<p>使用desc()可以按降序(descending)排列：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">arrange(flights,desc(month))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/07.png"></p>
+<p>缺省值总是排在最后。</p>
+<h1 id="使用select-函数选择列"><a href="#使用select-函数选择列" class="headerlink" title="使用select()函数选择列"></a>使用select()函数选择列</h1><ul>
+<li>按名称选择列</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#列的排列顺序与参数中的顺序一致</span></span><br><span class="line">select(flights, year, month, day)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/08.png"></p>
+<ul>
+<li>选择year和day之间的所有列</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">select(flights, year:day)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/09.png"></p>
+<ul>
+<li>选择除year和day之外的列</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">select(flights, ！<span class="built_in">c</span>(year, day))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/10.png"></p>
+<p>此外，在可以在select()函数里使用一些函数来辅助选择：</p>
+<ul>
+<li>starts_with(“abc”)：匹配以“abc”开头的名称</li>
+<li>ends_with(“abc”)：匹配以“abc”结尾的名称</li>
+<li>contains(“abc”)：匹配包含“abc”的名称</li>
+<li>matches()：匹配正则表达式</li>
+<li>mum_range(“x”, 1:3)：匹配x1、x2、x3</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#选择列名以d开头且不包含a的列</span></span><br><span class="line">select(flights, starts_with(<span class="string">&quot;d&quot;</span>)&amp;!contains(<span class="string">&quot;a&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/11.png"></p>
+<p>还有一种用法是将select()函数和everything()辅助函数一起使用。当想要将几个变量移在前面时非常有效：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">select(flights, day, month, year, everything())</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/12.png"></p>
+<h1 id="使用mutate-添加新列"><a href="#使用mutate-添加新列" class="headerlink" title="使用mutate()添加新列"></a>使用mutate()添加新列</h1><p>除了选择现有的变量外，经常还需要根据现有变量计算出新变量，而这就是mutate()函数的功能。新增的变量会被放在最后一列。</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">flights_time &lt;- select(flights, distance, air_time) </span><br><span class="line">mutate(flights_time, speed=distance/air_time*<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/13.png"></p>
+<p>如果只想保留新变量，则应使用transmute()函数：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">transmute(flights, distance, air_time, speed=distance/air_time*<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/14.png"></p>
+<h2 id="常用的创建新变量的函数公式"><a href="#常用的创建新变量的函数公式" class="headerlink" title="常用的创建新变量的函数公式"></a>常用的创建新变量的函数公式</h2><ul>
+<li>算术运算符：+、-、*、/、^</li>
+</ul>
+<p>它们都是向量，使用所谓的“循环法则”。如果一个参数比另一个短，那么前者会自动扩展到相同长度。当某个参数还是单个数值时，这种运算非常有效：air_time/60、hours*60+minute。</p>
+<ul>
+<li><p>模运算符：%/%、%%</p>
+</li>
+<li><p>对数函数：log()、log2()、log10()</p>
+</li>
+<li><p>偏移函数：lead()、lag()</p>
+</li>
+<li><p>累加和滚动求和：cumsum()、cumprod()、commin()、cunmax()、cummean()</p>
+</li>
+<li><p>逻辑比较：&lt;、&lt;=、&gt;、&gt;=、!=</p>
+</li>
+<li><p>排秩：min_rank()</p>
+</li>
+</ul>
+<h1 id="使用summarize-进行分组摘要"><a href="#使用summarize-进行分组摘要" class="headerlink" title="使用summarize()进行分组摘要"></a>使用summarize()进行分组摘要</h1><p>通常summarize()函数是与group_by()一起使用。group_by()可以将数据集进行分组。分组后再使用其他函数进行操作时，便会按组别进行操作。例如，按年月对上述进行分组统计平均每月延误时间：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">by_month &lt;- group_by(flights, year, month)</span><br><span class="line">summarize(by_month, delay = mean(dep_delay, na.rm = <span class="literal">TRUE</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/15.png"></p>
+<p>group_by()和summarize()的组合构成了使用dplyr包时最常用的操作之一：分组统计。</p>
+<h2 id="管道-gt"><a href="#管道-gt" class="headerlink" title="管道%&gt;%"></a>管道%&gt;%</h2><p>为了减少对中间无关紧要变量的命名，我们可以使用管道工具<code>%&gt;%</code>。例如，x %&gt;% f(y)会转换为f(x, y)，x %&gt;% f(y) %&gt;% g(z)会转换为g(f(x, y), z)，以此类推。它可以将上一步的结果作为下一步的数据来源。它显著提高了代码的可读性。</p>
+<p>例如上述代码可重写为：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">by_month &lt;- flights %&gt;%</span><br><span class="line">  group_by(year, month) %&gt;%</span><br><span class="line">  summarize(delay = mean(dep_delay, na.rm = <span class="literal">TRUE</span>))</span><br></pre></td></tr></table></figure>
+
+<p>运行完后将结果保存到by_month中。</p>
+<h2 id="summarize-中常用的摘要函数"><a href="#summarize-中常用的摘要函数" class="headerlink" title="summarize()中常用的摘要函数"></a>summarize()中常用的摘要函数</h2><p>在下面几个案例中，我们先要通过筛选掉出发或抵达延误为NA的行，以排除掉取消的航班：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">not_cancelled &lt;- flights %&gt;%</span><br><span class="line">  filter(!<span class="built_in">is.na</span>(dep_delay), !<span class="built_in">is.na</span>(arr_delay)</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>center：mean()、median()</li>
+</ul>
+<p>有时候需要将摘要函数与逻辑筛选组合起来使用，但目前还没深入了解过通过逻辑判断来取子集的方法：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#平均正抵达延误时间</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(avg_delay = mean(arr_delay[arr_delay &gt; <span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/16.png"></p>
+<ul>
+<li><p>spread：sd()、IQR()、mad()</p>
+</li>
+<li><p>range：min()、max()、quantile()</p>
+</li>
+</ul>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#每天最早和最晚出发的航班</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(first = <span class="built_in">min</span>(dep_time), last = <span class="built_in">max</span>(dep_time))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/17.png"></p>
+<ul>
+<li><p>position：first()、last()、nth()</p>
+</li>
+<li><p>count：n()、n_distinct()</p>
+</li>
+</ul>
+<p>n()不需要任何参数就能返回当前分组的大小。n_distinct()则是返回当前分组唯一值的数量。</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#每个目的地的航空公司数量</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(dest) %&gt;%</span><br><span class="line">  summarize(carriers = n_distinct(carrier)) %&gt;%</span><br><span class="line">  arrange(desc(carriers))</span><br></pre></td></tr></table></figure>
+
+<p>因为计数功能太常用，所以dplyr中专门提供一个用于计数的函数count()：</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#但是并不能剔除重复</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  count(dest, sort = <span class="literal">TRUE</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/18.png"></p>
+<p>还可以给count()函数wt参数提供一个变量，从而对其进行分组求和，如果没有提供就只是单纯的分组计数。</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#计算每架飞机的飞行总里程</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  count(tailnum, wt = distance, sort = <span class="literal">TRUE</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/19.png"></p>
+<ul>
+<li><p>logical：any()、all()</p>
+</li>
+<li><p>函数结合逻辑判断：sum(x &gt; 10)、mean(x &gt; 10)</p>
+</li>
+</ul>
+<p>当逻辑判断与数值型函数一起使用时会产生比较神奇的效果，因为TRUE会转换为1，FALSE会转换为0，因此sum(x)可以找出x为TRUE的数量，mean(x)可以找出x为TRUE的比例。</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#每天早上5点前出发的航班数量</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(n_delay = <span class="built_in">sum</span>(dep_time &lt; <span class="number">500</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/20.png"></p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line"><span class="comment">#每日延误超过1小时的航班比例</span></span><br><span class="line">not_cancelled %&gt;%</span><br><span class="line">  group_by(year, month, day) %&gt;%</span><br><span class="line">  summarize(hour_perc = mean(arr_delay &gt; <span class="number">60</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/04/R-03/21.png"></p>
+]]></content>
+      <categories>
+        <category>R</category>
+      </categories>
+  </entry>
+  <entry>
     <title>RNA-seq背景知识</title>
     <url>/2022/02/12/RNA-seq-01/</url>
     <content><![CDATA[<p>RNA-seq利用NGS测序技术来分析生物样品转录组，以揭示其RNA在某个时刻的表达情况及表达量。其原理如下图所示：</p>
@@ -418,6 +600,48 @@
 ]]></content>
   </entry>
   <entry>
+    <title>富集分析</title>
+    <url>/2022/02/24/RNA-seq-06/</url>
+    <content><![CDATA[<h1 id="安装R包ClusterProfiler"><a href="#安装R包ClusterProfiler" class="headerlink" title="安装R包ClusterProfiler"></a>安装R包ClusterProfiler</h1><figure class="highlight r"><table><tr><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">require(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">install_github(<span class="string">&quot;GuangchuangYu/clusterProfiler&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>很多时候R包安装失败都是文件夹的读写权限未打开，其次可能是因为依赖文件的缺失。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#对文件夹其下所有子文件（夹）开放读、写、执行权限</span><br><span class="line">sudo chmod 777 -R &lt;directory&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<span id="more"></span>
+
+<h1 id="基因富集分析"><a href="#基因富集分析" class="headerlink" title="基因富集分析"></a>基因富集分析</h1><h2 id="加载R包ClusterProfiler"><a href="#加载R包ClusterProfiler" class="headerlink" title="加载R包ClusterProfiler"></a>加载R包ClusterProfiler</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(clusterProfiler)</span><br></pre></td></tr></table></figure>
+
+<h2 id="提取差异基因（以resSig-105Vs120为例）"><a href="#提取差异基因（以resSig-105Vs120为例）" class="headerlink" title="提取差异基因（以resSig_105Vs120为例）"></a>提取差异基因（以resSig_105Vs120为例）</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gene &lt;- read.table(&quot;resSig_105Vs120.csv&quot;)</span><br><span class="line">gene &lt;- rownames(gene)</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建非模式物种注释信息"><a href="#构建非模式物种注释信息" class="headerlink" title="构建非模式物种注释信息"></a>构建非模式物种注释信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">BiocManager::install(&quot;AnnotationHub&quot;)</span><br><span class="line">library(AnnotationHub)</span><br><span class="line">hub &lt;- AnnotationHub()</span><br><span class="line">query(hub,&quot;Prunus persica&quot;)</span><br><span class="line">peach &lt;- hub[[&#x27;AH86027&#x27;]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。</p>
+<h3 id="rvest包基本函数"><a href="#rvest包基本函数" class="headerlink" title="rvest包基本函数"></a>rvest包基本函数</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">read_html():读取html网页</span><br><span class="line">html_nodes():选择提取网页中指定元素、节点</span><br><span class="line">html_text():提取标签内的文本</span><br></pre></td></tr></table></figure>
+
+<h3 id="rvest包的使用"><a href="#rvest包的使用" class="headerlink" title="rvest包的使用"></a>rvest包的使用</h3><p>使用revest包加上基本的for循环来批量爬取locus tag对应的NCBI gene id，即entrez ID，其中html的element可通过selectorgadget插件获取。虽然比较慢，但是目前我也没有找到更好的转换locus tag为通用id的方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">  system.time(1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="stringi处理爬取的字符串"><a href="#stringi处理爬取的字符串" class="headerlink" title="stringi处理爬取的字符串"></a>stringi处理爬取的字符串</h3><p>使用stringr提取<code>Gene ID: 18793306, updated on 1-Jun-2019</code>里仅数字部分的ID：18793306。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(tidyverse)</span><br><span class="line">genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,&quot;,&quot;)-1) </span><br><span class="line">genelist &lt;- genelist[1:i]</span><br><span class="line">genelist &lt;- na.omit(genelist)</span><br></pre></td></tr></table></figure>
+
+<p>也可以使用Excel的智能匹配模式提取gene ID。</p>
+<h2 id="GO富集分析及可视化"><a href="#GO富集分析及可视化" class="headerlink" title="GO富集分析及可视化"></a>GO富集分析及可视化</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=genelist, OrgDb=peach,ont=&quot;ALL&quot;,pAdjustMethod=&quot;BH&quot;,pvalueCutoff = 0.99,readable=TRUE)</span><br><span class="line"></span><br><span class="line">barplot(ego)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/24/RNA-seq-06/resSig_105Vs120_go.png"></p>
+<h2 id="KEGG富集分析"><a href="#KEGG富集分析" class="headerlink" title="KEGG富集分析"></a>KEGG富集分析</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kk &lt;- enrichKEGG(gene = genelist,organism = &#x27;pper&#x27;,pvalueCutoff = 0.05)</span><br><span class="line">head(kk)</span><br><span class="line">browseKEGG(kk,&#x27;pper00196&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/24/RNA-seq-06/pper00196.png"></p>
+<p><img src="/2022/02/24/RNA-seq-06/resSig_105Vs120_kegg.png"></p>
+<h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
+<p>1.<a href="https://yulab-smu.top/biomedical-knowledge-mining-book/clusterprofiler-go.html">clusterprofiler</a></p>
+]]></content>
+      <categories>
+        <category>RNA_seq</category>
+      </categories>
+  </entry>
+  <entry>
     <title>软件准备</title>
     <url>/2022/01/13/WES01/</url>
     <content><![CDATA[<h1 id="安装必备软件"><a href="#安装必备软件" class="headerlink" title="安装必备软件"></a>安装必备软件</h1><h2 id="Miniconda"><a href="#Miniconda" class="headerlink" title="Miniconda"></a>Miniconda</h2><h3 id="关于conda和miniconda"><a href="#关于conda和miniconda" class="headerlink" title="关于conda和miniconda"></a>关于conda和miniconda</h3><p>Conda is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language.</p>
@@ -516,48 +740,6 @@
 ]]></content>
       <categories>
         <category>WES</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>富集分析</title>
-    <url>/2022/02/24/RNA-seq-06/</url>
-    <content><![CDATA[<h1 id="安装R包ClusterProfiler"><a href="#安装R包ClusterProfiler" class="headerlink" title="安装R包ClusterProfiler"></a>安装R包ClusterProfiler</h1><figure class="highlight r"><table><tr><td class="code"><pre><span class="line">install.packages(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">require(<span class="string">&quot;devtools&quot;</span>)</span><br><span class="line">install_github(<span class="string">&quot;GuangchuangYu/clusterProfiler&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<p>很多时候R包安装失败都是文件夹的读写权限未打开，其次可能是因为依赖文件的缺失。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#对文件夹其下所有子文件（夹）开放读、写、执行权限</span><br><span class="line">sudo chmod 777 -R &lt;directory&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-<span id="more"></span>
-
-<h1 id="基因富集分析"><a href="#基因富集分析" class="headerlink" title="基因富集分析"></a>基因富集分析</h1><h2 id="加载R包ClusterProfiler"><a href="#加载R包ClusterProfiler" class="headerlink" title="加载R包ClusterProfiler"></a>加载R包ClusterProfiler</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(clusterProfiler)</span><br></pre></td></tr></table></figure>
-
-<h2 id="提取差异基因（以resSig-105Vs120为例）"><a href="#提取差异基因（以resSig-105Vs120为例）" class="headerlink" title="提取差异基因（以resSig_105Vs120为例）"></a>提取差异基因（以resSig_105Vs120为例）</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gene &lt;- read.table(&quot;resSig_105Vs120.csv&quot;)</span><br><span class="line">gene &lt;- rownames(gene)</span><br></pre></td></tr></table></figure>
-
-<h2 id="构建非模式物种注释信息"><a href="#构建非模式物种注释信息" class="headerlink" title="构建非模式物种注释信息"></a>构建非模式物种注释信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">BiocManager::install(&quot;AnnotationHub&quot;)</span><br><span class="line">library(AnnotationHub)</span><br><span class="line">hub &lt;- AnnotationHub()</span><br><span class="line">query(hub,&quot;Prunus persica&quot;)</span><br><span class="line">peach &lt;- hub[[&#x27;AH86027&#x27;]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="转换为EntrezID"><a href="#转换为EntrezID" class="headerlink" title="转换为EntrezID"></a>转换为EntrezID</h2><p>phytozome上的数据采用的注释为形如Prupe.1G002900的Locus tag。因此首先需使用R爬虫工具爬取NCBI的gene ID，登录网页搜索locus tag：<a href="https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E6%89%BE%E5%88%B0Gene">https://www.ncbi.nlm.nih.gov/gene/?term=PRUPE_1G018800，可以在网页中找到Gene</a> ID: 18792947。</p>
-<h3 id="rvest包基本函数"><a href="#rvest包基本函数" class="headerlink" title="rvest包基本函数"></a>rvest包基本函数</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">read_html():读取html网页</span><br><span class="line">html_nodes():选择提取网页中指定元素、节点</span><br><span class="line">html_text():提取标签内的文本</span><br></pre></td></tr></table></figure>
-
-<h3 id="rvest包的使用"><a href="#rvest包的使用" class="headerlink" title="rvest包的使用"></a>rvest包的使用</h3><p>使用revest包加上基本的for循环来批量爬取locus tag对应的NCBI gene id，即entrez ID，其中html的element可通过selectorgadget插件获取。虽然比较慢，但是目前我也没有找到更好的转换locus tag为通用id的方法。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;rvest&quot;)</span><br><span class="line">library(rvest)</span><br><span class="line">geneid=vector()</span><br><span class="line">for (i in 1:length(gene)) &#123;</span><br><span class="line">  url &lt;- paste(&quot;https://www.ncbi.nlm.nih.gov/gene/?term=&quot;,gene[i],sep = &quot;&quot;)</span><br><span class="line">  web1 &lt;- read_html(url)</span><br><span class="line">  web2 &lt;- html_element(web1,&#x27;.geneid&#x27;)</span><br><span class="line">  geneid[i] &lt;- html_text2(web2)</span><br><span class="line">  print(gene[i])</span><br><span class="line">  system.time(1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="stringi处理爬取的字符串"><a href="#stringi处理爬取的字符串" class="headerlink" title="stringi处理爬取的字符串"></a>stringi处理爬取的字符串</h3><p>使用stringr提取<code>Gene ID: 18793306, updated on 1-Jun-2019</code>里仅数字部分的ID：18793306。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;tidyverse&quot;)</span><br><span class="line">library(tidyverse)</span><br><span class="line">genelist &lt;- str_sub(geneid,start=10,end=str_locate(geneid,&quot;,&quot;)-1) </span><br><span class="line">genelist &lt;- genelist[1:i]</span><br><span class="line">genelist &lt;- na.omit(genelist)</span><br></pre></td></tr></table></figure>
-
-<p>也可以使用Excel的智能匹配模式提取gene ID。</p>
-<h2 id="GO富集分析及可视化"><a href="#GO富集分析及可视化" class="headerlink" title="GO富集分析及可视化"></a>GO富集分析及可视化</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ego &lt;- enrichGO(gene=genelist, OrgDb=peach,ont=&quot;ALL&quot;,pAdjustMethod=&quot;BH&quot;,pvalueCutoff = 0.99,readable=TRUE)</span><br><span class="line"></span><br><span class="line">barplot(ego)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/02/24/RNA-seq-06/resSig_105Vs120_go.png"></p>
-<h2 id="KEGG富集分析"><a href="#KEGG富集分析" class="headerlink" title="KEGG富集分析"></a>KEGG富集分析</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kk &lt;- enrichKEGG(gene = genelist,organism = &#x27;pper&#x27;,pvalueCutoff = 0.05)</span><br><span class="line">head(kk)</span><br><span class="line">browseKEGG(kk,&#x27;pper00196&#x27;)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/02/24/RNA-seq-06/pper00196.png"></p>
-<p><img src="/2022/02/24/RNA-seq-06/resSig_105Vs120_kegg.png"></p>
-<h1 id="基因集富集分析"><a href="#基因集富集分析" class="headerlink" title="基因集富集分析"></a>基因集富集分析</h1><p>参考文献：</p>
-<p>1.<a href="https://yulab-smu.top/biomedical-knowledge-mining-book/clusterprofiler-go.html">clusterprofiler</a></p>
-]]></content>
-      <categories>
-        <category>RNA_seq</category>
       </categories>
   </entry>
   <entry>

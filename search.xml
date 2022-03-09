@@ -451,6 +451,8 @@
     <title>处理字符串</title>
     <url>/2022/03/08/R-04/</url>
     <content><![CDATA[<p>我们将学习如何使用tidyverse核心包stringr来处理字符串。除了学习stringr包里的各种函数外，还有个重点就是学习正则表达式。通过stringr与正则表达式的结合来实现更为复杂和精准的字符串的增删改查。</p>
+<span id="more"></span>
+
 <h1 id="使用stringr处理字符"><a href="#使用stringr处理字符" class="headerlink" title="使用stringr处理字符"></a>使用stringr处理字符</h1><p>首先创建一个字符串向量：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fruit &lt;- c(&quot;apple&quot;, &quot;banana&quot;, &quot;pear&quot;)</span><br></pre></td></tr></table></figure>
 
@@ -498,6 +500,96 @@
 
 <p>将字符串填充至指定长度，默认在字符串左边填充空格。</p>
 <p><img src="/home/yico/blog/source/_posts/R-04/11.png" alt="11"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_trunc(string, width, side = c(&quot;right&quot;, &quot;left&quot;, &quot;center&quot;), ellipsis = &quot;...&quot;)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_trim(string, side = c(&quot;both&quot;, &quot;left&quot;, &quot;right&quot;))</span><br></pre></td></tr></table></figure>
+
+<p>删除字符串两边的空格。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_squish(string)</span><br></pre></td></tr></table></figure>
+
+<p>除了删去字符串两边的空格外，还将字符串中间的所有空格压缩为1个。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/12.png" alt="12"></p>
+<h2 id="Mutate-Strings"><a href="#Mutate-Strings" class="headerlink" title="Mutate Strings"></a>Mutate Strings</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_sub() &lt;- value</span><br></pre></td></tr></table></figure>
+
+<p>str_sub()与赋值相结合，所产生的的效果为，使用赋予的值替代指定位序的字符。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/13.png" alt="13"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_replace(string, pattern, replacement)</span><br></pre></td></tr></table></figure>
+
+<p>用指定值替换匹配到的第一个字符。str_replace_all()则是全部替换。str_remove()/str_remove_all()直接剔除。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/14.png" alt="14"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_to_lower(string) #所有字母转换为小写</span><br><span class="line">str_to_upper(string) #所有字母转换为大写</span><br><span class="line">str_to_title(string) #首字母转换为大写</span><br></pre></td></tr></table></figure>
+
+<p><img src="/home/yico/blog/source/_posts/R-04/15.png" alt="15"></p>
+<h2 id="Join-and-Split"><a href="#Join-and-Split" class="headerlink" title="Join and Split"></a>Join and Split</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_c(..., sep = &quot;&quot;, collapse = NULL)</span><br></pre></td></tr></table></figure>
+
+<p>将多个字符合并成一个，默认连接符为空。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/16.png" alt="16"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_flatten(string, collapse = &quot;&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>将字符向量合并成一个，默认连接符为空。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/17.png" alt="17"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_dup(string, times)</span><br></pre></td></tr></table></figure>
+
+<p>重复字符。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/18.png" alt="18"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_split_fixed(string, pattern, n)</span><br></pre></td></tr></table></figure>
+
+<p>将字符按指定的模式(pattern)和次数(n)进行分割，并将分割后的结果保存在矩阵中。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/19.png" alt="19"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_glue(..., sep = &quot;&quot;, .envir = parent.frame())</span><br></pre></td></tr></table></figure>
+
+<p>能正确翻译函数表达式。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/20.png" alt="20"></p>
+<h2 id="Order-Strings"><a href="#Order-Strings" class="headerlink" title="Order Strings"></a>Order Strings</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_order(x, decreasing = FALSE, na_last = TRUE, locale = &quot;en&quot;, numeric = FALSE)</span><br></pre></td></tr></table></figure>
+
+<p>返回排序后的序次。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/21.png" alt="21"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">str_sort(x, decreasing = FALSE, na_last = TRUE, locale = &quot;en&quot;, numeric = FALSE)</span><br></pre></td></tr></table></figure>
+
+<p>排序，默认升序。</p>
+<p><img src="/home/yico/blog/source/_posts/R-04/22.png" alt="22"></p>
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>首先需要知道的一点是，在R里想要表示<code>\</code>，必须输入<code>\\</code>，其中前一个作为转义字符，转义字符一个作用就是使正则表达式中存在特殊含义的字符保持原始的含义，如<code>.</code>在正则里表示匹配任意字符，因此如果想要匹配<code>.</code>本身，就需要使用转义字符<code>\.</code>来表示点，而在R中则需输入<code>\\.</code>。同理，在R中要想表示<code>\</code>，则需输入<code>\\\\</code>。</p>
+<h2 id="Match-Characters"><a href="#Match-Characters" class="headerlink" title="Match Characters"></a>Match Characters</h2><p>为了方便展示，这里先构建一个函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">see &lt;- function(rx) str_view_all(&quot;abc ABC 123\t.!?\\&#123;&#125;&#123;&#125;\n&quot;, rx)</span><br></pre></td></tr></table></figure>
+
+<p>str_view_all()函数的作用是以HTML的方式来可视化正则表达式的匹配结果。</p>
+<ul>
+<li>以下表格展示了常用的匹配字符的正则表达式：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">pattern</th>
+<th align="center">regexp</th>
+<th align="center">matches</th>
+<th align="center">code</th>
+<th align="center">result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>\\.</code></td>
+<td align="center"><code>\.</code></td>
+<td align="center"><code>.</code></td>
+<td align="center"><code>see(&quot;\\.&quot;)</code></td>
+<td align="center"><img src="/2022/03/08/R-04/23.png"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
         <category>R</category>

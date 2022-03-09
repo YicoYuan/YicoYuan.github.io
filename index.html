@@ -229,9 +229,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-03-08 21:37:08 / 修改时间：23:46:52" itemprop="dateCreated datePublished" datetime="2022-03-08T21:37:08+08:00">2022-03-08</time>
+      <time title="创建时间：2022-03-08 21:37:08" itemprop="dateCreated datePublished" datetime="2022-03-08T21:37:08+08:00">2022-03-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-09 22:30:54" itemprop="dateModified" datetime="2022-03-09T22:30:54+08:00">2022-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -254,54 +260,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>我们将学习如何使用tidyverse核心包stringr来处理字符串。除了学习stringr包里的各种函数外，还有个重点就是学习正则表达式。通过stringr与正则表达式的结合来实现更为复杂和精准的字符串的增删改查。</p>
-<h1 id="使用stringr处理字符"><a href="#使用stringr处理字符" class="headerlink" title="使用stringr处理字符"></a>使用stringr处理字符</h1><p>首先创建一个字符串向量：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fruit &lt;- c(&quot;apple&quot;, &quot;banana&quot;, &quot;pear&quot;)</span><br></pre></td></tr></table></figure>
-
-<h2 id="Detect-Matches"><a href="#Detect-Matches" class="headerlink" title="Detect Matches"></a>Detect Matches</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_detect(string, pattern, negate = FALSE)</span><br></pre></td></tr></table></figure>
-
-<p>判断字符串是否包含模式，并返回逻辑值。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/01.png" alt="01"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_starts(string, pattern, negate = FALSE)</span><br></pre></td></tr></table></figure>
-
-<p>判断每个字符串的开头是否包含模式，并返回逻辑值。str_ends()同理。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/02.png" alt="02"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_which(string, pattern, negate = FALSE)</span><br></pre></td></tr></table></figure>
-
-<p>返回与包含模式的字符串索引值。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/03.png" alt="03"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_locate(string, pattern)</span><br></pre></td></tr></table></figure>
-
-<p>返回字符串内第一个与模式相匹配的部分的起始和结束位序。str_locate_all()则是返回字符串内所有与模式匹配部分的起始和结束位序。这种局部匹配都有两个模式，匹配第一个和匹配所有满足条件的。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/04.png" alt="04"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_count(string, pattern)</span><br></pre></td></tr></table></figure>
-
-<p>统计字符串内与模式匹配的次数，即局部匹配的次数。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/05.png" alt="05"></p>
-<h2 id="Subset-Strings"><a href="#Subset-Strings" class="headerlink" title="Subset Strings"></a>Subset Strings</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_sub(string, start = 1L, end = -1L)</span><br></pre></td></tr></table></figure>
-
-<p>提取字符串开始和结束位序的指定部分。负数表示倒数。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/06.png" alt="06"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_subset(string, pattern, negate = FALSE)</span><br></pre></td></tr></table></figure>
-
-<p>与str_detect()类似，不过str_subset()是返回包含模式的字符串。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/07.png" alt="07"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_extract(string, pattern)</span><br></pre></td></tr></table></figure>
-
-<p>返回字符串内第一个与模式相匹配的部分。str_extract_all()返回字符串内所有与模式相匹配的部分。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/08.png" alt="08"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_match(string, pattern)</span><br></pre></td></tr></table></figure>
-
-<p>输出结果为一个矩阵，其中第一列为第一个与模式相匹配的部分，随后几列则按()对匹配的结果进行拆解分组保存在每列中。str_match_all()同理。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/09.png" alt="09"></p>
-<h2 id="Manage-Lengths"><a href="#Manage-Lengths" class="headerlink" title="Manage Lengths"></a>Manage Lengths</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_length(string)</span><br></pre></td></tr></table></figure>
-
-<p>返回字符串的长度。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/10.png" alt="10"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str_pad(string, width, side=c(&quot;left&quot;,&quot;right&quot;,&quot;both&quot;),pad=&quot;&quot;)</span><br></pre></td></tr></table></figure>
-
-<p>将字符串填充至指定长度，默认在字符串左边填充空格。</p>
-<p><img src="/home/yico/blog/source/_posts/R-04/11.png" alt="11"></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/08/R-04/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
